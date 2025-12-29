@@ -22,17 +22,66 @@ The Cursor AI Agent Team Framework provides a structured approach to AI-assisted
 
 ## Installation
 
-### Method 1: Direct Copy
+### Step 1: Add as Git Submodule
 
-1. Copy the `.cursor/` directory to your project root
-2. Copy the `00_meta/` directory to your project root
-3. Ensure your project structure follows the recommended naming convention (see below)
-
-### Method 2: Git Submodule (Future)
+Add the framework as a Git submodule to your project:
 
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git 00_meta/cursor-agent-team
+git submodule update --init --recursive
 ```
+
+### Step 2: Run Install Script
+
+Run the installation script to copy files to your project:
+
+```bash
+./00_meta/cursor-agent-team/install.sh
+```
+
+This will:
+- Copy command files to `.cursor/commands/`
+- Copy rule files to `.cursor/rules/`
+- Initialize AI workspace structure in `00_meta/ai_workspace/`
+- Record installation information
+
+### Update
+
+To update to the latest version:
+
+```bash
+cd 00_meta/cursor-agent-team
+git pull origin main
+cd ../..
+./00_meta/cursor-agent-team/install.sh
+```
+
+The install script will overwrite existing files with the latest versions.
+
+### Uninstall
+
+To remove the framework:
+
+```bash
+./00_meta/cursor-agent-team/uninstall.sh
+```
+
+This will remove all installed files. Optionally, you can also remove the submodule:
+
+```bash
+git submodule deinit 00_meta/cursor-agent-team
+git rm 00_meta/cursor-agent-team
+```
+
+### Alternative: Direct Copy (Not Recommended)
+
+If you prefer not to use Git submodules, you can manually copy files:
+
+1. Copy the `.cursor/` directory to your project root
+2. Copy the `00_meta/ai_workspace/` directory structure to your project root
+3. Ensure your project structure follows the recommended naming convention (see below)
+
+**Note**: Using Git submodule is recommended for easier updates and maintenance.
 
 ## Directory Structure
 

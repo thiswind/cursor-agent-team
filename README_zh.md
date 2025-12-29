@@ -22,17 +22,66 @@ Cursor AI 智能体团队框架通过三个专门的智能体提供结构化的 
 
 ## 安装
 
-### 方法 1：直接复制
+### 步骤 1：添加 Git 子模块
 
-1. 将 `.cursor/` 目录复制到项目根目录
-2. 将 `00_meta/` 目录复制到项目根目录
-3. 确保项目结构遵循推荐的命名约定（见下文）
-
-### 方法 2：Git 子模块（未来）
+将框架作为 Git 子模块添加到您的项目中：
 
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git 00_meta/cursor-agent-team
+git submodule update --init --recursive
 ```
+
+### 步骤 2：运行安装脚本
+
+运行安装脚本将文件复制到您的项目：
+
+```bash
+./00_meta/cursor-agent-team/install.sh
+```
+
+这将：
+- 复制命令文件到 `.cursor/commands/`
+- 复制规则文件到 `.cursor/rules/`
+- 初始化 AI 工作空间结构到 `00_meta/ai_workspace/`
+- 记录安装信息
+
+### 更新
+
+要更新到最新版本：
+
+```bash
+cd 00_meta/cursor-agent-team
+git pull origin main
+cd ../..
+./00_meta/cursor-agent-team/install.sh
+```
+
+安装脚本会用最新版本覆盖现有文件。
+
+### 卸载
+
+要移除框架：
+
+```bash
+./00_meta/cursor-agent-team/uninstall.sh
+```
+
+这将删除所有已安装的文件。可选地，您也可以删除子模块：
+
+```bash
+git submodule deinit 00_meta/cursor-agent-team
+git rm 00_meta/cursor-agent-team
+```
+
+### 替代方案：直接复制（不推荐）
+
+如果您不想使用 Git 子模块，可以手动复制文件：
+
+1. 将 `.cursor/` 目录复制到项目根目录
+2. 将 `00_meta/ai_workspace/` 目录结构复制到项目根目录
+3. 确保项目结构遵循推荐的命名约定（见下文）
+
+**注意**：建议使用 Git 子模块以便于更新和维护。
 
 ## 目录结构
 
