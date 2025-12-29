@@ -129,20 +129,33 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         echo -e "${YELLOW}Warning: Failed to deinitialize submodule${NC}"
     fi
     
-    # Remove submodule
+    # Remove submodule from Git index
     if git rm -f cursor-agent-team 2>/dev/null; then
-        echo -e "${GREEN}✓ Submodule removed${NC}"
-        echo ""
-        echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
-        echo "  git commit -m 'Remove cursor-agent-team submodule'"
+        echo -e "${GREEN}✓ Submodule removed from Git index${NC}"
     else
-        echo -e "${YELLOW}Warning: Failed to remove submodule${NC}"
-        echo "You may need to manually remove it from .gitmodules and .git/config"
+        echo -e "${YELLOW}Warning: Failed to remove submodule from Git index${NC}"
     fi
+    
+    # Remove Git internal module configuration (important for complete cleanup)
+    if [ -d "$PROJECT_ROOT/.git/modules/cursor-agent-team" ]; then
+        rm -rf "$PROJECT_ROOT/.git/modules/cursor-agent-team"
+        echo -e "${GREEN}✓ Git internal module configuration removed${NC}"
+    fi
+    
+    # Remove submodule directory if exists
+    if [ -d "$PROJECT_ROOT/cursor-agent-team" ]; then
+        rm -rf "$PROJECT_ROOT/cursor-agent-team"
+        echo -e "${GREEN}✓ Submodule directory removed${NC}"
+    fi
+    
+    echo ""
+    echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
+    echo "  git commit -m 'Remove cursor-agent-team submodule'"
 else
     echo "Submodule kept. You can remove it later with:"
-    echo "  git submodule deinit cursor-agent-team"
-    echo "  git rm cursor-agent-team"
+    echo "  git submodule deinit -f cursor-agent-team"
+    echo "  git rm -f cursor-agent-team"
+    echo "  rm -rf .git/modules/cursor-agent-team"
 fi
 
 echo ""
