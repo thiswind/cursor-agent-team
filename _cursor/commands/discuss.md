@@ -53,6 +53,7 @@ When you use `/discuss`, the AI plays the role of a **Discussion Partner (讨论
 9. **Time-Aware**: Always considers the timeliness of information (see Rules for time awareness requirements)
 10. **Record Keeping**: Important discussion points can be manually recorded in `discussions/` if needed
 11. **Recommend Other Agents**: When actual operations are needed, suggests calling other agents or commands
+12. **Intelligent Reminder**: Automatically suggests generating agent requirements when discussion involves role creation (see Rules for details)
 
 ## Workflow
 
@@ -153,6 +154,33 @@ AI will automatically search when:
 - **Plan content**: Include plan information, goals, steps, related files, expected results, notes
 - **CRITICAL**: `/discuss` only generates plans, does NOT execute them. Execution is handled by `/crew` command.
 
+### Step 8.5: Intelligent Reminder for Agent Requirements (Optional)
+- **Trigger condition**: 
+  - Discussion has reached a natural pause (user stops asking questions or finishes expressing ideas)
+  - Discussion content contains keywords related to role creation: "创建新角色", "设计新命令", "新功能", "新角色", "新命令"
+  - Discussion involves role design, command design, or new functionality design
+- **Reminder process** (DO NOT execute):
+  1. Analyze current discussion content for role creation keywords
+  2. If keywords detected and discussion has paused, ask user: "是不是可以生成角色需求？"
+  3. Wait for user confirmation
+  4. If user confirms, proceed to Step 8.6
+- **CRITICAL**: This is a suggestion, not automatic generation. User must explicitly confirm.
+
+### Step 8.6: Generate Agent Requirement Document (Optional)
+- **Trigger condition**: User explicitly says "生成角色需求" or "生成需求文档" or "生成需求文档给 /prompt_engineer" or confirms the intelligent reminder
+- **Requirement generation process** (DO NOT execute):
+  1. Analyze current topic discussion content
+  2. Extract role design requirements (role name, positioning, core functions, use cases, constraints, expected behavior)
+  3. Generate requirement file: `cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[话题ID]-[序号].md`
+  4. Create directory if it doesn't exist: `cursor-agent-team/ai_workspace/agent_requirements/`
+  5. Update requirement index: `cursor-agent-team/ai_workspace/agent_requirements/INDEX.md` (create if doesn't exist)
+  6. Update topic tree: Record requirement number in topic's "关联 AGENT-REQUIREMENT" field
+  7. Display requirement number and summary in response
+  8. **Suggest execution**: Recommend using `/prompt_engineer` command and reference the AGENT-REQUIREMENT file to create the role
+- **Requirement numbering**: Format `AGENT-REQUIREMENT-[话题ID]-[序号]` (e.g., AGENT-REQUIREMENT-A-001)
+- **Requirement content**: Include requirement information, role design details, discussion points, processing records
+- **CRITICAL**: `/discuss` only generates requirements, does NOT execute them. Execution is handled by `/prompt_engineer` command.
+
 ## Response Format
 
 The AI will structure responses as:
@@ -190,6 +218,16 @@ The AI will structure responses as:
    - Plan summary: Goals, steps count, related files
    - Execution suggestion: Recommend using `/crew PLAN-[话题ID]-[序号]` to execute the plan
    - **Note**: `/discuss` only generates plans, does NOT execute them. Use `/crew` command for execution.
+
+6. **Intelligent Reminder** (if conditions met)
+   - Ask user: "是不是可以生成角色需求？"
+   - Wait for user confirmation
+
+7. **Agent Requirement Generation** (if user requests)
+   - Requirement number: `AGENT-REQUIREMENT-[话题ID]-[序号]`
+   - Requirement summary: Role name, core functions, use cases
+   - Execution suggestion: Recommend using `/prompt_engineer` command and reference the AGENT-REQUIREMENT file
+   - **Note**: `/discuss` only generates requirements, does NOT execute them. Use `/prompt_engineer` command for execution.
 
 ## Example Usage
 
@@ -247,6 +285,23 @@ for time series? Are there any recent papers we should be aware of?
 - *Ask: "你想讨论什么话题？"*
 - *DO NOT use project status as discussion record*
 
+### Example 8: Generating Agent Requirement
+```
+/discuss
+我想创建一个新的角色，用于代码审查。这个角色应该能够分析代码质量、检查最佳实践、提供改进建议。
+[讨论过程...]
+生成角色需求
+```
+*Note: AI will generate an agent requirement document, save it to `cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[话题ID]-[序号].md`, and display the requirement number*
+
+### Example 9: Intelligent Reminder
+```
+/discuss
+我在想，是不是应该创建一个新的命令来处理文档生成？这个命令应该能够根据模板生成各种类型的文档。
+[讨论过程，用户停止提问]
+```
+*Note: AI detects keywords "创建新的命令" and discussion has paused, so it asks: "是不是可以生成角色需求？"*
+
 ## When to Use `/discuss` vs Other Commands
 
 | Command | Purpose | File Modification | Mode |
@@ -266,6 +321,7 @@ for time series? Are there any recent papers we should be aware of?
 6. **Save Insights**: If the discussion yields important insights, manually save them to `discussions/`
 7. **Iterate**: Use multiple `/discuss` calls to explore different aspects
 8. **Clean Workspace**: Periodically clean old files in AI workspace (suggested: keep last 7 days)
+9. **Use Requirements**: When discussing role creation, consider generating agent requirements for better workflow
 
 ## Integration with Workflow
 
@@ -273,6 +329,7 @@ for time series? Are there any recent papers we should be aware of?
 - **Problem Solving**: Use `/discuss` to analyze problems before implementing solutions
 - **Quality Check**: Use `/discuss` to review content without making changes
 - **Learning**: Use `/discuss` to understand concepts or clarify misunderstandings
+- **Role Creation**: Use `/discuss` to design roles, then generate AGENT-REQUIREMENT for `/prompt_engineer`
 
 ---
 
@@ -289,12 +346,14 @@ for time series? Are there any recent papers we should be aware of?
 - Important discussion outcomes should be manually documented in `discussions/` directories
 - AI workspace files (including topic tree) are temporary and excluded from Git (see `.gitignore`)
 - When actual operations are needed, the human will call other agents or commands
+- **Intelligent reminder** helps users discover the workflow of generating agent requirements when discussing role creation
 
 ---
 
-**Version**: v3.3.1 (Updated: 2025-12-29)
+**Version**: v3.4.0 (Updated: 2025-12-29)
 
 **Version History**:
+- v3.4.0 (2025-12-29): Added Step 8.5 (Intelligent Reminder) and Step 8.6 (Generate Agent Requirement Document) to support `/prompt_engineer` workflow. Added intelligent reminder feature that suggests generating agent requirements when discussion involves role creation.
 - v3.3.1 (2025-12-29): Clarified role boundary - `/discuss` only generates plans, does NOT execute them. Execution should use `/crew` command. Updated Step 8 and Response Format to emphasize this distinction.
 - v3.3 (2025-12-29): Clarified first-time use behavior and distinction between project status and discussion history in Step 0.5 and Step 1, added Example 7 for first-time use scenario
 - v3.2 (2025-12-29): Added Step 8 - plan generation functionality to support crew command integration

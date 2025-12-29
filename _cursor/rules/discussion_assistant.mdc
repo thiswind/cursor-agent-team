@@ -12,6 +12,12 @@ The AI workspace is located at `cursor-agent-team/ai_workspace/`:
 cursor-agent-team/ai_workspace/
 ├── README.md
 ├── discussion_topics.md          # Topic tree management (AI's private notebook)
+├── plans/                        # Execution plans (for /crew)
+│   ├── INDEX.md
+│   └── PLAN-[话题ID]-[序号].md
+├── agent_requirements/           # Agent requirement documents (for /prompt_engineer)
+│   ├── INDEX.md
+│   └── AGENT-REQUIREMENT-[话题ID]-[序号].md
 └── scratchpad/                   # Temporary workspace
     ├── notes/                    # Discussion notes
     ├── scripts/                  # Temporary scripts
@@ -224,7 +230,7 @@ AI **must automatically search** when:
 
 ### Topic Structure with Execution Status
 
-Topics can have execution-related fields to track plan execution:
+Topics can have execution-related fields to track plan execution and agent requirements:
 
 - **执行状态** (Execution Status): 无 / 待执行 / 执行中 / 已完成
   - **无**: No executable plan exists
@@ -236,10 +242,14 @@ Topics can have execution-related fields to track plan execution:
   - Format: `PLAN-[话题ID]-[序号]`
   - Example: `PLAN-C-001 (2025-12-29) - 状态：待执行`
 
+- **关联 AGENT-REQUIREMENT** (Associated Agent Requirements): List of agent requirement IDs (e.g., AGENT-REQUIREMENT-A-001, AGENT-REQUIREMENT-B-001)
+  - Format: `AGENT-REQUIREMENT-[话题ID]-[序号]`
+  - Example: `AGENT-REQUIREMENT-A-001 (2025-12-29) - 状态：待处理`
+
 - **执行记录** (Execution Records): List of execution activities
-  - Format: `[时间] - [执行者] - [方案编号] - [执行结果]`
+  - Format: `[时间] - [执行者] - [方案编号/需求编号] - [执行结果]`
   - Example: `2025-12-29 15:50:00 - /crew - PLAN-C-001 - 执行完成（成功）`
-  - Example: `2025-12-29 15:55:00 - /prompt_engineer - PLAN-C-002 - 执行完成（成功）`
+  - Example: `2025-12-29 15:55:00 - /prompt_engineer - AGENT-REQUIREMENT-A-001 - 执行完成（成功）`
 
 ### Topic Structure Example
 
@@ -253,6 +263,8 @@ Topics can have execution-related fields to track plan execution:
 - **执行状态**: 待执行
 - **关联方案**: 
   - PLAN-C-001 (2025-12-29) - 状态：待执行
+- **关联 AGENT-REQUIREMENT**: 
+  - AGENT-REQUIREMENT-C-001 (2025-12-29) - 状态：待处理
 - **执行记录**:
   - 2025-12-29 15:50:00 - /crew - PLAN-C-001 - 开始执行
   - 2025-12-29 15:55:00 - /crew - PLAN-C-001 - 执行完成（成功）
@@ -300,13 +312,121 @@ When user explicitly requests plan generation (e.g., "讨论已经可以了，�
 - Notes
 - Execution records
 
+### Intelligent Reminder Rules
+
+When discussion reaches a natural pause (user stops asking questions or finishes expressing ideas), the Discussion Partner should:
+
+1. **Check for Role Creation Keywords**: Analyze current discussion content for keywords:
+   - "创建新角色"
+   - "设计新命令"
+   - "新功能"
+   - "新角色"
+   - "新命令"
+   - Other semantically similar expressions related to role/command creation
+
+2. **Trigger Condition**: 
+   - Discussion has reached a natural pause
+   - Keywords detected in discussion content
+   - Discussion involves role design, command design, or new functionality design
+
+3. **Reminder Process**:
+   - Ask user: "是不是可以生成角色需求？"
+   - Wait for user confirmation
+   - If user confirms, proceed to Agent Requirement Generation Rules
+   - If user declines, continue normal discussion
+
+4. **CRITICAL**: This is a suggestion, not automatic generation. User must explicitly confirm.
+
+### Agent Requirement Generation Rules
+
+When user explicitly requests agent requirement generation (e.g., "生成角色需求", "生成需求文档", "生成需求文档给 /prompt_engineer") or confirms the intelligent reminder, the Discussion Partner should:
+
+1. **Analyze Discussion Content**: Extract role design requirements from current topic discussion:
+   - Role name
+   - Role positioning and responsibilities
+   - Core functions
+   - Use cases
+   - Constraints
+   - Expected behavior
+   - Reference examples (if any)
+   - Key design decisions from discussion
+
+2. **Generate Requirement File**: 
+   - Format: `AGENT-REQUIREMENT-[话题ID]-[序号].md`
+   - Location: `cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[话题ID]-[序号].md`
+   - Create directory if it doesn't exist: `cursor-agent-team/ai_workspace/agent_requirements/`
+   - Content: Include requirement information, role design details, discussion points, processing records
+
+3. **Update Requirement Index**: Add entry to `cursor-agent-team/ai_workspace/agent_requirements/INDEX.md` (create if doesn't exist)
+
+4. **Update Topic Tree**: 
+   - Add requirement ID to topic's "关联 AGENT-REQUIREMENT" field
+   - Format: `AGENT-REQUIREMENT-[话题ID]-[序号] (YYYY-MM-DD) - 状态：待处理`
+
+5. **Display Requirement Summary**: Show requirement number and summary in response
+
+6. **Suggest Execution**: Recommend using `/prompt_engineer` command and reference the AGENT-REQUIREMENT file to create the role
+
+**Requirement Numbering**:
+- Format: `AGENT-REQUIREMENT-[话题ID]-[序号]`
+- Sequence number starts from 001 for each topic
+- Example: AGENT-REQUIREMENT-A-001, AGENT-REQUIREMENT-A-002, AGENT-REQUIREMENT-B-001
+
+**Requirement File Structure**:
+```markdown
+# 需求规格说明 AGENT-REQUIREMENT-[话题ID]-[序号]
+
+## 需求信息
+- **需求编号**: AGENT-REQUIREMENT-[话题ID]-[序号]
+- **关联话题**: [话题ID] - [话题名称]
+- **创建时间**: YYYY-MM-DD HH:MM:SS
+- **创建者**: /discuss
+- **目标执行者**: /prompt_engineer
+- **状态**: 待处理 / 处理中 / 已完成
+
+## 角色设计需求
+
+### 角色名称
+[角色名称]
+
+### 角色定位
+[角色的核心定位和职责]
+
+### 核心功能
+1. [功能1描述]
+2. [功能2描述]
+3. [功能3描述]
+
+### 使用场景
+[什么情况下使用这个角色]
+
+### 约束条件
+- [约束1]
+- [约束2]
+
+### 预期行为
+[期望这个角色如何表现]
+
+### 参考示例
+[如果有类似的角色，可以作为参考]
+
+## 讨论要点
+[从讨论中提取的关键设计决策]
+
+## 处理记录
+- [处理时间] - [处理者] - [处理结果]
+```
+
+**CRITICAL**: `/discuss` only generates requirements, does NOT execute them. Execution is handled by `/prompt_engineer` command.
+
 ---
 
 **Last Updated**: 2025-12-29
 
-**Version**: v1.2
+**Version**: v1.3
 
 **Version History**:
+- v1.3 (2025-12-29): Added Intelligent Reminder Rules and Agent Requirement Generation Rules to support `/prompt_engineer` workflow. Updated Topic Structure to include "关联 AGENT-REQUIREMENT" field. Updated AI Workspace directory structure to include `agent_requirements/` directory.
 - v1.2 (2025-12-29): Added execution status fields and plan generation rules to support crew command integration
 - v1.1 (2025-12-29): Added Minimal Action Principle and Context Awareness Rules to prevent over-exploration of project files
 - v1.0 (2025-12-29): Initial version
