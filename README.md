@@ -1,27 +1,45 @@
 # Cursor AI Agent Team Framework
 
-A three-agent collaboration system for AI-assisted work in Cursor IDE.
+A three-agent collaboration system for Cursor IDE that installs custom commands and enables team expansion.
 
 ## Overview
 
-This framework provides three core team roles that work together:
+This framework installs three core Cursor commands (roles) into your project:
 
 - **`/discuss`** - Discussion Partner (讨论伙伴): The strategist who analyzes problems, explores ideas, and creates execution plans
 - **`/crew`** - Crew Member (万能打工人): The executor who implements plans strictly according to specifications
-- **`/prompt_engineer`** - Prompt Engineer (提示词工程师): The HR and trainer who creates and maintains new roles (prompt templates)
+- **`/prompt_engineer`** - Prompt Engineer (提示词工程师): The HR and trainer who creates new roles (new Cursor commands)
 
-With these three core roles, the team can operate and expand.
+With these three core roles installed, the team can operate. The Prompt Engineer can create additional roles as needed, allowing the team to expand.
+
+## How It Works
+
+### Installation
+
+When you run `install.sh`, the framework copies files to your project's `.cursor/` directory:
+
+- **Commands**: `.cursor/commands/` - These become available as `/discuss`, `/prompt_engineer`, and `/crew` in Cursor
+- **Rules**: `.cursor/rules/` - Persistent rules that define each role's behavior
+
+### Creating New Roles
+
+The `/prompt_engineer` command creates new roles by generating:
+
+- **New Command File**: `.cursor/commands/[name].md` - A new command you can call with `/[name]`
+- **New Rule File**: `.cursor/rules/[name]_assistant.mdc` - Persistent rules for the new role
+
+These new files become new roles in your Cursor IDE, just like the three core roles.
 
 ## Team Roles
 
 ### Discussion Partner (`/discuss`)
-The strategist of the team. Engages in discussions, analyzes problems, explores solutions, and generates executable plans. Does not modify project files directly—only provides strategies and plans.
+The strategist. Engages in discussions, analyzes problems, explores solutions, and generates executable plans. Does not modify project files directly—only provides strategies and plans.
 
 ### Crew Member (`/crew`)
-The executor of the team. Receives plans from the Discussion Partner and executes them step by step. Strictly follows plan specifications without deviation.
+The executor. Receives plans from the Discussion Partner and executes them step by step. Strictly follows plan specifications without deviation.
 
 ### Prompt Engineer (`/prompt_engineer`)
-The HR and trainer of the team. Creates and maintains new roles (prompt templates) in LangGPT format. When you need a new specialized role, the Prompt Engineer helps create it.
+The HR and trainer. Creates and maintains new roles (Cursor commands). When you need a new specialized role, the Prompt Engineer helps create it as a new command file and rule file.
 
 ## Workflow
 
@@ -57,10 +75,14 @@ The Crew Member executes the plan step by step.
 If you need a specialized role for a specific task:
 ```
 /prompt_engineer
-I need a prompt for generating figure captions
+I need a role for generating figure captions
 ```
 
-The Prompt Engineer creates a new role template that can be used later.
+The Prompt Engineer creates:
+- `.cursor/commands/figure_caption.md` - A new command `/figure_caption`
+- `.cursor/rules/figure_caption_assistant.mdc` - Rules for this role
+
+You can now use `/figure_caption` in Cursor, just like the three core commands.
 
 ## Installation
 
@@ -73,6 +95,8 @@ git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent
 ```bash
 ./cursor-agent-team/install.sh
 ```
+
+This installs the three core commands into `.cursor/commands/` and rules into `.cursor/rules/`.
 
 ### Update
 ```bash
@@ -93,7 +117,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.1.0**
+Current version: **v0.1.1**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 

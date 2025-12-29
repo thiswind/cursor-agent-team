@@ -1,16 +1,34 @@
 # Cursor AI 智能体团队框架
 
-一个用于 Cursor IDE 中 AI 辅助工作的三智能体协作系统。
+一个用于 Cursor IDE 的三智能体协作系统，安装自定义命令并支持团队扩展。
 
 ## 概述
 
-本框架提供三个核心团队角色，协同工作：
+本框架会将三个核心 Cursor 命令（角色）安装到您的项目中：
 
 - **`/discuss`** - 讨论伙伴：谋士，分析问题、探索想法、制定方案
 - **`/crew`** - 万能打工人：执行者，严格按照方案执行任务
-- **`/prompt_engineer`** - 提示词工程师：HR+培训师，创建和维护新角色（提示词模板）
+- **`/prompt_engineer`** - 提示词工程师：HR+培训师，创建新角色（新的 Cursor 命令）
 
-有了这三个核心团队角色，团队就可以运作并扩展。
+有了这三个核心角色，团队就可以运作。提示词工程师可以根据需要创建更多角色，让团队得以扩展。
+
+## 工作原理
+
+### 安装
+
+运行 `install.sh` 后，框架会将文件复制到项目的 `.cursor/` 目录：
+
+- **命令文件**：`.cursor/commands/` - 这些文件在 Cursor 中可以通过 `/discuss`、`/prompt_engineer`、`/crew` 调用
+- **规则文件**：`.cursor/rules/` - 定义每个角色行为的持久规则
+
+### 创建新角色
+
+`/prompt_engineer` 命令通过生成以下文件来创建新角色：
+
+- **新命令文件**：`.cursor/commands/[name].md` - 一个新的命令，可以通过 `/[name]` 调用
+- **新规则文件**：`.cursor/rules/[name]_assistant.mdc` - 新角色的持久规则
+
+这些新文件会成为 Cursor IDE 中的新角色，就像三个核心角色一样。
 
 ## 团队角色
 
@@ -21,7 +39,7 @@
 团队的执行者。接收讨论伙伴制定的方案，逐步执行。严格按照方案规范执行，不偏离。
 
 ### 提示词工程师 (`/prompt_engineer`)
-团队的 HR 和培训师。创建和维护新角色（LangGPT 格式的提示词模板）。当你需要新的专门角色时，提示词工程师帮助创建。
+团队的 HR 和培训师。创建和维护新角色（Cursor 命令）。当你需要新的专门角色时，提示词工程师帮助创建新的命令文件和规则文件。
 
 ## 工作流程
 
@@ -57,10 +75,14 @@
 如果需要为特定任务创建专门角色：
 ```
 /prompt_engineer
-我需要一个生成图表标题的提示词
+我需要一个生成图表标题的角色
 ```
 
-提示词工程师创建新的角色模板，供后续使用。
+提示词工程师创建：
+- `.cursor/commands/figure_caption.md` - 新命令 `/figure_caption`
+- `.cursor/rules/figure_caption_assistant.mdc` - 该角色的规则
+
+现在你可以在 Cursor 中使用 `/figure_caption`，就像使用三个核心命令一样。
 
 ## 安装
 
@@ -73,6 +95,8 @@ git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent
 ```bash
 ./cursor-agent-team/install.sh
 ```
+
+这会将三个核心命令安装到 `.cursor/commands/`，规则安装到 `.cursor/rules/`。
 
 ### 更新
 ```bash
@@ -93,7 +117,7 @@ git submodule update --remote cursor-agent-team
 
 ## 版本
 
-当前版本：**v0.1.0**
+当前版本：**v0.1.1**
 
 版本历史请参阅 [CHANGELOG.md](CHANGELOG.md)。
 
