@@ -45,97 +45,81 @@ echo "  Version: $INSTALLED_VERSION"
 echo "  Installed at: $INSTALLED_AT"
 echo ""
 
-# Step 2: Delete files
-echo "Step 2: Removing installed files..."
+# Confirm uninstallation
+echo -e "${YELLOW}This will remove all installed files and directories.${NC}"
+read -p "Are you sure you want to uninstall? (y/n) " -n 1 -r
+echo
+if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    echo "Uninstallation cancelled."
+    exit 0
+fi
 
+echo ""
+echo "Uninstalling..."
+
+# Track removed items
+REMOVED_ITEMS=()
+
+# Step 2: Delete files
 # Delete command files
-echo "  Removing command files..."
-rm -f "$PROJECT_ROOT/.cursor/commands/discuss.md"
-rm -f "$PROJECT_ROOT/.cursor/commands/prompt_engineer.md"
-rm -f "$PROJECT_ROOT/.cursor/commands/crew.md"
+if [ -f "$PROJECT_ROOT/.cursor/commands/discuss.md" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/commands/discuss.md"
+    REMOVED_ITEMS+=(".cursor/commands/discuss.md")
+fi
+if [ -f "$PROJECT_ROOT/.cursor/commands/prompt_engineer.md" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/commands/prompt_engineer.md"
+    REMOVED_ITEMS+=(".cursor/commands/prompt_engineer.md")
+fi
+if [ -f "$PROJECT_ROOT/.cursor/commands/crew.md" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/commands/crew.md"
+    REMOVED_ITEMS+=(".cursor/commands/crew.md")
+fi
 
 # Delete rule files
-echo "  Removing rule files..."
-rm -f "$PROJECT_ROOT/.cursor/rules/discussion_assistant.mdc"
-rm -f "$PROJECT_ROOT/.cursor/rules/prompt_engineer_assistant.mdc"
-rm -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc"
-
-echo -e "${GREEN}✓ Files removed${NC}"
-echo ""
+if [ -f "$PROJECT_ROOT/.cursor/rules/discussion_assistant.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/discussion_assistant.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/discussion_assistant.mdc")
+fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/prompt_engineer_assistant.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/prompt_engineer_assistant.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/prompt_engineer_assistant.mdc")
+fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/crew_assistant.mdc")
+fi
 
 # Step 3: Remove installation info
-echo "Step 3: Removing installation information..."
+if [ -f "$INSTALL_INFO_FILE" ]; then
+    rm -f "$INSTALL_INFO_FILE"
+    REMOVED_ITEMS+=(".cursor/.cursor-agent-team-installed")
+fi
 
-rm -f "$INSTALL_INFO_FILE"
-echo -e "${GREEN}✓ Installation information removed${NC}"
-echo ""
-
-# Safety verification function for directory removal
-safe_remove_directory() {
-    local dir_to_remove="$1"
-    local dir_name="$2"
-    
-    if [ ! -d "$dir_to_remove" ]; then
-        return 0
-    fi
-    
-    # Get parent directory
-    local parent_dir="$(dirname "$dir_to_remove")"
-    
-    # Change to parent directory and verify
-    echo "  Verifying location before removing $dir_name..."
-    cd "$parent_dir"
-    echo "  Current directory: $(pwd)"
-    echo "  Contents:"
-    ls -la | head -10
-    echo ""
-    
-    read -p "  Confirm removal of $dir_name? (y/n) " -n 1 -r
-    echo
-    if [[ $REPLY =~ ^[Yy]$ ]]; then
-        rmdir "$dir_to_remove"
-        echo -e "${GREEN}✓ Removed $dir_name${NC}"
-        return 0
-    else
-        echo -e "${YELLOW}  Skipped removal of $dir_name${NC}"
-        return 1
-    fi
-}
-
-# Step 4: Clean up directories
-echo "Step 4: Cleaning up directories..."
-
-# Check if commands directory is empty
+# Step 4: Clean up empty directories
+# Remove commands directory if empty
 if [ -d "$PROJECT_ROOT/.cursor/commands" ]; then
     if [ -z "$(ls -A "$PROJECT_ROOT/.cursor/commands" 2>/dev/null)" ]; then
-        read -p "Remove empty .cursor/commands/ directory? (y/n) " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            safe_remove_directory "$PROJECT_ROOT/.cursor/commands" ".cursor/commands/"
+        if rmdir "$PROJECT_ROOT/.cursor/commands" 2>/dev/null; then
+            REMOVED_ITEMS+=(".cursor/commands/")
         fi
     fi
 fi
 
-# Check if rules directory is empty
+# Remove rules directory if empty
 if [ -d "$PROJECT_ROOT/.cursor/rules" ]; then
     if [ -z "$(ls -A "$PROJECT_ROOT/.cursor/rules" 2>/dev/null)" ]; then
-        read -p "Remove empty .cursor/rules/ directory? (y/n) " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            safe_remove_directory "$PROJECT_ROOT/.cursor/rules" ".cursor/rules/"
+        if rmdir "$PROJECT_ROOT/.cursor/rules" 2>/dev/null; then
+            REMOVED_ITEMS+=(".cursor/rules/")
         fi
     fi
 fi
 
-# Check if .cursor directory is empty (installation info file already removed)
+# Remove .cursor directory if empty
 if [ -d "$PROJECT_ROOT/.cursor" ]; then
-    # Count all items in .cursor directory
     REMAINING_ITEMS=$(find "$PROJECT_ROOT/.cursor" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')
     if [ "$REMAINING_ITEMS" -eq 0 ]; then
-        read -p "Remove empty .cursor/ directory? (y/n) " -n 1 -r
-        echo
-        if [[ $REPLY =~ ^[Yy]$ ]]; then
-            safe_remove_directory "$PROJECT_ROOT/.cursor" ".cursor/"
+        if rmdir "$PROJECT_ROOT/.cursor" 2>/dev/null; then
+            REMOVED_ITEMS+=(".cursor/")
         fi
     fi
 fi
@@ -143,54 +127,48 @@ fi
 echo ""
 
 # Step 5: Optional submodule removal
-echo "Step 5: Submodule removal (optional)..."
-
+echo "Submodule removal (optional)..."
 read -p "Remove submodule? (y/n) " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-    echo "Removing submodule..."
     cd "$PROJECT_ROOT"
     
     # Deinitialize submodule
     if git submodule deinit -f cursor-agent-team 2>/dev/null; then
-        echo -e "${GREEN}✓ Submodule deinitialized${NC}"
-    else
-        echo -e "${YELLOW}Warning: Failed to deinitialize submodule${NC}"
+        REMOVED_ITEMS+=("Submodule deinitialized")
     fi
     
     # Remove submodule from Git index
     if git rm -f cursor-agent-team 2>/dev/null; then
-        echo -e "${GREEN}✓ Submodule removed from Git index${NC}"
-    else
-        echo -e "${YELLOW}Warning: Failed to remove submodule from Git index${NC}"
+        REMOVED_ITEMS+=("Submodule removed from Git index")
     fi
     
-    # Remove Git internal module configuration (important for complete cleanup)
+    # Remove Git internal module configuration
     if [ -d "$PROJECT_ROOT/.git/modules/cursor-agent-team" ]; then
         rm -rf "$PROJECT_ROOT/.git/modules/cursor-agent-team"
-        echo -e "${GREEN}✓ Git internal module configuration removed${NC}"
+        REMOVED_ITEMS+=("Git internal module configuration")
     fi
     
-    # Remove submodule directory if exists
+    # Remove submodule directory
     if [ -d "$PROJECT_ROOT/cursor-agent-team" ]; then
         rm -rf "$PROJECT_ROOT/cursor-agent-team"
-        echo -e "${GREEN}✓ Submodule directory removed${NC}"
+        REMOVED_ITEMS+=("Submodule directory (cursor-agent-team/)")
     fi
     
     echo ""
     echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
     echo "  git commit -m 'Remove cursor-agent-team submodule'"
-else
-    echo "Submodule kept. You can remove it later with:"
-    echo "  git submodule deinit -f cursor-agent-team"
-    echo "  git rm -f cursor-agent-team"
-    echo "  rm -rf .git/modules/cursor-agent-team"
 fi
 
 echo ""
 echo "=========================================="
 echo -e "${GREEN}Uninstallation completed!${NC}"
 echo "=========================================="
+echo ""
+echo "Removed items:"
+for item in "${REMOVED_ITEMS[@]}"; do
+    echo -e "  ${GREEN}✅${NC} $item"
+done
 echo ""
 echo "The Cursor AI Agent Team Framework has been removed from your project."
 echo ""

@@ -48,6 +48,15 @@ git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent
 要更新到最新版本：
 
 ```bash
+git submodule update --remote cursor-agent-team
+./cursor-agent-team/install.sh
+```
+
+`git submodule update --remote` 命令会从远程仓库获取并更新子模块到最新提交。然后运行安装脚本将更新的文件复制到您的项目。
+
+**替代方法**（如果您更喜欢明确的方式）：
+
+```bash
 cd cursor-agent-team
 git pull origin main
 cd ..

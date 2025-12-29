@@ -48,6 +48,15 @@ This will:
 To update to the latest version:
 
 ```bash
+git submodule update --remote cursor-agent-team
+./cursor-agent-team/install.sh
+```
+
+The `git submodule update --remote` command will fetch and update the submodule to the latest commit from the remote repository. Then run the install script to copy the updated files to your project.
+
+**Alternative method** (if you prefer to be explicit):
+
+```bash
 cd cursor-agent-team
 git pull origin main
 cd ..
