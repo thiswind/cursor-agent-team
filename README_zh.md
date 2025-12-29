@@ -28,7 +28,6 @@ Cursor AI 智能体团队框架通过三个专门的智能体提供结构化的 
 
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-git submodule update --init --recursive
 ```
 
 ### 步骤 2：运行安装脚本
@@ -65,7 +64,12 @@ cd ..
 ./cursor-agent-team/uninstall.sh
 ```
 
-这将删除所有已安装的文件。可选地，您也可以删除子模块：
+这将：
+- 删除所有已安装的文件
+- 清理空目录（需要确认）
+- 询问是否要删除子模块
+
+如果您在脚本中选择不删除子模块，可以稍后手动删除：
 
 ```bash
 git submodule deinit cursor-agent-team
@@ -103,7 +107,7 @@ project-root/
     │   ├── prompt_engineer/
     │   ├── crew/
     │   └── scratchpad/
-    ├── .cursor/                 # 框架源文件
+    ├── _cursor/                 # 框架源文件
     ├── install.sh
     ├── uninstall.sh
     └── ...

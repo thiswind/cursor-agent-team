@@ -28,7 +28,6 @@ Add the framework as a Git submodule to your project:
 
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-git submodule update --init --recursive
 ```
 
 ### Step 2: Run Install Script
@@ -65,7 +64,12 @@ To remove the framework:
 ./cursor-agent-team/uninstall.sh
 ```
 
-This will remove all installed files. Optionally, you can also remove the submodule:
+This will:
+- Remove all installed files
+- Clean up empty directories (with confirmation)
+- Ask if you want to remove the submodule
+
+If you choose not to remove the submodule in the script, you can remove it manually later:
 
 ```bash
 git submodule deinit cursor-agent-team
@@ -103,7 +107,7 @@ project-root/
     │   ├── prompt_engineer/
     │   ├── crew/
     │   └── scratchpad/
-    ├── .cursor/                 # Framework source files
+    ├── _cursor/                 # Framework source files
     ├── install.sh
     ├── uninstall.sh
     └── ...
