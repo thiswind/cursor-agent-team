@@ -72,35 +72,50 @@ echo ""
 # Step 3: Copy files (direct overwrite)
 echo "Step 3: Copying files..."
 
+# Track installed items
+INSTALLED_ITEMS=()
+
 # Copy command files
 echo "  Copying command files..."
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/discuss.md" "$PROJECT_ROOT/.cursor/commands/" || {
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/discuss.md" "$PROJECT_ROOT/.cursor/commands/"; then
+    INSTALLED_ITEMS+=(".cursor/commands/discuss.md")
+else
     echo -e "${RED}Error: Failed to copy discuss.md${NC}"
     exit 1
-}
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/prompt_engineer.md" "$PROJECT_ROOT/.cursor/commands/" || {
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/prompt_engineer.md" "$PROJECT_ROOT/.cursor/commands/"; then
+    INSTALLED_ITEMS+=(".cursor/commands/prompt_engineer.md")
+else
     echo -e "${RED}Error: Failed to copy prompt_engineer.md${NC}"
     exit 1
-}
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/crew.md" "$PROJECT_ROOT/.cursor/commands/" || {
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/crew.md" "$PROJECT_ROOT/.cursor/commands/"; then
+    INSTALLED_ITEMS+=(".cursor/commands/crew.md")
+else
     echo -e "${RED}Error: Failed to copy crew.md${NC}"
     exit 1
-}
+fi
 
 # Copy rule files
 echo "  Copying rule files..."
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/discussion_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/discussion_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/discussion_assistant.mdc")
+else
     echo -e "${RED}Error: Failed to copy discussion_assistant.mdc${NC}"
     exit 1
-}
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/prompt_engineer_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/prompt_engineer_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/prompt_engineer_assistant.mdc")
+else
     echo -e "${RED}Error: Failed to copy prompt_engineer_assistant.mdc${NC}"
     exit 1
-}
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/crew_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/crew_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/crew_assistant.mdc")
+else
     echo -e "${RED}Error: Failed to copy crew_assistant.mdc${NC}"
     exit 1
-}
+fi
 
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
@@ -148,6 +163,7 @@ cat > "$INSTALL_INFO_FILE" << EOF
 EOF
 
 if [ $? -eq 0 ]; then
+    INSTALLED_ITEMS+=(".cursor/.cursor-agent-team-installed")
     echo -e "${GREEN}✓ Installation information recorded${NC}"
 else
     echo -e "${YELLOW}Warning: Failed to create installation info file${NC}"
@@ -158,13 +174,10 @@ echo "=========================================="
 echo -e "${GREEN}Installation completed successfully!${NC}"
 echo "=========================================="
 echo ""
-echo "Installed files:"
-echo "  - .cursor/commands/discuss.md"
-echo "  - .cursor/commands/prompt_engineer.md"
-echo "  - .cursor/commands/crew.md"
-echo "  - .cursor/rules/discussion_assistant.mdc"
-echo "  - .cursor/rules/prompt_engineer_assistant.mdc"
-echo "  - .cursor/rules/crew_assistant.mdc"
+echo "Installed items:"
+for item in "${INSTALLED_ITEMS[@]}"; do
+    echo -e "  ${GREEN}✅${NC} $item"
+done
 echo ""
 echo "Version: $VERSION"
 echo "Installed at: $INSTALLED_AT"

@@ -47,6 +47,9 @@ echo ""
 
 # Confirm uninstallation
 echo -e "${YELLOW}This will remove all installed files and directories.${NC}"
+if [ -d "$PROJECT_ROOT/cursor-agent-team" ] && [ -f "$PROJECT_ROOT/.gitmodules" ]; then
+    echo -e "${YELLOW}This will also remove the git submodule.${NC}"
+fi
 read -p "Are you sure you want to uninstall? (y/n) " -n 1 -r
 echo
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
@@ -59,6 +62,11 @@ echo "Uninstalling..."
 
 # Track removed items
 REMOVED_ITEMS=()
+# Track if submodule should be removed (default: yes if submodule exists)
+REMOVE_SUBMODULE=0
+if [ -d "$PROJECT_ROOT/cursor-agent-team" ] && [ -f "$PROJECT_ROOT/.gitmodules" ]; then
+    REMOVE_SUBMODULE=1
+fi
 
 # Step 2: Delete files
 # Delete command files
@@ -124,13 +132,8 @@ if [ -d "$PROJECT_ROOT/.cursor" ]; then
     fi
 fi
 
-echo ""
-
-# Step 5: Optional submodule removal
-echo "Submodule removal (optional)..."
-read -p "Remove submodule? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
+# Step 5: Remove submodule if it exists
+if [ "$REMOVE_SUBMODULE" -eq 1 ]; then
     cd "$PROJECT_ROOT"
     
     # Deinitialize submodule
@@ -154,10 +157,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
         rm -rf "$PROJECT_ROOT/cursor-agent-team"
         REMOVED_ITEMS+=("Submodule directory (cursor-agent-team/)")
     fi
-    
-    echo ""
-    echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
-    echo "  git commit -m 'Remove cursor-agent-team submodule'"
 fi
 
 echo ""
@@ -170,6 +169,17 @@ for item in "${REMOVED_ITEMS[@]}"; do
     echo -e "  ${GREEN}✅${NC} $item"
 done
 echo ""
+
+# Check if submodule was removed
+if [ "$REMOVE_SUBMODULE" -eq 1 ]; then
+    # Check if any submodule-related items were removed
+    if printf '%s\n' "${REMOVED_ITEMS[@]}" | grep -q "Submodule"; then
+        echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
+        echo "  git commit -m 'Remove cursor-agent-team submodule'"
+        echo ""
+    fi
+fi
+
 echo "The Cursor AI Agent Team Framework has been removed from your project."
 echo ""
 
