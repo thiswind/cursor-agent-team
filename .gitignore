@@ -1,0 +1,37 @@
+# AI workspace temporary files
+00_meta/ai_workspace/scratchpad/
+00_meta/ai_workspace/*/sessions/
+00_meta/ai_workspace/discussion_topics.md
+00_meta/ai_workspace/plans/*.md
+!00_meta/ai_workspace/plans/README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+*.bak
+*.backup
+
+# Cache
+.cache/
+*.cache
+
