@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2025-12-29
+
+### Changed
+
+- Simplified README documentation to focus on team roles and collaboration
+- Clarified the relationship between three core roles: strategist (discuss), executor (crew), and HR/trainer (prompt_engineer)
+- Removed detailed feature lists, focusing on core concepts and usage examples
+- Improved workflow explanation with a complete usage example
+
 ## [0.1.0] - 2025-12-29
 
 ### Added
+
 - Initial release of Cursor AI Agent Team Framework
 - Three agents: discuss, prompt_engineer, crew
 - AI workspace structure and templates
@@ -19,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Academic-first search strategy
 
 ### Features
+
 - `/discuss` command: Discussion partner for exploring ideas and generating plans
 - `/prompt_engineer` command: Prompt engineer for creating and maintaining LangGPT-formatted prompts
 - `/crew` command: Crew member for executing plans strictly according to specifications
@@ -29,5 +40,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.1.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.1.1
 [0.1.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.1.0
-
