@@ -1,5 +1,7 @@
 # Cursor AI Agent Team Framework
 
+![Framework Banner](banner.png)
+
 A three-agent collaboration system for Cursor IDE that installs custom commands and enables team expansion.
 
 ## Overview
