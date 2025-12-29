@@ -66,6 +66,11 @@ When you use `/discuss`, the AI will follow this workflow:
 
 ### Step 0.5: Manage Topic Tree (CRITICAL)
 - **Read topic tree**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
+- **Handle first-time use**: 
+  - If file does not exist or is empty: This is the first discussion session
+  - Create initial topic tree structure
+  - For "where are we?" questions: Explicitly state "这是我们第一次讨论，还没有之前的讨论记录"
+  - **CRITICAL**: Do NOT use project files (e.g., README) as discussion records
 - **Analyze conversation**: Extract keywords and themes to identify current topic
 - **Match topics**: Match with existing topics in the tree
 - **Query if uncertain**: If unable to uniquely identify, ask user for clarification
@@ -84,7 +89,12 @@ When you use `/discuss`, the AI will follow this workflow:
   - The question directly requires information from a specific file
   - The question cannot be answered without accessing a specific file
 - **DO NOT** proactively explore files, todos, or project structure unless explicitly requested
-- **For "where are we?" type questions**: Primarily rely on topic tree, do NOT read other files
+- **For "where are we?" type questions**: 
+  - **Primary source**: Topic tree (discussion history)
+  - **If topic tree is empty**: Explicitly state "这是我们第一次讨论，还没有之前的讨论记录"
+  - **DO NOT** read project files (e.g., README) to answer "where are we?"
+  - **Distinction**: Project status (from README) ≠ Discussion history (from topic tree)
+  - **Optional**: Can introduce project understanding as context, but clearly distinguish it from discussion history
 
 ### Step 2: Use AI Workspace (If Needed)
 For complex discussions, AI may use `cursor-agent-team/ai_workspace/` to:
@@ -223,6 +233,17 @@ for time series? Are there any recent papers we should be aware of?
 ```
 *Note: AI will generate an execution plan, save it to `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`, and display the plan number*
 
+### Example 7: First-Time Use / "Where Are We?"
+```
+/discuss
+我们聊到哪里了？
+```
+*Note: If this is the first discussion (topic tree is empty), AI should:*
+- *Explicitly state: "这是我们第一次使用 `/discuss` 进行讨论，还没有之前的讨论记录"*
+- *Can optionally introduce project context (e.g., from README) but clearly distinguish it from discussion history*
+- *Ask: "你想讨论什么话题？"*
+- *DO NOT use project status as discussion record*
+
 ## When to Use `/discuss` vs Other Commands
 
 | Command | Purpose | File Modification | Mode |
@@ -268,9 +289,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.2 (Updated: 2025-12-29)
+**Version**: v3.3 (Updated: 2025-12-29)
 
 **Version History**:
+- v3.3 (2025-12-29): Clarified first-time use behavior and distinction between project status and discussion history in Step 0.5 and Step 1, added Example 7 for first-time use scenario
 - v3.2 (2025-12-29): Added Step 8 - plan generation functionality to support crew command integration
 - v3.1 (2025-12-29): Added Minimal Action Principle to Step 1 - only reference project files when explicitly mentioned or directly required, avoid proactive exploration
 - v3.0 (2025-12-29): Refactored according to Rules/Commands separation principle - moved persistent rules to `.cursor/rules/discussion_assistant.mdc`, kept only role behavior and workflow in command
