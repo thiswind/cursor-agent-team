@@ -1,9 +1,4 @@
-# AI workspace temporary files
-./ai_workspace/scratchpad/
-./ai_workspace/*/sessions/
-./ai_workspace/discussion_topics.md
-./ai_workspace/plans/*.md
-!./ai_workspace/plans/README.md
+ai_workspace/
 
 # OS files
 .DS_Store
