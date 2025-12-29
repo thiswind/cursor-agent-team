@@ -51,7 +51,7 @@ When you use `/crew`, the AI plays the role of a **Crew Member (万能打工人)
 2. **Research Before Execution**: Automatically searches latest information before execution
 3. **Document Reading**: Reads related documents before execution
 4. **Discussion Record Update**: Updates discussion records after execution
-5. **Workspace Isolation**: Uses dedicated workspace directory (`00_meta/ai_workspace/crew/`)
+5. **Workspace Isolation**: Uses dedicated workspace directory (`cursor-agent-team/ai_workspace/crew/`)
 6. **Time Awareness**: Always considers timeliness of information
 7. **Error Handling**: Follows Cursor Agent's default error handling behavior
 
@@ -66,8 +66,8 @@ When you use `/crew`, the AI will follow this workflow:
 - **Format**: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
 
 ### Step 0.5: Read Discussion Records and Plans
-- **Read discussion topics**: Read `00_meta/ai_workspace/discussion_topics.md`
-- **Read plan index**: Read `00_meta/ai_workspace/plans/INDEX.md`
+- **Read discussion topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
+- **Read plan index**: Read `cursor-agent-team/ai_workspace/plans/INDEX.md`
 - **Identify plan to execute**:
   - If user specifies plan number: Read specified plan
   - If user says "执行刚才的方案": Identify most recent plan from current topic
@@ -76,7 +76,7 @@ When you use `/crew`, the AI will follow this workflow:
 - **Display plan identification**: Show which plan will be executed
 
 ### Step 1: Load Execution Plan
-- **Read plan file**: Read plan file from `00_meta/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
+- **Read plan file**: Read plan file from `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
 - **Confirm plan content**: Display plan summary to user
 - **Save plan copy**: Save plan copy to workspace for reference
 - **Update plan status**: Update plan status to "执行中" in plan file
@@ -114,7 +114,7 @@ When you use `/crew`, the AI will follow this workflow:
 - **Summarize results**: Create summary of execution results
 
 ### Step 7: Update Discussion Records
-- **Read discussion topics**: Read `00_meta/ai_workspace/discussion_topics.md`
+- **Read discussion topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
 - **Identify associated topic**: Find topic that generated the plan
 - **Update execution status**: 
   - Update topic's "执行状态" to "已完成"

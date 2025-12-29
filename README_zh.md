@@ -42,7 +42,6 @@ git submodule update --init --recursive
 这将：
 - 复制命令文件到 `.cursor/commands/`
 - 复制规则文件到 `.cursor/rules/`
-- 创建从 `00_meta/ai_workspace/` 到 `cursor-agent-team/ai_workspace/` 的符号链接
 - 记录安装信息
 
 ### 更新
@@ -66,7 +65,7 @@ cd ..
 ./cursor-agent-team/uninstall.sh
 ```
 
-这将删除所有已安装的文件和符号链接。可选地，您也可以删除子模块：
+这将删除所有已安装的文件。可选地，您也可以删除子模块：
 
 ```bash
 git submodule deinit cursor-agent-team
@@ -78,8 +77,7 @@ git rm cursor-agent-team
 如果您不想使用 Git 子模块，可以手动复制文件：
 
 1. 将 `.cursor/` 目录复制到项目根目录
-2. 将 `00_meta/ai_workspace/` 目录结构复制到项目根目录
-3. 确保项目结构遵循推荐的命名约定（见下文）
+2. 确保项目结构遵循推荐的命名约定（见下文）
 
 **注意**：建议使用 Git 子模块以便于更新和维护。
 
@@ -98,15 +96,8 @@ project-root/
 │       ├── discussion_assistant.mdc
 │       ├── prompt_engineer_assistant.mdc
 │       └── crew_assistant.mdc
-├── 00_meta/
-│   └── ai_workspace/           # 符号链接 → ../cursor-agent-team/ai_workspace/
-│       ├── README.md
-│       ├── plans/
-│       ├── prompt_engineer/
-│       ├── crew/
-│       └── scratchpad/
 └── cursor-agent-team/           # Git 子模块
-    ├── ai_workspace/           # 实际工作空间位置
+    ├── ai_workspace/           # 工作空间位置
     │   ├── README.md
     │   ├── plans/
     │   ├── prompt_engineer/
@@ -118,7 +109,7 @@ project-root/
     └── ...
 ```
 
-**注意**：`00_meta/ai_workspace/` 是一个指向 `cursor-agent-team/ai_workspace/` 的符号链接。这保持了与路径引用的向后兼容性，同时将实际数据集中在子模块内。
+**注意**：工作空间直接位于 `cursor-agent-team/ai_workspace/`。所有规则和命令文件中的路径引用都直接指向此位置。
 
 ## 工作目录命名建议
 
@@ -139,10 +130,8 @@ project-root/
 **示例结构：**
 ```
 project-root/
-├── 00_meta/              # 元数据
-│   └── ai_workspace/     # 指向 cursor-agent-team/ai_workspace/ 的符号链接
 ├── cursor-agent-team/    # 框架（Git 子模块）
-│   └── ai_workspace/     # 实际工作空间位置
+│   └── ai_workspace/     # 工作空间位置
 ├── 01_method/            # 方法部分
 ├── 02_experiments/       # 实验部分
 ├── 03_theory/            # 理论部分

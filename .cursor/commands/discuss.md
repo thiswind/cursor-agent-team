@@ -65,7 +65,7 @@ When you use `/discuss`, the AI will follow this workflow:
 - **Display**: Current time is displayed at the start of the response
 
 ### Step 0.5: Manage Topic Tree (CRITICAL)
-- **Read topic tree**: Read `00_meta/ai_workspace/discussion_topics.md`
+- **Read topic tree**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
 - **Analyze conversation**: Extract keywords and themes to identify current topic
 - **Match topics**: Match with existing topics in the tree
 - **Query if uncertain**: If unable to uniquely identify, ask user for clarification
@@ -87,7 +87,7 @@ When you use `/discuss`, the AI will follow this workflow:
 - **For "where are we?" type questions**: Primarily rely on topic tree, do NOT read other files
 
 ### Step 2: Use AI Workspace (If Needed)
-For complex discussions, AI may use `00_meta/ai_workspace/` to:
+For complex discussions, AI may use `cursor-agent-team/ai_workspace/` to:
 - Record discussion notes and intermediate thoughts
 - Create temporary scripts for verification
 - Save multi-step analysis results
@@ -134,8 +134,8 @@ AI will automatically search when:
 - **Execution process**:
   1. Analyze current topic discussion content
   2. Extract executable steps and goals
-  3. Generate plan file: `00_meta/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
-  4. Update plan index: `00_meta/ai_workspace/plans/INDEX.md`
+  3. Generate plan file: `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
+  4. Update plan index: `cursor-agent-team/ai_workspace/plans/INDEX.md`
   5. Update topic tree: Record plan number in topic's "关联方案" field, update "执行状态" to "待执行"
   6. Display plan number and summary in response
 - **Plan numbering**: Format `PLAN-[话题ID]-[序号]` (e.g., PLAN-C-001)
@@ -149,7 +149,7 @@ The AI will structure responses as:
    - Format: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
 
 0.5. **Topic Management** (SECOND STEP - read and update topic tree, identify current topic)
-   - Read `00_meta/ai_workspace/discussion_topics.md`
+   - Read `cursor-agent-team/ai_workspace/discussion_topics.md`
    - Identify current topic (or ask for clarification)
    - Update topic tree
    - Save updated file
@@ -221,7 +221,7 @@ for time series? Are there any recent papers we should be aware of?
 /discuss
 [After discussion] 讨论已经可以了，可以生成方案了
 ```
-*Note: AI will generate an execution plan, save it to `00_meta/ai_workspace/plans/PLAN-[话题ID]-[序号].md`, and display the plan number*
+*Note: AI will generate an execution plan, save it to `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`, and display the plan number*
 
 ## When to Use `/discuss` vs Other Commands
 
@@ -238,7 +238,7 @@ for time series? Are there any recent papers we should be aware of?
 2. **Reference Files**: Mention specific files or sections if relevant
 3. **Trust Auto-Search**: Let AI automatically search when needed - it will prioritize top-tier sources
 4. **Check Timestamps**: AI will report information timestamps - pay attention to recency
-5. **View AI Workspace**: You can check `00_meta/ai_workspace/` to see AI's notes and thinking process
+5. **View AI Workspace**: You can check `cursor-agent-team/ai_workspace/` to see AI's notes and thinking process
 6. **Save Insights**: If the discussion yields important insights, manually save them to `discussions/`
 7. **Iterate**: Use multiple `/discuss` calls to explore different aspects
 8. **Clean Workspace**: Periodically clean old files in AI workspace (suggested: keep last 7 days)

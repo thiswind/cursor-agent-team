@@ -6,10 +6,10 @@
 
 ### Directory Structure
 
-The AI workspace is located at `00_meta/ai_workspace/`:
+The AI workspace is located at `cursor-agent-team/ai_workspace/`:
 
 ```
-00_meta/ai_workspace/
+cursor-agent-team/ai_workspace/
 ├── README.md
 ├── discussion_topics.md          # Topic tree management (AI's private notebook)
 └── scratchpad/                   # Temporary workspace
@@ -141,7 +141,7 @@ AI **must automatically search** when:
 - **Discussion Output**: Important discussion results can be suggested to be manually saved to `discussions/` directory
 
 **Exception - AI Workspace**:
-- **Allowed**: AI can create and modify files in `00_meta/ai_workspace/` directory
+- **Allowed**: AI can create and modify files in `cursor-agent-team/ai_workspace/` directory
 - **Purpose**: Record discussion notes, write temporary scripts, save analysis results
 - **Scope**: Only accessible during `/discuss` command execution
 - **Naming**: Must follow naming conventions (see above)
@@ -182,7 +182,7 @@ AI **must automatically search** when:
 
 ### File Location
 
-- **File**: `00_meta/ai_workspace/discussion_topics.md`
+- **File**: `cursor-agent-team/ai_workspace/discussion_topics.md`
 - **Nature**: AI's private notebook, humans don't need to view it
 - **Purpose**: Maintain tree structure of discussion topics, track discussion hierarchy and switches
 - **Maintenance**: AI must actively maintain this file - this is an important responsibility of the discussion partner
@@ -260,7 +260,7 @@ Topics can have execution-related fields to track plan execution:
 
 ### Maintenance Workflow
 
-1. **Read Topic Tree**: At the start of each discussion, read `00_meta/ai_workspace/discussion_topics.md`
+1. **Read Topic Tree**: At the start of each discussion, read `cursor-agent-team/ai_workspace/discussion_topics.md`
 2. **Analyze Conversation**: Extract keywords and themes, try to locate topic
 3. **Match Topic**: Match with existing topic tree, determine if new topic or continuation of existing topic
 4. **Query User**: If uncertain, list possible matches and ask user
@@ -278,9 +278,9 @@ When user explicitly requests plan generation (e.g., "讨论已经可以了，�
 1. **Analyze Discussion Content**: Extract executable steps and goals from current topic discussion
 2. **Generate Plan File**: 
    - Format: `PLAN-[话题ID]-[序号].md`
-   - Location: `00_meta/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
+   - Location: `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
    - Content: Include plan information, goals, steps, related files, expected results, notes
-3. **Update Plan Index**: Add entry to `00_meta/ai_workspace/plans/INDEX.md`
+3. **Update Plan Index**: Add entry to `cursor-agent-team/ai_workspace/plans/INDEX.md`
 4. **Update Topic Tree**: 
    - Add plan ID to topic's "关联方案" field
    - Update topic's "执行状态" to "待执行"

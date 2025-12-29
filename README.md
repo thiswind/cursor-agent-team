@@ -42,7 +42,6 @@ Run the installation script to copy files to your project:
 This will:
 - Copy command files to `.cursor/commands/`
 - Copy rule files to `.cursor/rules/`
-- Create a symbolic link from `00_meta/ai_workspace/` to `cursor-agent-team/ai_workspace/`
 - Record installation information
 
 ### Update
@@ -66,7 +65,7 @@ To remove the framework:
 ./cursor-agent-team/uninstall.sh
 ```
 
-This will remove all installed files and the symbolic link. Optionally, you can also remove the submodule:
+This will remove all installed files. Optionally, you can also remove the submodule:
 
 ```bash
 git submodule deinit cursor-agent-team
@@ -78,8 +77,7 @@ git rm cursor-agent-team
 If you prefer not to use Git submodules, you can manually copy files:
 
 1. Copy the `.cursor/` directory to your project root
-2. Copy the `00_meta/ai_workspace/` directory structure to your project root
-3. Ensure your project structure follows the recommended naming convention (see below)
+2. Ensure your project structure follows the recommended naming convention (see below)
 
 **Note**: Using Git submodule is recommended for easier updates and maintenance.
 
@@ -98,15 +96,8 @@ project-root/
 │       ├── discussion_assistant.mdc
 │       ├── prompt_engineer_assistant.mdc
 │       └── crew_assistant.mdc
-├── 00_meta/
-│   └── ai_workspace/           # Symbolic link → ../cursor-agent-team/ai_workspace/
-│       ├── README.md
-│       ├── plans/
-│       ├── prompt_engineer/
-│       ├── crew/
-│       └── scratchpad/
 └── cursor-agent-team/           # Git submodule
-    ├── ai_workspace/           # Actual workspace location
+    ├── ai_workspace/           # Workspace location
     │   ├── README.md
     │   ├── plans/
     │   ├── prompt_engineer/
@@ -118,7 +109,7 @@ project-root/
     └── ...
 ```
 
-**Note**: The `00_meta/ai_workspace/` is a symbolic link pointing to `cursor-agent-team/ai_workspace/`. This maintains backward compatibility with path references while centralizing the actual data within the submodule.
+**Note**: The workspace is directly located at `cursor-agent-team/ai_workspace/`. All path references in rules and commands point directly to this location.
 
 ## Workspace Directory Naming Convention
 
@@ -139,10 +130,8 @@ This naming convention:
 **Example structure:**
 ```
 project-root/
-├── 00_meta/              # Metadata
-│   └── ai_workspace/     # Symbolic link to cursor-agent-team/ai_workspace/
 ├── cursor-agent-team/    # Framework (Git submodule)
-│   └── ai_workspace/     # Actual workspace location
+│   └── ai_workspace/     # Workspace location
 ├── 01_method/            # Method section
 ├── 02_experiments/       # Experiments section
 ├── 03_theory/            # Theory section

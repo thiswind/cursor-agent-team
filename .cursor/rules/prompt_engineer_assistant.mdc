@@ -5,7 +5,7 @@
 ## File Path Rules
 
 ### Prompt Files
-- **Directory**: `00_meta/ai_prompts/`
+- **Directory**: `cursor-agent-team/ai_prompts/`
 - **Naming**: `[name]_prompts.md`
 - **Example**: `figure_caption_prompts.md`
 
@@ -53,10 +53,10 @@
 
 ### Directory Structure
 
-The AI workspace for Prompt Engineer is located at `00_meta/ai_workspace/prompt_engineer/`:
+The AI workspace for Prompt Engineer is located at `cursor-agent-team/ai_workspace/prompt_engineer/`:
 
 ```
-00_meta/ai_workspace/prompt_engineer/
+cursor-agent-team/ai_workspace/prompt_engineer/
 ├── sessions/
 │   └── session_YYYYMMDD_HHMMSS/
 │       ├── mode.md                    # Mode identifier (create/maintain)
@@ -110,7 +110,7 @@ The AI workspace for Prompt Engineer is located at `00_meta/ai_workspace/prompt_
 
 - **After Finalization**: Temporary files are cleaned after user confirms finalization
 - **Session Retention**: Session directories can be kept for reference (suggested: 7 days)
-- **Important Content**: Important content should be saved to permanent locations (`00_meta/ai_prompts/`, `.cursor/commands/`, `.cursor/rules/`)
+- **Important Content**: Important content should be saved to permanent locations (`cursor-agent-team/ai_prompts/`, `.cursor/commands/`, `.cursor/rules/`)
 
 ## Output Type Determination Rules
 
@@ -211,7 +211,7 @@ Format: `MAJOR.MINOR.PATCH`
 
 **Before creating or maintaining prompts, MUST scan**:
 
-1. `00_meta/ai_prompts/` - for existing prompt files
+1. `cursor-agent-team/ai_prompts/` - for existing prompt files
 2. `.cursor/commands/` - for existing command files
 3. `.cursor/rules/` - for existing rule files
 
@@ -293,8 +293,8 @@ Format: `MAJOR.MINOR.PATCH`
 ### File Modification Rules
 
 **Allowed Modifications**:
-- Create/modify files in `00_meta/ai_workspace/prompt_engineer/` (workspace)
-- Create/modify prompt files in `00_meta/ai_prompts/` (after user confirmation)
+- Create/modify files in `cursor-agent-team/ai_workspace/prompt_engineer/` (workspace)
+- Create/modify prompt files in `cursor-agent-team/ai_prompts/` (after user confirmation)
 - Create/modify command files in `.cursor/commands/` (after user confirmation)
 - Create/modify rule files in `.cursor/rules/` (after user confirmation)
 
@@ -323,7 +323,7 @@ The Prompt Engineer should update discussion records when:
 
 ### Update Process
 
-1. **Read Discussion Topics**: Read `00_meta/ai_workspace/discussion_topics.md`
+1. **Read Discussion Topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
 2. **Identify Associated Topic and Plan**: 
    - Find the topic that generated the plan (if any)
    - Identify the plan number (e.g., PLAN-C-001)

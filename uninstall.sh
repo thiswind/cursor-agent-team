@@ -63,29 +63,7 @@ rm -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc"
 echo -e "${GREEN}✓ Files removed${NC}"
 echo ""
 
-# Step 3: Remove symbolic link
-echo "Step 3: Removing workspace symbolic link..."
-
-if [ -L "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
-    rm "$PROJECT_ROOT/00_meta/ai_workspace"
-    echo -e "${GREEN}✓ Symbolic link removed${NC}"
-    
-    # Check if 00_meta directory is empty
-    if [ -d "$PROJECT_ROOT/00_meta" ]; then
-        REMAINING_ITEMS=$(find "$PROJECT_ROOT/00_meta" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')
-        if [ "$REMAINING_ITEMS" -eq 0 ]; then
-            read -p "Remove empty 00_meta/ directory? (y/n) " -n 1 -r
-            echo
-            if [[ $REPLY =~ ^[Yy]$ ]]; then
-                rmdir "$PROJECT_ROOT/00_meta"
-                echo -e "${GREEN}✓ Removed 00_meta/ directory${NC}"
-            fi
-        fi
-    fi
-fi
-echo ""
-
-# Step 4: Clean up directories
+# Step 3: Clean up directories
 echo "Step 3: Cleaning up directories..."
 
 # Check if commands directory is empty
@@ -128,15 +106,15 @@ fi
 
 echo ""
 
-# Step 5: Remove installation info
-echo "Step 5: Removing installation information..."
+# Step 4: Remove installation info
+echo "Step 4: Removing installation information..."
 
 rm -f "$INSTALL_INFO_FILE"
 echo -e "${GREEN}✓ Installation information removed${NC}"
 echo ""
 
-# Step 6: Optional submodule removal
-echo "Step 6: Submodule removal (optional)..."
+# Step 5: Optional submodule removal
+echo "Step 5: Submodule removal (optional)..."
 
 read -p "Remove submodule? (y/n) " -n 1 -r
 echo

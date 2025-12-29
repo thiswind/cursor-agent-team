@@ -107,29 +107,8 @@ cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/rules/crew_assistant.mdc" "$PROJECT_ROO
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
 
-# Step 4: Create symbolic link for workspace
-echo "Step 4: Creating workspace symbolic link..."
-
-# Create 00_meta directory if not exists
-mkdir -p "$PROJECT_ROOT/00_meta"
-
-# Create symbolic link (if not exists or not a symlink)
-if [ ! -L "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
-    if [ -d "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
-        echo -e "${YELLOW}Warning: 00_meta/ai_workspace/ already exists as a directory${NC}"
-        echo "If you have existing data, please migrate it first before installing."
-        echo "The framework will create a symbolic link, but existing directory must be migrated manually."
-        exit 1
-    fi
-    ln -s "../cursor-agent-team/ai_workspace" "$PROJECT_ROOT/00_meta/ai_workspace"
-    echo -e "${GREEN}✓ Symbolic link created${NC}"
-else
-    echo -e "${GREEN}✓ Symbolic link already exists${NC}"
-fi
-echo ""
-
-# Step 5: Record installation information
-echo "Step 5: Recording installation information..."
+# Step 4: Record installation information
+echo "Step 4: Recording installation information..."
 
 # Get version from git tag or CHANGELOG
 VERSION="0.1.0"

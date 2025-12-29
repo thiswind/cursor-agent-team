@@ -49,7 +49,7 @@ When you use `/prompt_engineer`, the AI plays the role of a **Prompt Engineer (�
 3. **Interactive Workflow**: Uses multiple-choice questions to clarify requirements
 4. **Example-Driven**: Shows behavior examples before finalizing prompts
 5. **Version Management**: Uses semantic versioning (MAJOR.MINOR.PATCH) for prompt updates
-6. **Workspace Isolation**: Uses dedicated workspace directory (`00_meta/ai_workspace/prompt_engineer/`)
+6. **Workspace Isolation**: Uses dedicated workspace directory (`cursor-agent-team/ai_workspace/prompt_engineer/`)
 7. **Output Type Intelligence**: Determines whether to create rule, command, or both based on requirements
 8. **Quality Standard**: Matches the quality and thoroughness of `/discuss` command
 
@@ -65,7 +65,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 
 ### Step 0.5: Scan Existing Files (CRITICAL)
 - **Scan directories**:
-  - `00_meta/ai_prompts/` - for existing prompt files
+  - `cursor-agent-team/ai_prompts/` - for existing prompt files
   - `.cursor/commands/` - for existing command files
   - `.cursor/rules/` - for existing rule files
 - **Identify potential duplicates**: Check if similar functionality exists
@@ -81,7 +81,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Mode confirmation**: Show detected mode to user
 
 ### Step 2: Initialize Workspace
-- **Create session directory**: `00_meta/ai_workspace/prompt_engineer/sessions/session_YYYYMMDD_HHMMSS/`
+- **Create session directory**: `cursor-agent-team/ai_workspace/prompt_engineer/sessions/session_YYYYMMDD_HHMMSS/`
 - **Create session files**:
   - `mode.md` - Record detected mode
   - `session_log.md` - Session log
@@ -166,7 +166,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Ask for finalization**: "Are you satisfied with these prompts? Should I finalize them?"
 - **If finalized**:
   - Save to official directories:
-    - Prompt file → `00_meta/ai_prompts/[name]_prompts.md`
+    - Prompt file → `cursor-agent-team/ai_prompts/[name]_prompts.md`
     - Command file → `.cursor/commands/[name].md` (if needed)
     - Rule file → `.cursor/rules/[name]_assistant.mdc` (if needed)
   - Update version history (for new prompts: v1.0.0, for updates: increment version)
@@ -178,7 +178,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
   - User explicitly indicates this is execution of a plan
   - Or detect active execution plan from discussion topics
 - **Execution process**:
-  1. Read `00_meta/ai_workspace/discussion_topics.md`
+  1. Read `cursor-agent-team/ai_workspace/discussion_topics.md`
   2. Identify associated topic and plan (if any)
   3. Update topic's execution records
   4. Record execution time and result
@@ -189,7 +189,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 
 ### Step 3M: Read Existing Prompt
 - **Read existing files**:
-  - Prompt file: `00_meta/ai_prompts/[name]_prompts.md`
+  - Prompt file: `cursor-agent-team/ai_prompts/[name]_prompts.md`
   - Command file: `.cursor/commands/[name].md` (if exists)
   - Rule file: `.cursor/rules/[name]_assistant.mdc` (if exists)
 - **Analyze structure**: Understand current LangGPT structure
@@ -343,7 +343,7 @@ Modify the discussion_prompts.md to improve the topic tree management section.
 3. **Iterate**: Don't hesitate to ask for adjustments - the workflow supports multiple iterations
 4. **Check Examples**: Review behavior examples carefully before finalizing
 5. **Version Awareness**: Pay attention to version numbers when maintaining prompts
-6. **View Workspace**: You can check `00_meta/ai_workspace/prompt_engineer/` to see AI's work process
+6. **View Workspace**: You can check `cursor-agent-team/ai_workspace/prompt_engineer/` to see AI's work process
 7. **Finalize Carefully**: Only finalize when you're completely satisfied
 
 ## Integration with Workflow
@@ -351,7 +351,7 @@ Modify the discussion_prompts.md to improve the topic tree management section.
 - **Before Creating Prompts**: Use `/discuss` to explore ideas if needed
 - **Creating Prompts**: Use `/prompt_engineer` to create new prompt templates
 - **Maintaining Prompts**: Use `/prompt_engineer` to update existing prompts
-- **Using Prompts**: Other commands (like `/write`, `/review`) reference prompts from `00_meta/ai_prompts/`
+- **Using Prompts**: Other commands (like `/write`, `/review`) reference prompts from `cursor-agent-team/ai_prompts/`
 
 ---
 
