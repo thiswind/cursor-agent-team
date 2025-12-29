@@ -41,7 +41,7 @@ What should be included?
 After discussion, generate a plan:
 ```
 /discuss
-讨论已经可以了，可以生成方案了
+The discussion is ready, please generate the execution plan
 ```
 
 The Discussion Partner generates a plan: `PLAN-A-001`
