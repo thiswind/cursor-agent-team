@@ -1,0 +1,245 @@
+# Crew Assistant Rules
+
+> **Purpose**: Persistent rules for the Crew Member (万能打工人) - these rules are always active and automatically injected.
+
+## Plan Reading Rules
+
+### Plan File Location
+
+- **Directory**: `cursor-agent-team/ai_workspace/plans/`
+- **Naming**: `PLAN-[话题ID]-[序号].md`
+- **Example**: `PLAN-C-001.md`
+- **Index File**: `cursor-agent-team/ai_workspace/plans/INDEX.md`
+
+### Plan Identification
+
+**Automatic Identification**:
+- If user specifies plan number (e.g., "PLAN-C-001"): Read specified plan
+- If user says "执行刚才的方案": Identify most recent plan from current topic
+- If user says "执行话题X的方案": Identify latest plan for topic X
+- If only `/crew` is used: Auto-identify latest pending plan from current topic
+
+**Plan File Structure**:
+- Plan information (number, topic, creation time, creator, status)
+- Plan goal
+- Execution steps
+- Related files
+- Expected results
+- Notes
+- Execution records
+
+## Information Retrieval Rules
+
+### Automatic Search Trigger Conditions
+
+AI **must automatically search** before execution when:
+- Plan involves specific techniques, methods, or concepts
+- Plan may be affected by latest research progress or trends
+- Need to verify claims, data, or facts mentioned in plan
+- Understanding recent developments related to plan execution
+- Finding related papers or resources for plan execution
+
+### Academic Search Requirements
+
+**Hard Requirement**: Academic searches **ONLY** use top-tier conferences and journals.
+
+**Top-Tier Conferences**:
+- NeurIPS, ICML, ICLR, AAAI
+- CVPR, ICCV, ECCV (for vision)
+- ACL, EMNLP, NAACL (for NLP)
+- Other top-tier conferences in relevant fields
+
+**Top-Tier Journals**:
+- JMLR, TPAMI, TNNLS
+- Nature Machine Intelligence, Science
+- Other top-tier journals in relevant fields
+
+**Search Strategy**:
+- **Platform**: Google Scholar, arXiv (sorted by time)
+- **Time Filter**: Prioritize recent work (last 1-2 years)
+- **Date Check**: Always check and report publication dates
+- **Quality Filter**: Avoid low-quality papers that may mislead research
+
+### General Information Search
+
+**Trusted Sources**:
+- Official documentation
+- Reputable technical blogs
+- Authoritative technical communities
+
+**Time Awareness**:
+- Prioritize latest information
+- Always include timestamps
+- Cross-validate from multiple sources
+
+## Document Reading Rules
+
+### Required Document Reading
+
+Before execution, **must read**:
+- Files explicitly mentioned in plan's "相关文件" section
+- Related project documentation files
+- Related code files (if plan involves code)
+- Related configuration files (if plan involves configuration)
+
+### Document Analysis
+
+- Analyze document content in relation to plan
+- Confirm document status and content
+- Identify any conflicts or issues
+- Record findings in workspace
+
+## Workspace Management Rules
+
+### Directory Structure
+
+The AI workspace for Crew is located at `cursor-agent-team/ai_workspace/crew/`:
+
+```
+cursor-agent-team/ai_workspace/crew/
+├── sessions/
+│   └── session_YYYYMMDD_HHMMSS/
+│       ├── session_log.md          # Execution log
+│       ├── plan.md                 # Executed plan (copy)
+│       ├── research.md             # Search and research results
+│       ├── documents.md            # Document reading summary
+│       ├── execution_steps.md      # Execution steps record
+│       ├── results.md              # Execution results
+│       └── discussion_update.md    # Discussion record update content
+└── README.md
+```
+
+### File Naming Conventions
+
+**Session Directories**:
+- Format: `session_YYYYMMDD_HHMMSS/`
+- Example: `session_20251229_160000/`
+
+**Session Files**:
+- `session_log.md` - Complete execution log
+- `plan.md` - Executed plan (copy for reference)
+- `research.md` - Search and research results
+- `documents.md` - Document reading summary
+- `execution_steps.md` - Step-by-step execution record
+- `results.md` - Final execution results
+- `discussion_update.md` - Discussion record update content
+
+### Usage Rules
+
+1. **Purpose**: Record execution process, research results, and execution outcomes
+2. **Scope**: Only accessible during `/crew` command execution
+3. **Temporary Nature**: Files are temporary and can be cleaned periodically (suggested: keep last 7 days)
+4. **Session Isolation**: Each execution session has its own directory
+5. **Human Access**: Humans can view workspace to understand execution process
+
+### Cleanup Policy
+
+- Files in `sessions/` are temporary
+- Suggested retention: Keep files from last 7 days
+- Important execution results should be reflected in plan files and discussion records
+
+## Execution Rules
+
+### Strict Plan Adherence
+
+- **Must follow plan strictly**: Execute exactly as specified in plan steps
+- **No deviation**: Do not modify plan steps without user confirmation
+- **Step-by-step execution**: Execute each step in order
+- **Record progress**: Document each step's execution status
+
+### Error Handling
+
+- If execution encounters errors: Record error details
+- If plan step cannot be completed: Report to user and wait for guidance
+- If authorization needed: Wait for user confirmation (Cursor will prompt)
+- Follow Cursor Agent's default error handling behavior
+
+### Execution Recording
+
+- Record each execution step with timestamp
+- Record any issues or problems encountered
+- Record completion status for each step
+- Record final execution result
+
+## Discussion Record Update Rules
+
+### When to Update
+
+The Crew must update discussion records after execution:
+- Always update after plan execution (successful or failed)
+- Update topic's execution status
+- Add execution record to topic
+- Update plan file status
+
+### Update Process
+
+1. **Read Discussion Topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
+2. **Identify Associated Topic**: Find topic that generated the plan
+3. **Update Execution Status**:
+   - If execution started: Update to "执行中"
+   - If execution completed: Update to "已完成"
+4. **Add Execution Record**:
+   - Format: `[时间] - /crew - [方案编号] - [执行结果]`
+   - Example: `2025-12-29 16:00:00 - /crew - PLAN-C-001 - 执行完成（成功）`
+   - Add to topic's "执行记录" field
+5. **Update Plan File**:
+   - Update plan file status
+   - Add execution record to plan file
+
+### Record Format
+
+**Execution Record Format**:
+- Format: `[时间] - [执行者] - [方案编号] - [执行结果]`
+- Time: YYYY-MM-DD HH:MM:SS
+- Executor: `/crew`
+- Plan Number: `PLAN-[话题ID]-[序号]`
+- Result: 开始执行 / 执行完成（成功/失败/部分完成）
+
+**Example**:
+```markdown
+- **执行记录**:
+  - 2025-12-29 16:00:00 - /crew - PLAN-C-001 - 开始执行
+  - 2025-12-29 16:05:00 - /crew - PLAN-C-001 - 执行完成（成功）
+```
+
+## Time Awareness Rules
+
+### Mandatory Current Time Retrieval
+
+**CRITICAL**: Before any execution work, AI **must first retrieve current time**.
+
+- **Why**: Essential for version management, timestamps, and execution records
+- **Method**: Use system time
+- **Display**: Always display current time at the start of responses
+- **Format**: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+
+### Timestamp Requirements
+
+- **Execution Records**: Include timestamps for all actions
+- **Session Logs**: Include timestamps for all execution steps
+- **File Metadata**: Include timestamps in file headers
+
+## Behavior Constraints
+
+### Execution Permissions
+
+- **Allowed**: All operations that Cursor Agent can perform
+- **Authorization**: If operation requires authorization, Cursor will prompt user
+- **User Confirmation**: Wait for user confirmation when Cursor prompts
+
+### Plan Modification
+
+- **Do NOT modify plan**: Execute plan as-is
+- **If plan needs modification**: Report to user and wait for confirmation
+- **If plan is unclear**: Ask user for clarification before proceeding
+
+---
+
+**Last Updated**: 2025-12-29
+
+**Version**: v1.0.0
+
+**Version History**:
+- v1.0.0 (2025-12-29): Initial version
+
+**Note**: These rules are persistent and automatically applied when using the `/crew` command. They define the infrastructure and constraints for the Crew Assistant, while the command itself defines the role behavior and workflow.
