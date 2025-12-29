@@ -27,7 +27,7 @@ Cursor AI 智能体团队框架通过三个专门的智能体提供结构化的 
 将框架作为 Git 子模块添加到您的项目中：
 
 ```bash
-git submodule add https://github.com/thiswind/cursor-agent-team.git 00_meta/cursor-agent-team
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 git submodule update --init --recursive
 ```
 
@@ -36,13 +36,13 @@ git submodule update --init --recursive
 运行安装脚本将文件复制到您的项目：
 
 ```bash
-./00_meta/cursor-agent-team/install.sh
+./cursor-agent-team/install.sh
 ```
 
 这将：
 - 复制命令文件到 `.cursor/commands/`
 - 复制规则文件到 `.cursor/rules/`
-- 初始化 AI 工作空间结构到 `00_meta/ai_workspace/`
+- 创建从 `00_meta/ai_workspace/` 到 `cursor-agent-team/ai_workspace/` 的符号链接
 - 记录安装信息
 
 ### 更新
@@ -50,10 +50,10 @@ git submodule update --init --recursive
 要更新到最新版本：
 
 ```bash
-cd 00_meta/cursor-agent-team
+cd cursor-agent-team
 git pull origin main
-cd ../..
-./00_meta/cursor-agent-team/install.sh
+cd ..
+./cursor-agent-team/install.sh
 ```
 
 安装脚本会用最新版本覆盖现有文件。
@@ -63,14 +63,14 @@ cd ../..
 要移除框架：
 
 ```bash
-./00_meta/cursor-agent-team/uninstall.sh
+./cursor-agent-team/uninstall.sh
 ```
 
-这将删除所有已安装的文件。可选地，您也可以删除子模块：
+这将删除所有已安装的文件和符号链接。可选地，您也可以删除子模块：
 
 ```bash
-git submodule deinit 00_meta/cursor-agent-team
-git rm 00_meta/cursor-agent-team
+git submodule deinit cursor-agent-team
+git rm cursor-agent-team
 ```
 
 ### 替代方案：直接复制（不推荐）
@@ -85,9 +85,11 @@ git rm 00_meta/cursor-agent-team
 
 ## 目录结构
 
+安装后，您的项目结构将是：
+
 ```
 project-root/
-├── .cursor/
+├── .cursor/                    # 从子模块安装
 │   ├── commands/
 │   │   ├── discuss.md
 │   │   ├── prompt_engineer.md
@@ -96,21 +98,27 @@ project-root/
 │       ├── discussion_assistant.mdc
 │       ├── prompt_engineer_assistant.mdc
 │       └── crew_assistant.mdc
-└── 00_meta/
-    └── ai_workspace/
-        ├── README.md
-        ├── plans/
-        │   └── README.md
-        ├── prompt_engineer/
-        │   └── README.md
-        ├── crew/
-        │   └── README.md
-        └── scratchpad/
-            ├── notes/
-            ├── scripts/
-            ├── analysis/
-            └── temp/
+├── 00_meta/
+│   └── ai_workspace/           # 符号链接 → ../cursor-agent-team/ai_workspace/
+│       ├── README.md
+│       ├── plans/
+│       ├── prompt_engineer/
+│       ├── crew/
+│       └── scratchpad/
+└── cursor-agent-team/           # Git 子模块
+    ├── ai_workspace/           # 实际工作空间位置
+    │   ├── README.md
+    │   ├── plans/
+    │   ├── prompt_engineer/
+    │   ├── crew/
+    │   └── scratchpad/
+    ├── .cursor/                 # 框架源文件
+    ├── install.sh
+    ├── uninstall.sh
+    └── ...
 ```
+
+**注意**：`00_meta/ai_workspace/` 是一个指向 `cursor-agent-team/ai_workspace/` 的符号链接。这保持了与路径引用的向后兼容性，同时将实际数据集中在子模块内。
 
 ## 工作目录命名建议
 
@@ -131,9 +139,10 @@ project-root/
 **示例结构：**
 ```
 project-root/
-├── 00_meta/              # 框架和元数据
-│   ├── .cursor/          # 框架命令和规则
-│   └── ai_workspace/     # AI 工作空间
+├── 00_meta/              # 元数据
+│   └── ai_workspace/     # 指向 cursor-agent-team/ai_workspace/ 的符号链接
+├── cursor-agent-team/    # 框架（Git 子模块）
+│   └── ai_workspace/     # 实际工作空间位置
 ├── 01_method/            # 方法部分
 ├── 02_experiments/       # 实验部分
 ├── 03_theory/            # 理论部分

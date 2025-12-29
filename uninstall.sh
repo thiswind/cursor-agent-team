@@ -5,7 +5,7 @@
 # by deleting the files that were installed by install.sh.
 #
 # Usage:
-#   ./00_meta/cursor-agent-team/uninstall.sh
+#   ./cursor-agent-team/uninstall.sh
 
 set -e  # Exit on error
 
@@ -63,7 +63,29 @@ rm -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc"
 echo -e "${GREEN}✓ Files removed${NC}"
 echo ""
 
-# Step 3: Clean up directories
+# Step 3: Remove symbolic link
+echo "Step 3: Removing workspace symbolic link..."
+
+if [ -L "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
+    rm "$PROJECT_ROOT/00_meta/ai_workspace"
+    echo -e "${GREEN}✓ Symbolic link removed${NC}"
+    
+    # Check if 00_meta directory is empty
+    if [ -d "$PROJECT_ROOT/00_meta" ]; then
+        REMAINING_ITEMS=$(find "$PROJECT_ROOT/00_meta" -mindepth 1 -maxdepth 1 | wc -l | tr -d ' ')
+        if [ "$REMAINING_ITEMS" -eq 0 ]; then
+            read -p "Remove empty 00_meta/ directory? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                rmdir "$PROJECT_ROOT/00_meta"
+                echo -e "${GREEN}✓ Removed 00_meta/ directory${NC}"
+            fi
+        fi
+    fi
+fi
+echo ""
+
+# Step 4: Clean up directories
 echo "Step 3: Cleaning up directories..."
 
 # Check if commands directory is empty
@@ -106,15 +128,15 @@ fi
 
 echo ""
 
-# Step 4: Remove installation info
-echo "Step 4: Removing installation information..."
+# Step 5: Remove installation info
+echo "Step 5: Removing installation information..."
 
 rm -f "$INSTALL_INFO_FILE"
 echo -e "${GREEN}✓ Installation information removed${NC}"
 echo ""
 
-# Step 5: Optional submodule removal
-echo "Step 5: Submodule removal (optional)..."
+# Step 6: Optional submodule removal
+echo "Step 6: Submodule removal (optional)..."
 
 read -p "Remove submodule? (y/n) " -n 1 -r
 echo
@@ -123,14 +145,14 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     cd "$PROJECT_ROOT"
     
     # Deinitialize submodule
-    if git submodule deinit -f 00_meta/cursor-agent-team 2>/dev/null; then
+    if git submodule deinit -f cursor-agent-team 2>/dev/null; then
         echo -e "${GREEN}✓ Submodule deinitialized${NC}"
     else
         echo -e "${YELLOW}Warning: Failed to deinitialize submodule${NC}"
     fi
     
     # Remove submodule
-    if git rm -f 00_meta/cursor-agent-team 2>/dev/null; then
+    if git rm -f cursor-agent-team 2>/dev/null; then
         echo -e "${GREEN}✓ Submodule removed${NC}"
         echo ""
         echo -e "${YELLOW}Note: Don't forget to commit the changes:${NC}"
@@ -141,8 +163,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
     fi
 else
     echo "Submodule kept. You can remove it later with:"
-    echo "  git submodule deinit 00_meta/cursor-agent-team"
-    echo "  git rm 00_meta/cursor-agent-team"
+    echo "  git submodule deinit cursor-agent-team"
+    echo "  git rm cursor-agent-team"
 fi
 
 echo ""

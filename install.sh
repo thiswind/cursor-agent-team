@@ -5,11 +5,11 @@
 # by copying command and rule files to the project root's .cursor/ directory.
 #
 # Usage:
-#   ./00_meta/cursor-agent-team/install.sh
+#   ./cursor-agent-team/install.sh
 #
 # Prerequisites:
 #   - Git submodule must be added first:
-#     git submodule add https://github.com/thiswind/cursor-agent-team.git 00_meta/cursor-agent-team
+#     git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 #     git submodule update --init --recursive
 
 set -e  # Exit on error
@@ -25,7 +25,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
 
 # Submodule directory (relative to project root)
-SUBMODULE_DIR="00_meta/cursor-agent-team"
+SUBMODULE_DIR="cursor-agent-team"
 
 echo "=========================================="
 echo "Cursor AI Agent Team Framework Installer"
@@ -107,36 +107,25 @@ cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/rules/crew_assistant.mdc" "$PROJECT_ROO
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
 
-# Step 4: Initialize workspace (optional)
-echo "Step 4: Initializing workspace structure..."
+# Step 4: Create symbolic link for workspace
+echo "Step 4: Creating workspace symbolic link..."
 
-# Create workspace directory structure (if not exists)
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/plans"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/prompt_engineer"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/crew"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/scratchpad/notes"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/scratchpad/scripts"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/scratchpad/analysis"
-mkdir -p "$PROJECT_ROOT/00_meta/ai_workspace/scratchpad/temp"
+# Create 00_meta directory if not exists
+mkdir -p "$PROJECT_ROOT/00_meta"
 
-# Copy README files as templates (if not exists)
-if [ ! -f "$PROJECT_ROOT/00_meta/ai_workspace/README.md" ]; then
-    cp "$PROJECT_ROOT/$SUBMODULE_DIR/00_meta/ai_workspace/README.md" "$PROJECT_ROOT/00_meta/ai_workspace/" 2>/dev/null || true
+# Create symbolic link (if not exists or not a symlink)
+if [ ! -L "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
+    if [ -d "$PROJECT_ROOT/00_meta/ai_workspace" ]; then
+        echo -e "${YELLOW}Warning: 00_meta/ai_workspace/ already exists as a directory${NC}"
+        echo "If you have existing data, please migrate it first before installing."
+        echo "The framework will create a symbolic link, but existing directory must be migrated manually."
+        exit 1
+    fi
+    ln -s "../cursor-agent-team/ai_workspace" "$PROJECT_ROOT/00_meta/ai_workspace"
+    echo -e "${GREEN}✓ Symbolic link created${NC}"
+else
+    echo -e "${GREEN}✓ Symbolic link already exists${NC}"
 fi
-
-if [ ! -f "$PROJECT_ROOT/00_meta/ai_workspace/plans/README.md" ]; then
-    cp "$PROJECT_ROOT/$SUBMODULE_DIR/00_meta/ai_workspace/plans/README.md" "$PROJECT_ROOT/00_meta/ai_workspace/plans/" 2>/dev/null || true
-fi
-
-if [ ! -f "$PROJECT_ROOT/00_meta/ai_workspace/prompt_engineer/README.md" ]; then
-    cp "$PROJECT_ROOT/$SUBMODULE_DIR/00_meta/ai_workspace/prompt_engineer/README.md" "$PROJECT_ROOT/00_meta/ai_workspace/prompt_engineer/" 2>/dev/null || true
-fi
-
-if [ ! -f "$PROJECT_ROOT/00_meta/ai_workspace/crew/README.md" ]; then
-    cp "$PROJECT_ROOT/$SUBMODULE_DIR/00_meta/ai_workspace/crew/README.md" "$PROJECT_ROOT/00_meta/ai_workspace/crew/" 2>/dev/null || true
-fi
-
-echo -e "${GREEN}✓ Workspace structure initialized${NC}"
 echo ""
 
 # Step 5: Record installation information

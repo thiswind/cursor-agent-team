@@ -27,7 +27,7 @@ The Cursor AI Agent Team Framework provides a structured approach to AI-assisted
 Add the framework as a Git submodule to your project:
 
 ```bash
-git submodule add https://github.com/thiswind/cursor-agent-team.git 00_meta/cursor-agent-team
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 git submodule update --init --recursive
 ```
 
@@ -36,13 +36,13 @@ git submodule update --init --recursive
 Run the installation script to copy files to your project:
 
 ```bash
-./00_meta/cursor-agent-team/install.sh
+./cursor-agent-team/install.sh
 ```
 
 This will:
 - Copy command files to `.cursor/commands/`
 - Copy rule files to `.cursor/rules/`
-- Initialize AI workspace structure in `00_meta/ai_workspace/`
+- Create a symbolic link from `00_meta/ai_workspace/` to `cursor-agent-team/ai_workspace/`
 - Record installation information
 
 ### Update
@@ -50,10 +50,10 @@ This will:
 To update to the latest version:
 
 ```bash
-cd 00_meta/cursor-agent-team
+cd cursor-agent-team
 git pull origin main
-cd ../..
-./00_meta/cursor-agent-team/install.sh
+cd ..
+./cursor-agent-team/install.sh
 ```
 
 The install script will overwrite existing files with the latest versions.
@@ -63,14 +63,14 @@ The install script will overwrite existing files with the latest versions.
 To remove the framework:
 
 ```bash
-./00_meta/cursor-agent-team/uninstall.sh
+./cursor-agent-team/uninstall.sh
 ```
 
-This will remove all installed files. Optionally, you can also remove the submodule:
+This will remove all installed files and the symbolic link. Optionally, you can also remove the submodule:
 
 ```bash
-git submodule deinit 00_meta/cursor-agent-team
-git rm 00_meta/cursor-agent-team
+git submodule deinit cursor-agent-team
+git rm cursor-agent-team
 ```
 
 ### Alternative: Direct Copy (Not Recommended)
@@ -85,9 +85,11 @@ If you prefer not to use Git submodules, you can manually copy files:
 
 ## Directory Structure
 
+After installation, your project structure will be:
+
 ```
 project-root/
-├── .cursor/
+├── .cursor/                    # Installed from submodule
 │   ├── commands/
 │   │   ├── discuss.md
 │   │   ├── prompt_engineer.md
@@ -96,21 +98,27 @@ project-root/
 │       ├── discussion_assistant.mdc
 │       ├── prompt_engineer_assistant.mdc
 │       └── crew_assistant.mdc
-└── 00_meta/
-    └── ai_workspace/
-        ├── README.md
-        ├── plans/
-        │   └── README.md
-        ├── prompt_engineer/
-        │   └── README.md
-        ├── crew/
-        │   └── README.md
-        └── scratchpad/
-            ├── notes/
-            ├── scripts/
-            ├── analysis/
-            └── temp/
+├── 00_meta/
+│   └── ai_workspace/           # Symbolic link → ../cursor-agent-team/ai_workspace/
+│       ├── README.md
+│       ├── plans/
+│       ├── prompt_engineer/
+│       ├── crew/
+│       └── scratchpad/
+└── cursor-agent-team/           # Git submodule
+    ├── ai_workspace/           # Actual workspace location
+    │   ├── README.md
+    │   ├── plans/
+    │   ├── prompt_engineer/
+    │   ├── crew/
+    │   └── scratchpad/
+    ├── .cursor/                 # Framework source files
+    ├── install.sh
+    ├── uninstall.sh
+    └── ...
 ```
+
+**Note**: The `00_meta/ai_workspace/` is a symbolic link pointing to `cursor-agent-team/ai_workspace/`. This maintains backward compatibility with path references while centralizing the actual data within the submodule.
 
 ## Workspace Directory Naming Convention
 
@@ -131,9 +139,10 @@ This naming convention:
 **Example structure:**
 ```
 project-root/
-├── 00_meta/              # Framework and metadata
-│   ├── .cursor/          # Framework commands and rules
-│   └── ai_workspace/     # AI workspace
+├── 00_meta/              # Metadata
+│   └── ai_workspace/     # Symbolic link to cursor-agent-team/ai_workspace/
+├── cursor-agent-team/    # Framework (Git submodule)
+│   └── ai_workspace/     # Actual workspace location
 ├── 01_method/            # Method section
 ├── 02_experiments/       # Experiments section
 ├── 03_theory/            # Theory section
