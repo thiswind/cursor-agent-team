@@ -141,15 +141,17 @@ AI will automatically search when:
 
 ### Step 8: Generate Execution Plan (Optional)
 - **Trigger condition**: User explicitly says "讨论已经可以了，可以生成方案了" or similar expressions like "生成方案", "可以执行了"
-- **Execution process**:
+- **Plan generation process** (DO NOT execute):
   1. Analyze current topic discussion content
   2. Extract executable steps and goals
   3. Generate plan file: `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
   4. Update plan index: `cursor-agent-team/ai_workspace/plans/INDEX.md`
   5. Update topic tree: Record plan number in topic's "关联方案" field, update "执行状态" to "待执行"
   6. Display plan number and summary in response
+  7. **Suggest execution**: Recommend using `/crew PLAN-[话题ID]-[序号]` to execute the plan
 - **Plan numbering**: Format `PLAN-[话题ID]-[序号]` (e.g., PLAN-C-001)
 - **Plan content**: Include plan information, goals, steps, related files, expected results, notes
+- **CRITICAL**: `/discuss` only generates plans, does NOT execute them. Execution is handled by `/crew` command.
 
 ## Response Format
 
@@ -186,7 +188,8 @@ The AI will structure responses as:
 5. **Execution Plan Generation** (if user requests)
    - Plan number: `PLAN-[话题ID]-[序号]`
    - Plan summary: Goals, steps count, related files
-   - Next steps: How to execute the plan
+   - Execution suggestion: Recommend using `/crew PLAN-[话题ID]-[序号]` to execute the plan
+   - **Note**: `/discuss` only generates plans, does NOT execute them. Use `/crew` command for execution.
 
 ## Example Usage
 
@@ -289,9 +292,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.3 (Updated: 2025-12-29)
+**Version**: v3.3.1 (Updated: 2025-12-29)
 
 **Version History**:
+- v3.3.1 (2025-12-29): Clarified role boundary - `/discuss` only generates plans, does NOT execute them. Execution should use `/crew` command. Updated Step 8 and Response Format to emphasize this distinction.
 - v3.3 (2025-12-29): Clarified first-time use behavior and distinction between project status and discussion history in Step 0.5 and Step 1, added Example 7 for first-time use scenario
 - v3.2 (2025-12-29): Added Step 8 - plan generation functionality to support crew command integration
 - v3.1 (2025-12-29): Added Minimal Action Principle to Step 1 - only reference project files when explicitly mentioned or directly required, avoid proactive exploration
