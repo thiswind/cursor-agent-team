@@ -63,8 +63,47 @@ rm -f "$PROJECT_ROOT/.cursor/rules/crew_assistant.mdc"
 echo -e "${GREEN}✓ Files removed${NC}"
 echo ""
 
-# Step 3: Clean up directories
-echo "Step 3: Cleaning up directories..."
+# Step 3: Remove installation info
+echo "Step 3: Removing installation information..."
+
+rm -f "$INSTALL_INFO_FILE"
+echo -e "${GREEN}✓ Installation information removed${NC}"
+echo ""
+
+# Safety verification function for directory removal
+safe_remove_directory() {
+    local dir_to_remove="$1"
+    local dir_name="$2"
+    
+    if [ ! -d "$dir_to_remove" ]; then
+        return 0
+    fi
+    
+    # Get parent directory
+    local parent_dir="$(dirname "$dir_to_remove")"
+    
+    # Change to parent directory and verify
+    echo "  Verifying location before removing $dir_name..."
+    cd "$parent_dir"
+    echo "  Current directory: $(pwd)"
+    echo "  Contents:"
+    ls -la | head -10
+    echo ""
+    
+    read -p "  Confirm removal of $dir_name? (y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        rmdir "$dir_to_remove"
+        echo -e "${GREEN}✓ Removed $dir_name${NC}"
+        return 0
+    else
+        echo -e "${YELLOW}  Skipped removal of $dir_name${NC}"
+        return 1
+    fi
+}
+
+# Step 4: Clean up directories
+echo "Step 4: Cleaning up directories..."
 
 # Check if commands directory is empty
 if [ -d "$PROJECT_ROOT/.cursor/commands" ]; then
@@ -72,8 +111,7 @@ if [ -d "$PROJECT_ROOT/.cursor/commands" ]; then
         read -p "Remove empty .cursor/commands/ directory? (y/n) " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rmdir "$PROJECT_ROOT/.cursor/commands"
-            echo -e "${GREEN}✓ Removed .cursor/commands/ directory${NC}"
+            safe_remove_directory "$PROJECT_ROOT/.cursor/commands" ".cursor/commands/"
         fi
     fi
 fi
@@ -84,33 +122,24 @@ if [ -d "$PROJECT_ROOT/.cursor/rules" ]; then
         read -p "Remove empty .cursor/rules/ directory? (y/n) " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rmdir "$PROJECT_ROOT/.cursor/rules"
-            echo -e "${GREEN}✓ Removed .cursor/rules/ directory${NC}"
+            safe_remove_directory "$PROJECT_ROOT/.cursor/rules" ".cursor/rules/"
         fi
     fi
 fi
 
-# Check if .cursor directory is empty (excluding .cursor-agent-team-installed)
+# Check if .cursor directory is empty (installation info file already removed)
 if [ -d "$PROJECT_ROOT/.cursor" ]; then
-    # Count files/dirs excluding the install info file
-    REMAINING_ITEMS=$(find "$PROJECT_ROOT/.cursor" -mindepth 1 -maxdepth 1 ! -name ".cursor-agent-team-installed" 2>/dev/null | wc -l | tr -d ' ')
+    # Count all items in .cursor directory
+    REMAINING_ITEMS=$(find "$PROJECT_ROOT/.cursor" -mindepth 1 -maxdepth 1 2>/dev/null | wc -l | tr -d ' ')
     if [ "$REMAINING_ITEMS" -eq 0 ]; then
         read -p "Remove empty .cursor/ directory? (y/n) " -n 1 -r
         echo
         if [[ $REPLY =~ ^[Yy]$ ]]; then
-            rmdir "$PROJECT_ROOT/.cursor"
-            echo -e "${GREEN}✓ Removed .cursor/ directory${NC}"
+            safe_remove_directory "$PROJECT_ROOT/.cursor" ".cursor/"
         fi
     fi
 fi
 
-echo ""
-
-# Step 4: Remove installation info
-echo "Step 4: Removing installation information..."
-
-rm -f "$INSTALL_INFO_FILE"
-echo -e "${GREEN}✓ Installation information removed${NC}"
 echo ""
 
 # Step 5: Optional submodule removal
