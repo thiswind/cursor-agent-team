@@ -12,24 +12,6 @@
 
 有了这三个核心角色，团队就可以运作。提示词工程师可以根据需要创建更多角色，让团队得以扩展。
 
-## 工作原理
-
-### 安装
-
-运行 `install.sh` 后，框架会将文件复制到项目的 `.cursor/` 目录：
-
-- **命令文件**：`.cursor/commands/` - 这些文件在 Cursor 中可以通过 `/discuss`、`/prompt_engineer`、`/crew` 调用
-- **规则文件**：`.cursor/rules/` - 定义每个角色行为的持久规则
-
-### 创建新角色
-
-`/prompt_engineer` 命令通过生成以下文件来创建新角色：
-
-- **新命令文件**：`.cursor/commands/[name].md` - 一个新的命令，可以通过 `/[name]` 调用
-- **新规则文件**：`.cursor/rules/[name]_assistant.mdc` - 新角色的持久规则
-
-这些新文件会成为 Cursor IDE 中的新角色，就像三个核心角色一样。
-
 ## 团队角色
 
 ### 讨论伙伴 (`/discuss`)

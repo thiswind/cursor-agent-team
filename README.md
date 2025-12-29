@@ -12,24 +12,6 @@ This framework installs three core Cursor commands (roles) into your project:
 
 With these three core roles installed, the team can operate. The Prompt Engineer can create additional roles as needed, allowing the team to expand.
 
-## How It Works
-
-### Installation
-
-When you run `install.sh`, the framework copies files to your project's `.cursor/` directory:
-
-- **Commands**: `.cursor/commands/` - These become available as `/discuss`, `/prompt_engineer`, and `/crew` in Cursor
-- **Rules**: `.cursor/rules/` - Persistent rules that define each role's behavior
-
-### Creating New Roles
-
-The `/prompt_engineer` command creates new roles by generating:
-
-- **New Command File**: `.cursor/commands/[name].md` - A new command you can call with `/[name]`
-- **New Rule File**: `.cursor/rules/[name]_assistant.mdc` - Persistent rules for the new role
-
-These new files become new roles in your Cursor IDE, just like the three core roles.
-
 ## Team Roles
 
 ### Discussion Partner (`/discuss`)
