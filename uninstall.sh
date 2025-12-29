@@ -93,7 +93,7 @@ fi
 # Check if .cursor directory is empty (excluding .cursor-agent-team-installed)
 if [ -d "$PROJECT_ROOT/.cursor" ]; then
     # Count files/dirs excluding the install info file
-    REMAINING_ITEMS=$(find "$PROJECT_ROOT/.cursor" -mindepth 1 -maxdepth 1 ! -name ".cursor-agent-team-installed" | wc -l | tr -d ' ')
+    REMAINING_ITEMS=$(find "$PROJECT_ROOT/.cursor" -mindepth 1 -maxdepth 1 ! -name ".cursor-agent-team-installed" 2>/dev/null | wc -l | tr -d ' ')
     if [ "$REMAINING_ITEMS" -eq 0 ]; then
         read -p "Remove empty .cursor/ directory? (y/n) " -n 1 -r
         echo

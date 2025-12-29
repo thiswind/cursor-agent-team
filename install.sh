@@ -10,7 +10,6 @@
 # Prerequisites:
 #   - Git submodule must be added first:
 #     git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-#     git submodule update --init --recursive
 
 set -e  # Exit on error
 
@@ -47,7 +46,6 @@ if [ ! -d "$PROJECT_ROOT/$SUBMODULE_DIR" ]; then
     echo -e "${RED}Error: Submodule not found.${NC}"
     echo "Please add the submodule first:"
     echo "  git submodule add https://github.com/thiswind/cursor-agent-team.git $SUBMODULE_DIR"
-    echo "  git submodule update --init --recursive"
     exit 1
 fi
 
@@ -76,30 +74,30 @@ echo "Step 3: Copying files..."
 
 # Copy command files
 echo "  Copying command files..."
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/commands/discuss.md" "$PROJECT_ROOT/.cursor/commands/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/discuss.md" "$PROJECT_ROOT/.cursor/commands/" || {
     echo -e "${RED}Error: Failed to copy discuss.md${NC}"
     exit 1
 }
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/commands/prompt_engineer.md" "$PROJECT_ROOT/.cursor/commands/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/prompt_engineer.md" "$PROJECT_ROOT/.cursor/commands/" || {
     echo -e "${RED}Error: Failed to copy prompt_engineer.md${NC}"
     exit 1
 }
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/commands/crew.md" "$PROJECT_ROOT/.cursor/commands/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/crew.md" "$PROJECT_ROOT/.cursor/commands/" || {
     echo -e "${RED}Error: Failed to copy crew.md${NC}"
     exit 1
 }
 
 # Copy rule files
 echo "  Copying rule files..."
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/rules/discussion_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/discussion_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
     echo -e "${RED}Error: Failed to copy discussion_assistant.mdc${NC}"
     exit 1
 }
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/rules/prompt_engineer_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/prompt_engineer_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
     echo -e "${RED}Error: Failed to copy prompt_engineer_assistant.mdc${NC}"
     exit 1
 }
-cp "$PROJECT_ROOT/$SUBMODULE_DIR/.cursor/rules/crew_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
+cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/crew_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/" || {
     echo -e "${RED}Error: Failed to copy crew_assistant.mdc${NC}"
     exit 1
 }
@@ -114,7 +112,7 @@ echo "Step 4: Recording installation information..."
 VERSION="0.1.0"
 if [ -f "$PROJECT_ROOT/$SUBMODULE_DIR/CHANGELOG.md" ]; then
     # Try to extract version from CHANGELOG
-    CHANGELOG_VERSION=$(grep -m 1 "^## \[" "$PROJECT_ROOT/$SUBMODULE_DIR/CHANGELOG.md" | sed 's/## \[\(.*\)\].*/\1/' || echo "0.1.0")
+    CHANGELOG_VERSION=$(grep -m 1 "^## \[" "$PROJECT_ROOT/$SUBMODULE_DIR/CHANGELOG.md" 2>/dev/null | sed -n 's/## \[\(.*\)\].*/\1/p')
     if [ -n "$CHANGELOG_VERSION" ]; then
         VERSION="$CHANGELOG_VERSION"
     fi
