@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Simplified README documentation to focus on team roles and collaboration
-- Clarified the relationship between three core roles: strategist (discuss), executor (crew), and HR/trainer (prompt_engineer)
+- **Documentation refactoring**: Restructured README to clarify project as a Cursor IDE extension framework
+- Clarified that `install.sh` installs commands into `.cursor/` directory, making them available as `/discuss`, `/prompt_engineer`, and `/crew` in Cursor
+- Emphasized that `prompt_engineer` creates new roles (new Cursor commands), not just prompt templates
+- Simplified documentation to focus on team roles and collaboration workflow
 - Removed detailed feature lists, focusing on core concepts and usage examples
-- Improved workflow explanation with a complete usage example
+- Added complete examples showing how new roles are created as command files
 
 ## [0.1.0] - 2025-12-29
 
