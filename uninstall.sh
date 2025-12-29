@@ -136,14 +136,23 @@ fi
 if [ "$REMOVE_SUBMODULE" -eq 1 ]; then
     cd "$PROJECT_ROOT"
     
+    # Check if submodule directory exists before removal
+    SUBMODULE_DIR_EXISTS=0
+    if [ -d "$PROJECT_ROOT/cursor-agent-team" ]; then
+        SUBMODULE_DIR_EXISTS=1
+    fi
+    
     # Deinitialize submodule
     if git submodule deinit -f cursor-agent-team 2>/dev/null; then
         REMOVED_ITEMS+=("Submodule deinitialized")
     fi
     
-    # Remove submodule from Git index
+    # Remove submodule from Git index (this also removes the directory)
     if git rm -f cursor-agent-team 2>/dev/null; then
         REMOVED_ITEMS+=("Submodule removed from Git index")
+        if [ "$SUBMODULE_DIR_EXISTS" -eq 1 ]; then
+            REMOVED_ITEMS+=("Submodule directory (cursor-agent-team/)")
+        fi
     fi
     
     # Remove Git internal module configuration
@@ -152,10 +161,12 @@ if [ "$REMOVE_SUBMODULE" -eq 1 ]; then
         REMOVED_ITEMS+=("Git internal module configuration")
     fi
     
-    # Remove submodule directory
+    # Fallback: Remove submodule directory if still exists (shouldn't happen after git rm)
     if [ -d "$PROJECT_ROOT/cursor-agent-team" ]; then
         rm -rf "$PROJECT_ROOT/cursor-agent-team"
-        REMOVED_ITEMS+=("Submodule directory (cursor-agent-team/)")
+        if [ "$SUBMODULE_DIR_EXISTS" -eq 1 ] && ! printf '%s\n' "${REMOVED_ITEMS[@]}" | grep -q "Submodule directory"; then
+            REMOVED_ITEMS+=("Submodule directory (cursor-agent-team/)")
+        fi
     fi
 fi
 
