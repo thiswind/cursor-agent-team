@@ -30,7 +30,7 @@
 
 ## Information Retrieval Rules
 
-### Automatic Search Trigger Conditions
+### Automatic Search Trigger Conditions (Pre-Execution)
 
 AI **must automatically search** before execution when:
 - Plan involves specific techniques, methods, or concepts
@@ -38,6 +38,9 @@ AI **must automatically search** before execution when:
 - Need to verify claims, data, or facts mentioned in plan
 - Understanding recent developments related to plan execution
 - Finding related papers or resources for plan execution
+- Plan involves practical implementation (triggers general web search)
+- Plan mentions specific tools, frameworks, or technologies (triggers general web search)
+- Need troubleshooting guides or best practices (triggers general web search)
 
 ### Academic Search Requirements
 
@@ -60,17 +63,98 @@ AI **must automatically search** before execution when:
 - **Date Check**: Always check and report publication dates
 - **Quality Filter**: Avoid low-quality papers that may mislead research
 
-### General Information Search
+### General Information Search (Pre-Execution)
 
 **Trusted Sources**:
 - Official documentation
 - Reputable technical blogs
 - Authoritative technical communities
+- Stack Overflow (for specific error solutions)
+- GitHub issues and discussions (for implementation guidance)
 
 **Time Awareness**:
 - Prioritize latest information
 - Always include timestamps
 - Cross-validate from multiple sources
+- Check for deprecated methods or outdated practices
+
+**Search Strategy**:
+- **Official docs first**: Prioritize official documentation for tools/frameworks
+- **Community solutions**: Search Stack Overflow, GitHub for practical solutions
+- **Best practices**: Search for best practices and common patterns
+- **Troubleshooting guides**: Search for troubleshooting guides when needed
+
+### Automatic Search Trigger Conditions (Runtime)
+
+AI **must automatically search** during execution when:
+- Error occurs during execution
+- Plan step cannot be completed as specified
+- Encounter unexpected behavior or unclear requirements
+- Need clarification on implementation approach
+- Encounter technical obstacles that prevent plan step completion
+- Error message suggests a known issue or common problem
+
+### Runtime Search Strategy
+
+When runtime search is triggered:
+
+1. **Identify problem**: Clearly identify the error or difficulty
+   - Extract error message (if available)
+   - Identify error type or category
+   - Understand the context of the problem
+
+2. **Formulate search query**: Create specific search query for the problem
+   - Error-specific: Include exact error message or error type
+   - Solution-focused: "how to solve [problem]" or "how to fix [error]"
+   - Best practice: "best practice for [task]" or "how to [task] correctly"
+
+3. **Search for solutions**: 
+   - **Error-specific search**: Search for error messages or error types
+   - **Solution-focused search**: Search for "how to solve [problem]"
+   - **Best practice search**: Search for best practices for [task]
+   - **Tool-specific search**: If error is tool-related, search tool documentation
+
+4. **Evaluate results**: Assess solution quality and relevance
+   - Prioritize official documentation
+   - Check solution recency (prefer recent solutions)
+   - Verify solution applicability to current context
+   - Cross-validate from multiple sources if possible
+
+5. **Apply solutions**: Use search results as guidance (without modifying plan)
+   - Apply technical solutions to overcome obstacles
+   - Use search results to clarify implementation approach
+   - **Important**: Do not modify plan goals or structure based on search results
+   - If solution requires plan modification: Report to user and wait for approval
+
+6. **Record search**: Save to `runtime_research.md` with:
+   - Timestamp
+   - Problem context
+   - Search query used
+   - Search results summary
+   - Solution applied (if any)
+   - Outcome
+
+7. **Report if needed**: 
+   - If no solution found: Report problem and search results to user
+   - If solution requires plan modification: Report alternative approach and wait for user approval
+   - If solution found and applied: Record in execution steps
+
+### Runtime Search Frequency Control
+
+**To prevent excessive searches**:
+- Maximum 3 search attempts per execution step
+- If same error occurs multiple times, cache previous search results
+- Only search when error is not easily resolvable with existing knowledge
+- Skip search for trivial errors that can be resolved immediately
+
+### Runtime Search Quality Assurance
+
+**Quality criteria for search results**:
+- Prioritize official documentation and reputable sources
+- Cross-validate from multiple sources when possible
+- Check solution recency (prefer recent solutions)
+- Verify solution applicability to current context
+- Record source credibility in search results
 
 ## Document Reading Rules
 
@@ -101,9 +185,10 @@ cursor-agent-team/ai_workspace/crew/
 │   └── session_YYYYMMDD_HHMMSS/
 │       ├── session_log.md          # Execution log
 │       ├── plan.md                 # Executed plan (copy)
-│       ├── research.md             # Search and research results
+│       ├── research.md             # Pre-execution search and research results
 │       ├── documents.md            # Document reading summary
 │       ├── execution_steps.md      # Execution steps record
+│       ├── runtime_research.md     # Runtime search results (NEW)
 │       ├── results.md              # Execution results
 │       └── discussion_update.md    # Discussion record update content
 └── README.md
@@ -118,9 +203,10 @@ cursor-agent-team/ai_workspace/crew/
 **Session Files**:
 - `session_log.md` - Complete execution log
 - `plan.md` - Executed plan (copy for reference)
-- `research.md` - Search and research results
+- `research.md` - Pre-execution search and research results (academic + general web search)
 - `documents.md` - Document reading summary
 - `execution_steps.md` - Step-by-step execution record
+- `runtime_research.md` - Runtime search results during execution (NEW)
 - `results.md` - Final execution results
 - `discussion_update.md` - Discussion record update content
 
@@ -147,17 +233,20 @@ cursor-agent-team/ai_workspace/crew/
 - **Step-by-step execution**: Execute each step in order
 - **Record progress**: Document each step's execution status
 
-### Error Handling
+### Error Handling and Runtime Search
 
-- If execution encounters errors: Record error details
-- If plan step cannot be completed: Report to user and wait for guidance
-- If authorization needed: Wait for user confirmation (Cursor will prompt)
-- Follow Cursor Agent's default error handling behavior
+- **Detect errors early**: Identify errors and difficulties as soon as they occur
+- **Automatic search**: When error detected, automatically search for solutions
+- **Apply solutions**: Use search results to overcome obstacles (without modifying plan)
+- **Record all searches**: Document runtime searches in `runtime_research.md`
+- **Report to user**: If no solution found or plan modification needed, report and wait for guidance
+- **Maintain plan adherence**: Search provides guidance only, does not change plan goals
 
 ### Execution Recording
 
 - Record each execution step with timestamp
 - Record any issues or problems encountered
+- Record runtime searches performed (query, results, solution applied)
 - Record completion status for each step
 - Record final execution result
 
@@ -217,6 +306,7 @@ The Crew must update discussion records after execution:
 
 - **Execution Records**: Include timestamps for all actions
 - **Session Logs**: Include timestamps for all execution steps
+- **Runtime Searches**: Include timestamps for all runtime searches
 - **File Metadata**: Include timestamps in file headers
 
 ## Behavior Constraints
@@ -230,16 +320,19 @@ The Crew must update discussion records after execution:
 ### Plan Modification
 
 - **Do NOT modify plan**: Execute plan as-is
+- **Search provides guidance**: Runtime search results provide technical guidance, not plan modifications
 - **If plan needs modification**: Report to user and wait for confirmation
 - **If plan is unclear**: Ask user for clarification before proceeding
+- **If search suggests plan change**: Report alternative approach to user and wait for approval
 
 ---
 
-**Last Updated**: 2025-12-29
+**Last Updated**: 2025-12-30
 
-**Version**: v1.0.0
+**Version**: v1.1.0
 
 **Version History**:
+- v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced pre-execution search with general web search alongside academic search, added runtime_research.md workspace file
 - v1.0.0 (2025-12-29): Initial version
 
 **Note**: These rules are persistent and automatically applied when using the `/crew` command. They define the infrastructure and constraints for the Crew Assistant, while the command itself defines the role behavior and workflow.
