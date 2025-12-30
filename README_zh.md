@@ -101,7 +101,7 @@ git submodule update --remote cursor-agent-team
 
 ## 版本
 
-当前版本：**v0.1.1**
+当前版本：**v0.2.0**
 
 版本历史请参阅 [CHANGELOG.md](CHANGELOG.md)。
 
@@ -114,7 +114,3 @@ git submodule update --remote cursor-agent-team
 **thiswind**
 
 - GitHub: [@thiswind](https://github.com/thiswind)
-
----
-
-**注意**：这是第一个可用开发版本（v0.1.0）。框架功能正常，但可能有限制。欢迎反馈和贡献。
