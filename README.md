@@ -101,7 +101,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.1.1**
+Current version: **v0.2.0**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
@@ -114,7 +114,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 **thiswind**
 
 - GitHub: [@thiswind](https://github.com/thiswind)
-
----
-
-**Note**: This is the first working development version (v0.1.0). The framework is functional but may have limitations. Feedback and contributions are welcome.

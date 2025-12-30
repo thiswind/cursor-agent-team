@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2025-12-30
+
+### Added
+
+- **Enhanced Crew Command**: Added runtime search capability for automatic problem-solving during execution
+  - Crew now automatically searches for solutions when encountering difficulties
+  - Enhanced research phase with general web search alongside academic search
+  - New workspace file `runtime_research.md` for tracking runtime searches
+- **Enhanced Discuss Command**: Added AGENT-REQUIREMENT generation support
+  - Automatic generation of agent requirements during discussions
+  - Better integration with prompt engineering workflow
+
+### Changed
+
+- Improved error handling in crew command with proactive problem-solving
+- Enhanced information retrieval with both academic and practical web search
+
 ## [0.1.1] - 2025-12-29
 
 ### Changed
@@ -42,5 +59,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.2.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.2.0
 [0.1.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.1.1
 [0.1.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.1.0
