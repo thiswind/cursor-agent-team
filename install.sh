@@ -95,6 +95,12 @@ else
     echo -e "${RED}Error: Failed to copy crew.md${NC}"
     exit 1
 fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/commands/spec_translator.md" "$PROJECT_ROOT/.cursor/commands/"; then
+    INSTALLED_ITEMS+=(".cursor/commands/spec_translator.md")
+else
+    echo -e "${RED}Error: Failed to copy spec_translator.md${NC}"
+    exit 1
+fi
 
 # Copy rule files
 echo "  Copying rule files..."
@@ -114,6 +120,12 @@ if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/crew_assistant.mdc" "$PROJECT_
     INSTALLED_ITEMS+=(".cursor/rules/crew_assistant.mdc")
 else
     echo -e "${RED}Error: Failed to copy crew_assistant.mdc${NC}"
+    exit 1
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/spec_translator_assistant.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/spec_translator_assistant.mdc")
+else
+    echo -e "${RED}Error: Failed to copy spec_translator_assistant.mdc${NC}"
     exit 1
 fi
 
@@ -155,9 +167,11 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/commands/discuss.md",
     ".cursor/commands/prompt_engineer.md",
     ".cursor/commands/crew.md",
+    ".cursor/commands/spec_translator.md",
     ".cursor/rules/discussion_assistant.mdc",
     ".cursor/rules/prompt_engineer_assistant.mdc",
-    ".cursor/rules/crew_assistant.mdc"
+    ".cursor/rules/crew_assistant.mdc",
+    ".cursor/rules/spec_translator_assistant.mdc"
   ]
 }
 EOF
@@ -186,5 +200,6 @@ echo "You can now use the following commands in Cursor:"
 echo "  /discuss - Discussion partner"
 echo "  /prompt_engineer - Prompt engineer"
 echo "  /crew - Crew member"
+echo "  /spec_translator - Spec-Kit Translator (additional feature)"
 echo ""
 

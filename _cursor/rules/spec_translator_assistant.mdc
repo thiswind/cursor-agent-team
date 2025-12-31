@@ -1,0 +1,303 @@
+# Spec-Translator Assistant Rules
+
+> **Purpose**: Persistent rules for the Spec-Kit Translator (Spec-Kit 规范转换者) - these rules are always active and automatically injected.
+
+## Plan File Reading Rules
+
+### Plan File Location
+
+- **Directory**: `cursor-agent-team/ai_workspace/plans/`
+- **Naming**: `PLAN-[话题ID]-[序号].md`
+- **Example**: `PLAN-B-001.md`
+- **Index File**: `cursor-agent-team/ai_workspace/plans/INDEX.md`
+
+### Plan Number Parsing
+
+**Supported Formats**:
+- Full format: `PLAN-[话题ID]-[序号]` (e.g., `PLAN-B-001`)
+- Short format: `[话题ID]-[序号]` (e.g., `B-001`) - auto-complete to full format
+
+**Validation**:
+- Plan number is REQUIRED
+- If missing, reject command with error message
+- If file doesn't exist, reject with error message
+
+### Plan File Structure
+
+Plan files typically contain:
+- Plan information (number, topic, creation time, status)
+- Goals and objectives
+- Requirements analysis
+- Technical constraints
+- Development principles
+- Implementation plan
+- Execution steps
+- Development branch
+- Test plans
+- Risk assessment (optional)
+- Related files
+- Expected results
+- Notes
+
+## File Naming Rules
+
+### Spec-Kit Document Naming
+
+- **Constitution**: `spec-kit-constitution-[话题ID]-[序号].md`
+- **Specify**: `spec-kit-specify-[话题ID]-[序号].md`
+- **Plan**: `spec-kit-plan-[话题ID]-[序号].md`
+
+### Version Handling
+
+- **Check location**: Only check `cursor-agent-team/ai_workspace/` directory
+- **Version detection**: If same topic has multiple plans, create version suffix
+- **Version format**: `-v2.md`, `-v3.md`, etc. (e.g., `spec-kit-constitution-B-v2.md`)
+- **No version numbers**: Do not use semantic versioning (one-time task)
+
+### File Location
+
+- **Save directory**: `cursor-agent-team/ai_workspace/`
+- **Same directory**: All three documents saved in same directory
+- **No subdirectories**: Do not create subdirectories for spec-kit documents
+
+## Workspace Management Rules
+
+### Workspace Location
+
+- **Directory**: `cursor-agent-team/ai_workspace/spec_translator/`
+- **Session directories**: Can create `sessions/session_YYYYMMDD_HHMMSS/` for temporary files
+- **Temporary files**: Can save analysis files, intermediate results
+
+### Workspace Usage
+
+1. **Purpose**: Record conversion process, temporary analysis
+2. **Scope**: Only accessible during `/spec_translator` command execution
+3. **Temporary Nature**: Files are temporary and can be cleaned after conversion
+4. **Session Isolation**: Each conversion can have its own session directory
+
+### Cleanup Policy
+
+- **After Conversion**: Temporary files can be kept for reference
+- **Session Retention**: Session directories can be kept (suggested: 7 days)
+- **Important Content**: Generated spec-kit documents are saved to permanent location
+
+## Topic Tree Update Rules
+
+### Topic Tree File
+
+- **Location**: `cursor-agent-team/ai_workspace/discussion_topics.md`
+- **Update timing**: Immediately after conversion completes
+- **Update field**: "关联 Spec-Kit 文档" field in topic
+
+### Update Process
+
+1. **Read topic tree**: Read `discussion_topics.md`
+2. **Find topic**: Find topic associated with Plan (from Plan's "关联话题" field)
+3. **Add documents**: Add three generated documents to topic's "关联 Spec-Kit 文档" field
+4. **Format**: List format with document names
+5. **Save file**: Save updated topic tree
+
+### Update Format
+
+```markdown
+- **关联 Spec-Kit 文档**:
+  - spec-kit-constitution-[话题ID]-[序号].md (项目原则和开发指南)
+  - spec-kit-specify-[话题ID]-[序号].md (需求规范文档)
+  - spec-kit-plan-[话题ID]-[序号].md (技术实施计划)
+```
+
+## Conversion Mapping Rules
+
+### Constitution Mapping
+
+**Source → Target**:
+- Technical constraints → Core Principles (NON-NEGOTIABLE)
+- Development principles → Development Workflow
+- Notes/cautions → Code Quality Standards
+- Development environment → Development Environment
+- Test requirements → Testing Requirements
+- Project-specific requirements → Project-Specific Constraints
+- Governance → Governance (standard structure)
+
+### Specify Mapping
+
+**Source → Target**:
+- Goals → Feature Overview
+- Requirements analysis → Functional Requirements
+- Test plans → Success Criteria
+- User scenarios (if present) → User Stories with Priority
+- Data model (if mentioned) → Key Entities
+
+**Note**: If Plan doesn't have user scenarios, skip User Stories section.
+
+### Plan Mapping
+
+**Source → Target**:
+- Implementation plan → Implementation Phases
+- Execution steps → Technical Context
+- Development branch → Project Structure
+- Risk analysis (if present) → Risk Assessment
+- Rollback plan (if present) → Rollback Plan
+- Test plans → Testing Strategy
+
+## Task Type Detection Rules
+
+### Software Development Indicators
+
+Plan is considered software development task if it contains:
+- Technology stack mentions (programming languages, frameworks, tools)
+- Code modifications (file paths, code changes)
+- Development branches (branch names, git operations)
+- Software architecture changes
+- Implementation details (APIs, databases, services)
+- Technical constraints related to code
+
+### Non-Software Development Indicators
+
+Plan is NOT software development task if it contains:
+- Only document writing (no code changes)
+- Only research tasks (no implementation)
+- Only analysis tasks (no code)
+- Only planning tasks (no technical implementation)
+
+### Rejection Message
+
+If task is not software development:
+```
+❌ Conversion rejected
+
+Reason: This command is only for software development tasks.
+The plan "PLAN-[话题ID]-[序号]" appears to be a [task type], not a software development task.
+
+This command only processes plans that involve:
+- Code modifications
+- Technical implementation
+- Development branches
+- Software architecture changes
+```
+
+## Missing Information Handling Rules
+
+### Missing Information Marking
+
+- **Mark as**: `[NEEDS CLARIFICATION]`
+- **Location**: In the section where information is missing
+- **Format**: `[NEEDS CLARIFICATION]` on its own line or inline
+
+### Missing Information Examples
+
+- Constitution: Missing "Development Environment" → `[NEEDS CLARIFICATION]`
+- Specify: Missing "User Stories" → Skip section (not required if not in Plan)
+- Plan: Missing "Risk Assessment" → `[NEEDS CLARIFICATION]`
+
+### Continue Conversion
+
+- **Do NOT interrupt**: Continue conversion even if information is missing
+- **Mark and proceed**: Mark missing sections and continue
+- **Output note**: Add note in summary if missing information exists
+
+## Error Handling Rules
+
+### Plan File Not Found
+
+**Error Message**:
+```
+❌ Conversion rejected
+
+Reason: Plan file not found.
+Expected location: cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md
+
+Please check:
+- Plan number is correct
+- Plan file exists in the plans directory
+- Use /discuss to generate a plan first
+```
+
+### Missing Plan Number
+
+**Error Message**:
+```
+❌ Command rejected
+
+Reason: Plan number is required.
+
+Usage: /spec_translator PLAN-[话题ID]-[序号]
+   or: /spec_translator [话题ID]-[序号]
+
+Example: /spec_translator PLAN-B-001
+Example: /spec_translator B-001
+```
+
+### Format Errors
+
+- **Try to convert**: Even if Plan format is not completely standard, attempt conversion
+- **Mark unclear sections**: Mark unclear sections appropriately
+- **Output what's possible**: Output as much as possible, mark what's unclear
+
+## Behavior Constraints
+
+### File Modification Rules
+
+**Allowed Modifications**:
+- Create/modify files in `cursor-agent-team/ai_workspace/spec_translator/` (workspace)
+- Create spec-kit documents in `cursor-agent-team/ai_workspace/` (permanent location)
+- Update `discussion_topics.md` (topic tree)
+
+**Modification Workflow**:
+1. **Read Plan**: Read Plan file
+2. **Convert**: Convert to spec-kit format
+3. **Save**: Save three documents directly
+4. **Update**: Update topic tree
+5. **Output**: Display summary
+
+### Automatic Conversion Requirements
+
+1. **No User Interaction**: Conversion must be fully automatic
+2. **No Preview**: Do not show preview or ask for confirmation
+3. **Direct Save**: Save files directly after conversion
+4. **Simple Summary**: Output simple summary after completion
+
+## Spec-Kit Format Compliance
+
+### Constitution Format
+
+Must follow spec-kit constitution template structure:
+- Core Principles (NON-NEGOTIABLE)
+- Development Environment
+- Code Quality Standards
+- Testing Requirements
+- Project-Specific Constraints
+- Development Workflow
+- Governance
+
+### Specify Format
+
+Must follow spec-kit specify template structure:
+- User Scenarios & Testing (User Stories with Priority) - optional
+- Requirements (Functional Requirements)
+- Key Entities (if applicable)
+- Success Criteria (Measurable Outcomes)
+
+### Plan Format
+
+Must follow spec-kit plan template structure:
+- Summary
+- Technical Context
+- Constitution Check
+- Project Structure
+- Implementation Phases
+- Complexity Tracking
+- Risk Assessment
+- Testing Strategy
+- Rollback Plan
+
+---
+
+**Last Updated**: 2026-01-01
+
+**Version**: v1.0.0
+
+**Version History**:
+- v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator assistant rules
+
+**Note**: These rules are persistent and automatically applied when using the `/spec_translator` command. They define the infrastructure and constraints for the Spec-Kit Translator Assistant, while the command itself defines the role behavior and workflow.
