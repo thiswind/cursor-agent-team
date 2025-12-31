@@ -200,6 +200,6 @@ echo "You can now use the following commands in Cursor:"
 echo "  /discuss - Discussion partner"
 echo "  /prompt_engineer - Prompt engineer"
 echo "  /crew - Crew member"
-echo "  /spec_translator - Spec-Kit Translator (additional feature)"
+echo "  /spec_translator - Spec-Kit translator (additional feature)"
 echo ""
 

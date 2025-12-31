@@ -31,6 +31,33 @@
 2. **执行方案**：使用 `/crew` 执行方案
 3. **扩展团队**：需要时使用 `/prompt_engineer` 创建新角色
 
+## 附加功能
+
+框架还包含扩展核心功能的附加功能：
+
+### Spec-Kit 转换器 (`/spec_translator`)
+
+用于 [Spec-Kit](https://github.com/jimmysong/spec-kit) 工作流集成的转换工具。将 `/discuss` 生成的执行方案转换为符合 spec-kit 格式的文档。
+
+**用途**：当项目使用 Spec-Kit 进行规范驱动开发时，此工具会自动将 Plan 文件转换为三个 spec-kit 文档：
+- `constitution.md` - 项目治理原则和开发指南
+- `specify.md` - 需求规范文档
+- `plan.md` - 技术实施计划
+
+**使用方法**：
+```
+/spec_translator PLAN-B-001
+```
+
+**工作流集成**：
+1. 使用 `/discuss` 为软件开发任务生成执行方案
+2. 使用 `/spec_translator` 将方案转换为 spec-kit 文档
+3. 使用 spec-kit 命令（clarify、tasks 等）继续开发
+
+**注意**：这是附加功能，不是核心团队角色。它仅处理软件开发任务，会自动拒绝非软件开发方案。
+
+有关 Spec-Kit 的更多信息，请访问 [Spec-Kit 仓库](https://github.com/jimmysong/spec-kit)。
+
 ## 使用示例
 
 ### 步骤 1：讨论并制定方案
@@ -68,26 +95,6 @@
 
 现在你可以在 Cursor 中使用 `/figure_caption`，就像使用三个核心命令一样。
 
-## 附加功能
-
-框架还包含附加功能，用于扩展核心功能：
-
-### Spec-Kit 转换器 (`/spec_translator`)
-
-将执行方案（由 `/discuss` 生成）转换为 spec-kit 格式文档，用于规范驱动开发工作流。该命令自动将 Plan 文件转换为三个 spec-kit 文档：
-- `constitution.md` - 项目治理原则和开发指南
-- `specify.md` - 需求规范文档
-- `plan.md` - 技术实施计划
-
-**使用方法**：
-```
-/spec_translator PLAN-B-001
-```
-
-该命令专为使用 [spec-kit](https://vibecoding.app/tools/spec-kit) 进行规范驱动开发的项目设计。有关 spec-kit 的更多信息，请参阅 [spec-kit 主页](https://vibecoding.app/tools/spec-kit)。
-
-**注意**：这是附加功能，不是核心团队角色。框架未来将继续添加更多附加功能。
-
 ## 安装
 
 ### 步骤 1：添加 Git 子模块
@@ -100,7 +107,7 @@ git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent
 ./cursor-agent-team/install.sh
 ```
 
-这会将三个核心命令和附加功能安装到 `.cursor/commands/`，规则安装到 `.cursor/rules/`。
+这会将三个核心命令安装到 `.cursor/commands/`，规则安装到 `.cursor/rules/`。
 
 ### 更新
 ```bash
