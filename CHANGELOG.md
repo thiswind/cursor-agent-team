@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fully automatic conversion with intelligent information extraction
   - Only processes software development tasks
   - Automatically updates discussion topics with generated documents
-  - Reference: [Spec-Kit](https://github.com/jimmysong/spec-kit) - Specification-driven development framework
+  - Reference: [Spec-Kit](https://github.com/github/spec-kit) - Specification-driven development framework
 
 ### Changed
 

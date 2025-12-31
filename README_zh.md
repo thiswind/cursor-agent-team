@@ -37,7 +37,7 @@
 
 ### Spec-Kit 转换器 (`/spec_translator`)
 
-用于 [Spec-Kit](https://github.com/jimmysong/spec-kit) 工作流集成的转换工具。将 `/discuss` 生成的执行方案转换为符合 spec-kit 格式的文档。
+用于 [Spec-Kit](https://github.com/github/spec-kit) 工作流集成的转换工具。将 `/discuss` 生成的执行方案转换为符合 spec-kit 格式的文档。
 
 **用途**：当项目使用 Spec-Kit 进行规范驱动开发时，此工具会自动将 Plan 文件转换为三个 spec-kit 文档：
 - `constitution.md` - 项目治理原则和开发指南
@@ -56,7 +56,7 @@
 
 **注意**：这是附加功能，不是核心团队角色。它仅处理软件开发任务，会自动拒绝非软件开发方案。
 
-有关 Spec-Kit 的更多信息，请访问 [Spec-Kit 仓库](https://github.com/jimmysong/spec-kit)。
+有关 Spec-Kit 的更多信息，请访问 [Spec-Kit 仓库](https://github.com/github/spec-kit)。
 
 ## 使用示例
 
