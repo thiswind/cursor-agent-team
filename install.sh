@@ -184,6 +184,38 @@ else
 fi
 
 echo ""
+
+# Step 5: Update .gitignore
+echo "Step 5: Updating .gitignore..."
+
+GITIGNORE_FILE="$PROJECT_ROOT/.gitignore"
+IGNORE_PATTERN="$SUBMODULE_DIR"
+
+# Check if .gitignore exists, create if not
+if [ ! -f "$GITIGNORE_FILE" ]; then
+    touch "$GITIGNORE_FILE"
+    echo -e "${GREEN}✓ Created .gitignore file${NC}"
+fi
+
+# Check if the pattern already exists
+if grep -q "^$IGNORE_PATTERN$" "$GITIGNORE_FILE" 2>/dev/null || grep -q "^/$IGNORE_PATTERN$" "$GITIGNORE_FILE" 2>/dev/null; then
+    echo -e "${YELLOW}  Pattern already exists in .gitignore${NC}"
+else
+    # Add the pattern to .gitignore
+    # Add a comment and the pattern
+    if [ -s "$GITIGNORE_FILE" ]; then
+        # File is not empty, add a newline if last line doesn't end with newline
+        if [ "$(tail -c 1 "$GITIGNORE_FILE")" != "" ]; then
+            echo "" >> "$GITIGNORE_FILE"
+        fi
+    fi
+    echo "# Cursor AI Agent Team Framework (submodule)" >> "$GITIGNORE_FILE"
+    echo "$IGNORE_PATTERN" >> "$GITIGNORE_FILE"
+    echo -e "${GREEN}✓ Added $IGNORE_PATTERN to .gitignore${NC}"
+fi
+
+echo ""
+
 echo "=========================================="
 echo -e "${GREEN}Installation completed successfully!${NC}"
 echo "=========================================="
