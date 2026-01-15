@@ -2,7 +2,9 @@
 
 ![Framework Banner](banner.png)
 
-A three-agent collaboration system for Cursor IDE that installs custom commands and enables team expansion.
+A three-agent collaboration system for Cursor IDE and Qwen Code that installs custom commands and enables team expansion.
+
+**Now supports both Cursor IDE and Qwen Code platforms!**
 
 ## Overview
 
@@ -97,28 +99,64 @@ You can now use `/figure_caption` in Cursor, just like the three core commands.
 
 ## Installation
 
-### Step 1: Add as Git Submodule
+### For Cursor IDE
+
+#### Step 1: Add as Git Submodule
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 ```
 
-### Step 2: Run Install Script
+#### Step 2: Run Install Script
 ```bash
 ./cursor-agent-team/install.sh
 ```
 
 This installs the three core commands into `.cursor/commands/` and rules into `.cursor/rules/`.
 
-### Update
+#### Update
 ```bash
 git submodule update --remote cursor-agent-team
 ./cursor-agent-team/install.sh
 ```
 
-### Uninstall
+#### Uninstall
 ```bash
 ./cursor-agent-team/uninstall.sh
 ```
+
+### For Qwen Code
+
+#### Step 1: Add as Git Submodule
+```bash
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+```
+
+#### Step 2: Run Qwen Code Install Script
+```bash
+./cursor-agent-team/install_qwen.sh
+```
+
+This installs the three core commands into `.qwen/commands/` (TOML format) and context files into `.qwen/context/` (Markdown format).
+
+**Note**: The workspace at `cursor-agent-team/ai_workspace/` is **SHARED** between Cursor and Qwen Code platforms. This allows seamless switching between platforms while maintaining the same discussion history, plans, and execution records.
+
+#### Update
+```bash
+git submodule update --remote cursor-agent-team
+./cursor-agent-team/install_qwen.sh
+```
+
+#### Uninstall
+```bash
+./cursor-agent-team/uninstall_qwen.sh
+```
+
+### Platform Compatibility
+
+- **Cursor IDE**: Uses `.cursor/` directory with `.md` commands and `.mdc` rules
+- **Qwen Code**: Uses `.qwen/` directory with `.toml` commands and `.md` context files
+- **Shared Workspace**: `cursor-agent-team/ai_workspace/` is shared between both platforms
+- **Compatibility**: You can install both versions in the same project - they work independently
 
 ## License
 

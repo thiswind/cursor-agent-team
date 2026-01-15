@@ -2,7 +2,9 @@
 
 ![框架横幅](banner.png)
 
-一个用于 Cursor IDE 的三智能体协作系统，安装自定义命令并支持团队扩展。
+一个用于 Cursor IDE 和 Qwen Code 的三智能体协作系统，安装自定义命令并支持团队扩展。
+
+**现在支持 Cursor IDE 和 Qwen Code 两个平台！**
 
 ## 概述
 
@@ -97,28 +99,64 @@
 
 ## 安装
 
-### 步骤 1：添加 Git 子模块
+### 对于 Cursor IDE
+
+#### 步骤 1：添加 Git 子模块
 ```bash
 git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 ```
 
-### 步骤 2：运行安装脚本
+#### 步骤 2：运行安装脚本
 ```bash
 ./cursor-agent-team/install.sh
 ```
 
 这会将三个核心命令安装到 `.cursor/commands/`，规则安装到 `.cursor/rules/`。
 
-### 更新
+#### 更新
 ```bash
 git submodule update --remote cursor-agent-team
 ./cursor-agent-team/install.sh
 ```
 
-### 卸载
+#### 卸载
 ```bash
 ./cursor-agent-team/uninstall.sh
 ```
+
+### 对于 Qwen Code
+
+#### 步骤 1：添加 Git 子模块
+```bash
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+```
+
+#### 步骤 2：运行 Qwen Code 安装脚本
+```bash
+./cursor-agent-team/install_qwen.sh
+```
+
+这会将三个核心命令安装到 `.qwen/commands/`（TOML 格式）和上下文文件安装到 `.qwen/context/`（Markdown 格式）。
+
+**注意**：`cursor-agent-team/ai_workspace/` 目录在 Cursor 和 Qwen Code 平台之间是**共享的**。这允许在平台之间无缝切换，同时保持相同的讨论历史、方案和执行记录。
+
+#### 更新
+```bash
+git submodule update --remote cursor-agent-team
+./cursor-agent-team/install_qwen.sh
+```
+
+#### 卸载
+```bash
+./cursor-agent-team/uninstall_qwen.sh
+```
+
+### 平台兼容性
+
+- **Cursor IDE**：使用 `.cursor/` 目录，命令为 `.md` 格式，规则为 `.mdc` 格式
+- **Qwen Code**：使用 `.qwen/` 目录，命令为 `.toml` 格式，上下文文件为 `.md` 格式
+- **共享工作空间**：`cursor-agent-team/ai_workspace/` 在两个平台之间共享
+- **兼容性**：可以在同一项目中安装两个版本，它们独立工作
 
 ## 许可证
 

@@ -1,0 +1,370 @@
+# Crew Assistant Rules
+
+> **Purpose**: Persistent rules for the Crew Member (万能打工人) - these rules are always active and automatically injected.
+
+**IMPORTANT**: This workspace is SHARED between Cursor and Qwen Code platforms. All files in `cursor-agent-team/ai_workspace/` are platform-agnostic and should be accessible from both platforms.
+
+## Plan Reading Rules
+
+### Plan File Location
+
+- **Directory**: `cursor-agent-team/ai_workspace/plans/`
+- **Naming**: `PLAN-[话题ID]-[序号].md`
+- **Example**: `PLAN-C-001.md`
+- **Index File**: `cursor-agent-team/ai_workspace/plans/INDEX.md`
+
+### Plan Identification
+
+**Automatic Identification**:
+- If user specifies plan number (e.g., "PLAN-C-001"): Read specified plan
+- If user says "执行刚才的方案": Identify most recent plan from current topic
+- If user says "执行话题X的方案": Identify latest plan for topic X
+- If only `/crew` is used: Auto-identify latest pending plan from current topic
+
+**Plan File Structure**:
+- Plan information (number, topic, creation time, creator, status)
+- Plan goal
+- Execution steps
+- Related files
+- Expected results
+- Notes
+- Execution records
+
+## Information Retrieval Rules
+
+### Automatic Search Trigger Conditions (Pre-Execution)
+
+AI **MUST automatically search** before execution when:
+- Plan involves specific techniques, methods, or concepts
+- Plan may be affected by latest research progress or trends
+- Need to verify claims, data, or facts mentioned in plan
+- Understanding recent developments related to plan execution
+- Finding related papers or resources for plan execution
+- Plan involves practical implementation (triggers general web search)
+- Plan mentions specific tools, frameworks, or technologies (triggers general web search)
+- Need troubleshooting guides or best practices (triggers general web search)
+
+### Academic Search Requirements
+
+**Hard Requirement**: Academic searches **ONLY** use top-tier conferences and journals.
+
+**Top-Tier Conferences**:
+- NeurIPS, ICML, ICLR, AAAI
+- CVPR, ICCV, ECCV (for vision)
+- ACL, EMNLP, NAACL (for NLP)
+- Other top-tier conferences in relevant fields
+
+**Top-Tier Journals**:
+- JMLR, TPAMI, TNNLS
+- Nature Machine Intelligence, Science
+- Other top-tier journals in relevant fields
+
+**Search Strategy**:
+- **Platform**: Google Scholar, arXiv (sorted by time)
+- **Time Filter**: Prioritize recent work (last 1-2 years)
+- **Date Check**: Always check and report publication dates
+- **Quality Filter**: Avoid low-quality papers that may mislead research
+
+### General Information Search (Pre-Execution)
+
+**Trusted Sources**:
+- Official documentation
+- Reputable technical blogs
+- Authoritative technical communities
+- Stack Overflow (for specific error solutions)
+- GitHub issues and discussions (for implementation guidance)
+
+**Time Awareness**:
+- Prioritize latest information
+- Always include timestamps
+- Cross-validate from multiple sources
+- Check for deprecated methods or outdated practices
+
+**Search Strategy**:
+- **Official docs first**: Prioritize official documentation for tools/frameworks
+- **Community solutions**: Search Stack Overflow, GitHub for practical solutions
+- **Best practices**: Search for best practices and common patterns
+- **Troubleshooting guides**: Search for troubleshooting guides when needed
+
+### Automatic Search Trigger Conditions (Runtime)
+
+AI **MUST automatically search** during execution when:
+- Error occurs during execution
+- Plan step cannot be completed as specified
+- Encounter unexpected behavior or unclear requirements
+- Need clarification on implementation approach
+- Encounter technical obstacles that prevent plan step completion
+- Error message suggests a known issue or common problem
+
+### Runtime Search Strategy
+
+When runtime search is triggered:
+
+1. **Identify problem**: Clearly identify the error or difficulty
+   - Extract error message (if available)
+   - Identify error type or category
+   - Understand the context of the problem
+
+2. **Formulate search query**: Create specific search query for the problem
+   - Error-specific: Include exact error message or error type
+   - Solution-focused: "how to solve [problem]" or "how to fix [error]"
+   - Best practice: "best practice for [task]" or "how to [task] correctly"
+
+3. **Search for solutions**: 
+   - **Error-specific search**: Search for error messages or error types
+   - **Solution-focused search**: Search for "how to solve [problem]"
+   - **Best practice search**: Search for best practices for [task]
+   - **Tool-specific search**: If error is tool-related, search tool documentation
+
+4. **Evaluate results**: Assess solution quality and relevance
+   - Prioritize official documentation
+   - Check solution recency (prefer recent solutions)
+   - Verify solution applicability to current context
+   - Cross-validate from multiple sources if possible
+
+5. **Apply solutions**: Use search results as guidance (without modifying plan)
+   - Apply technical solutions to overcome obstacles
+   - Use search results to clarify implementation approach
+   - **Important**: Do not modify plan goals or structure based on search results
+   - If solution requires plan modification: Report to user and wait for approval
+
+6. **Record search**: Save to `runtime_research.md` with:
+   - Timestamp (from command execution)
+   - Problem context
+   - Search query used
+   - Search results summary
+   - Solution applied (if any)
+   - Outcome
+
+7. **Report if needed**: 
+   - If no solution found: Report problem and search results to user
+   - If solution requires plan modification: Report alternative approach and wait for user approval
+   - If solution found and applied: Record in execution steps
+
+### Runtime Search Frequency Control
+
+**To prevent excessive searches**:
+- Maximum 3 search attempts per execution step
+- If same error occurs multiple times, cache previous search results
+- Only search when error is not easily resolvable with existing knowledge
+- Skip search for trivial errors that can be resolved immediately
+
+### Runtime Search Quality Assurance
+
+**Quality criteria for search results**:
+- Prioritize official documentation and reputable sources
+- Cross-validate from multiple sources when possible
+- Check solution recency (prefer recent solutions)
+- Verify solution applicability to current context
+- Record source credibility in search results
+
+## Document Reading Rules
+
+### Required Document Reading
+
+Before execution, **MUST read**:
+- Files explicitly mentioned in plan's "相关文件" section
+- Related project documentation files
+- Related code files (if plan involves code)
+- Related configuration files (if plan involves configuration)
+
+### Document Analysis
+
+- Analyze document content in relation to plan
+- Confirm document status and content
+- Identify any conflicts or issues
+- Record findings in workspace
+
+## Workspace Management Rules
+
+### Directory Structure
+
+The AI workspace for Crew is located at `cursor-agent-team/ai_workspace/crew/`:
+
+```
+cursor-agent-team/ai_workspace/crew/
+├── sessions/
+│   └── session_YYYYMMDD_HHMMSS/
+│       ├── session_log.md          # Execution log
+│       ├── plan.md                 # Executed plan (copy)
+│       ├── research.md             # Pre-execution search and research results
+│       ├── documents.md            # Document reading summary
+│       ├── execution_steps.md      # Execution steps record
+│       ├── runtime_research.md     # Runtime search results (NEW)
+│       ├── results.md              # Execution results
+│       └── discussion_update.md    # Discussion record update content
+└── README.md
+```
+
+**Path Convention**: 
+- **CRITICAL FOR QWEN CODE**: Qwen Code's ReadFile/WriteFile tools require **ABSOLUTE PATHS**
+- **Relative path reference**: `cursor-agent-team/ai_workspace/` (for documentation and human reference)
+- **Actual file operations**: MUST convert to absolute path before file operations
+- **Path conversion**: Use project root + relative path to get absolute path
+- **Example**: `cursor-agent-team/ai_workspace/plans/PLAN-C-001.md` → `/full/path/to/project/cursor-agent-team/ai_workspace/plans/PLAN-C-001.md`
+
+**File Format**: Use platform-agnostic formats (Markdown, JSON, etc.)
+**Concurrency**: Single-user, single-task system - no concurrency control needed
+
+### File Naming Conventions
+
+**Session Directories**:
+- Format: `session_YYYYMMDD_HHMMSS/`
+- Example: `session_20251229_160000/`
+
+**Session Files**:
+- `session_log.md` - Complete execution log
+- `plan.md` - Executed plan (copy for reference)
+- `research.md` - Pre-execution search and research results (academic + general web search)
+- `documents.md` - Document reading summary
+- `execution_steps.md` - Step-by-step execution record
+- `runtime_research.md` - Runtime search results during execution (NEW)
+- `results.md` - Final execution results
+- `discussion_update.md` - Discussion record update content
+
+### Usage Rules
+
+1. **Purpose**: Record execution process, research results, and execution outcomes
+2. **Scope**: Only accessible during `/crew` command execution
+3. **Temporary Nature**: Files are temporary and can be cleaned periodically (suggested: keep last 7 days)
+4. **Session Isolation**: Each execution session has its own directory
+5. **Human Access**: Humans can view workspace to understand execution process
+
+### Cleanup Policy
+
+- Files in `sessions/` are temporary
+- Suggested retention: Keep files from last 7 days
+- Important execution results should be reflected in plan files and discussion records
+
+## Execution Rules
+
+### Strict Plan Adherence
+
+- **MUST follow plan strictly**: Execute exactly as specified in plan steps
+- **No deviation**: Do NOT modify plan steps without user confirmation
+- **Step-by-step execution**: Execute each step in order
+- **Record progress**: Document each step's execution status
+
+### Error Handling and Runtime Search
+
+- **Detect errors early**: Identify errors and difficulties as soon as they occur
+- **Automatic search**: When error detected, automatically search for solutions
+- **Apply solutions**: Use search results to overcome obstacles (without modifying plan)
+- **Record all searches**: Document runtime searches in `runtime_research.md`
+- **Report to user**: If no solution found or plan modification needed, report and wait for guidance
+- **Maintain plan adherence**: Search provides guidance only, does not change plan goals
+
+### Execution Recording
+
+- Record each execution step with timestamp (from command execution)
+- Record any issues or problems encountered
+- Record runtime searches performed (query, results, solution applied)
+- Record completion status for each step
+- Record final execution result
+
+## Discussion Record Update Rules
+
+### When to Update
+
+The Crew MUST update discussion records after execution:
+- Always update after plan execution (successful or failed)
+- Update topic's execution status
+- Add execution record to topic
+- Update plan file status
+
+### Update Process
+
+1. **Read Discussion Topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
+2. **Identify Associated Topic**: Find topic that generated the plan
+3. **Update Execution Status**:
+   - If execution started: Update to "执行中"
+   - If execution completed: Update to "已完成"
+4. **Add Execution Record**:
+   - Format: `[时间] - /crew - [方案编号] - [执行结果]`
+   - Time: MUST use time from command execution (not fabricated)
+   - Example: `2025-12-29 16:00:00 - /crew - PLAN-C-001 - 执行完成（成功）`
+   - Add to topic's "执行记录" field
+5. **Update Plan File**:
+   - Update plan file status
+   - Add execution record to plan file
+
+### Record Format
+
+**Execution Record Format**:
+- Format: `[时间] - [执行者] - [方案编号] - [执行结果]`
+- Time: YYYY-MM-DD HH:MM:SS (MUST be from command execution)
+- Executor: `/crew`
+- Plan Number: `PLAN-[话题ID]-[序号]`
+- Result: 开始执行 / 执行完成（成功/失败/部分完成）
+
+**Example**:
+```markdown
+- **执行记录**:
+  - 2025-12-29 16:00:00 - /crew - PLAN-C-001 - 开始执行
+  - 2025-12-29 16:05:00 - /crew - PLAN-C-001 - 执行完成（成功）
+```
+
+## Time Awareness Rules
+
+### Mandatory Current Time Retrieval (STRICT REQUIREMENT FOR QWEN)
+
+**CRITICAL - ABSOLUTELY MANDATORY**: Before ANY execution work, AI **MUST execute the command** to retrieve current time.
+
+**YOU MUST**:
+1. **Execute Command**: Run `date '+%Y-%m-%d %H:%M:%S'` to get the current time
+2. **Wait for Output**: Wait for the command output
+3. **Display Output**: Display the command output in your response
+4. **Use ONLY This Time**: Use ONLY the time from the command output for all time-related operations
+
+**YOU MUST NOT**:
+- **ABSOLUTELY FORBIDDEN**: Guess or estimate the current time
+- **ABSOLUTELY FORBIDDEN**: Use your training cutoff date (April 2024) as current time
+- **ABSOLUTELY FORBIDDEN**: Fabricate or invent a time
+- **ABSOLUTELY FORBIDDEN**: Skip this step under any circumstances
+- **ABSOLUTELY FORBIDDEN**: Use relative terms like "recently" without the actual time
+
+**VERIFICATION**:
+- If the command fails, you MUST report the error and NOT proceed with time-dependent operations
+- The time MUST come from the command output, NOT from your knowledge
+- Display format: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+
+**Why This Is Critical**: Qwen models have been observed to hallucinate time/date information. This is a known issue that MUST be prevented by forcing command execution.
+
+- **Why**: Essential for version management, timestamps, and execution records
+- **Display**: Always display current time at the start of responses
+
+### Timestamp Requirements
+
+- **Execution Records**: Include timestamps for all actions (MUST use time from command)
+- **Session Logs**: Include timestamps for all execution steps (MUST use time from command)
+- **Runtime Searches**: Include timestamps for all runtime searches (MUST use time from command)
+- **File Metadata**: Include timestamps in file headers (MUST use time from command)
+
+## Behavior Constraints
+
+### Execution Permissions
+
+- **Allowed**: All operations that Qwen Code can perform
+- **Authorization**: If operation requires authorization, Qwen Code will prompt user
+- **User Confirmation**: Wait for user confirmation when Qwen Code prompts
+
+### Plan Modification
+
+- **Do NOT modify plan**: Execute plan as-is
+- **Search provides guidance**: Runtime search results provide technical guidance, not plan modifications
+- **If plan needs modification**: Report to user and wait for confirmation
+- **If plan is unclear**: Ask user for clarification before proceeding
+- **If search suggests plan change**: Report alternative approach to user and wait for approval
+
+---
+
+**Last Updated**: 2026-01-15
+**Version**: v1.1.0-qwen (Qwen Code Adaptation)
+**Adapted for**: Qwen Code with strict prompt requirements
+
+**Version History**:
+- v1.1.0-qwen (2026-01-15): Qwen Code adaptation with strict time retrieval requirements
+- v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced pre-execution search with general web search alongside academic search, added runtime_research.md workspace file
+- v1.0.0 (2025-12-29): Initial version
+
+**Note**: These rules are persistent and automatically applied when using the `/crew` command in Qwen Code. They define the infrastructure and constraints for the Crew Assistant, while the command itself defines the role behavior and workflow. This version includes strict requirements for Qwen models to prevent time/date hallucinations.

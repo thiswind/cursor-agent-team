@@ -5,6 +5,44 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-01-15
+
+### Added
+
+- **Qwen Code Platform Support**: Full adaptation for Qwen Code platform
+  - New `_qwen/` directory containing Qwen Code-specific files
+  - Context files (`.md`) in `.qwen/context/` directory (equivalent to `.cursor/rules/`)
+  - Command files (`.toml`) in `.qwen/commands/` directory (equivalent to `.cursor/commands/`)
+  - New installation script `install_qwen.sh` for Qwen Code
+  - New uninstall script `uninstall_qwen.sh` for Qwen Code
+  - Shared workspace: `cursor-agent-team/ai_workspace/` is shared between Cursor and Qwen Code platforms
+- **Strict Prompt Requirements for Qwen**: Enhanced prompts with strict requirements
+  - Mandatory time retrieval via command execution (`date '+%Y-%m-%d %H:%M:%S'`)
+  - Explicit prohibition of time fabrication
+  - Enhanced verification steps
+  - Use of "MUST", "REQUIRED", "ABSOLUTELY FORBIDDEN" language
+  - Designed to prevent Qwen model's known time/date hallucination issues
+
+### Changed
+
+- Updated all context files with strict time retrieval requirements for Qwen models
+- Updated all command files (TOML format) with strict prompt requirements
+- Enhanced documentation to include Qwen Code installation instructions
+- Clarified shared workspace mechanism between platforms
+
+### Technical Details
+
+- **File Format Conversion**:
+  - Rules: `.mdc` → `.md` (Context Files)
+  - Commands: `.md` → `.toml` (TOML format)
+- **Directory Structure**:
+  - Cursor: `.cursor/commands/` and `.cursor/rules/`
+  - Qwen Code: `.qwen/commands/` and `.qwen/context/`
+- **Shared Resources**:
+  - `cursor-agent-team/ai_workspace/` is shared between both platforms
+  - Single-user, single-task system - no concurrency issues
+  - Platform-agnostic file formats (Markdown, JSON)
+
 ## [0.3.0] - 2026-01-01
 
 ### Added
