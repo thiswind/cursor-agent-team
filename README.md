@@ -6,6 +6,15 @@ A three-agent collaboration system for Cursor IDE and Qwen Code that installs cu
 
 **Now supports both Cursor IDE and Qwen Code platforms!**
 
+## What is cursor-agent-team?
+
+cursor-agent-team is a **lightweight, IDE-integrated multi-agent collaboration framework** that enables multiple specialized AI agents to work together within Cursor IDE. It belongs to:
+
+- **Academic**: Multi-Agent System (MAS), Prompt Engineering Toolchain, Workflow Automation Framework
+- **Industry**: Developer Tools (AI-enhanced), AI Agent Platform (lightweight), IDE Extension Framework
+
+For detailed classification analysis, see [Classification Analysis](ai_workspace/cursor_agent_team_classification_analysis.md).
+
 ## Overview
 
 This framework installs three core Cursor commands (roles) into your project:
@@ -15,6 +24,15 @@ This framework installs three core Cursor commands (roles) into your project:
 - **`/prompt_engineer`** - Prompt Engineer (提示词工程师): The HR and trainer who creates new roles (new Cursor commands)
 
 With these three core roles installed, the team can operate. The Prompt Engineer can create additional roles as needed, allowing the team to expand.
+
+## Key Features
+
+- **Lightweight**: File-based architecture, no complex infrastructure required
+- **IDE Native Integration**: Deeply integrated with Cursor IDE, seamless user experience
+- **Command-Driven**: Commands as roles (Commands as Roles philosophy)
+- **Rule Management**: Persistent rules via `.mdc` files for consistent behavior
+- **Extensible**: Create custom roles via `/prompt_engineer`
+- **Workflow Automation**: Complete discussion → planning → execution workflow
 
 ## Team Roles
 
@@ -32,6 +50,18 @@ The HR and trainer. Creates and maintains new roles (Cursor commands). When you 
 1. **Plan**: Use `/discuss` to explore ideas and generate execution plans
 2. **Execute**: Use `/crew` to execute the plans
 3. **Expand**: Use `/prompt_engineer` to create new roles when needed
+
+## Comparison with Similar Products
+
+| Feature | cursor-agent-team | LangChain/AutoGen | GitHub Copilot |
+|---------|------------------|-------------------|----------------|
+| **Positioning** | IDE Extension Framework | General Application Framework | Code Completion Tool |
+| **Integration** | IDE Native | External API/Library | IDE Plugin |
+| **Multi-Agent** | ✅ Yes | ✅ Yes | ❌ No |
+| **Role System** | ✅ Commands as Roles | ✅ Explicit Definition | ❌ No |
+| **Workflow** | ✅ Discussion→Execution | ✅ Configurable | ❌ No |
+| **Lightweight** | ✅ Yes | ❌ No | ✅ Yes |
+| **Extensible** | ✅ Yes | ✅ Yes | ❌ No |
 
 ## Additional Features
 
