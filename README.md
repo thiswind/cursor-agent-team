@@ -19,9 +19,9 @@ For detailed classification analysis, see [Classification Analysis](ai_workspace
 
 This framework installs three core Cursor commands (roles) into your project:
 
-- **`/discuss`** - Discussion Partner (讨论伙伴): The strategist who analyzes problems, explores ideas, and creates execution plans
-- **`/crew`** - Crew Member (万能打工人): The executor who implements plans strictly according to specifications
-- **`/prompt_engineer`** - Prompt Engineer (提示词工程师): The HR and trainer who creates new roles (new Cursor commands)
+- **`/discuss`** - Discussion Partner: The strategist who analyzes problems, explores ideas, and creates execution plans
+- **`/crew`** - Crew Member: The executor who implements plans strictly according to specifications
+- **`/prompt_engineer`** - Prompt Engineer: The HR and trainer who creates new roles (new Cursor commands)
 
 With these three core roles installed, the team can operate. The Prompt Engineer can create additional roles as needed, allowing the team to expand.
 
