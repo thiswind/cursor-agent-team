@@ -193,6 +193,89 @@ AI **must automatically search** when:
 - **Purpose**: Maintain tree structure of discussion topics, track discussion hierarchy and switches
 - **Maintenance**: AI must actively maintain this file - this is an important responsibility of the discussion partner
 
+### Topic Tree Update Flow (Hard Constraint Validation)
+
+**CRITICAL**: When updating the topic tree, you **MUST** follow this double-buffer validation flow to prevent data loss.
+
+#### Why This Flow Exists
+
+LLM output has inherent randomness. Previous topic tree updates may have accidentally lost historical topic IDs. This validation flow uses a deterministic Python script to catch such errors before they are committed.
+
+#### Step 1: Backup Current File
+
+Before making any changes, backup the current topic tree to a temporary file:
+
+```
+cursor-agent-team/ai_workspace/temp/discussion_topics.md.bak
+```
+
+**Action**: Copy the current content of `discussion_topics.md` to the backup file.
+
+#### Step 2: Generate New Content
+
+Write the updated topic tree content to a temporary file:
+
+```
+cursor-agent-team/ai_workspace/temp/new_topic_tree.md
+```
+
+**Action**: Write your updated topic tree content to this temporary file.
+
+#### Step 3: Validate
+
+Call the validation script to check the new content against the backup:
+
+```bash
+python cursor-agent-team/_scripts/validate_topic_tree.py \
+  --old cursor-agent-team/ai_workspace/temp/discussion_topics.md.bak \
+  --new cursor-agent-team/ai_workspace/temp/new_topic_tree.md
+```
+
+**Expected Output**: JSON with `valid`, `errors`, and `warnings` fields.
+
+#### Step 4: Handle Validation Result
+
+**If `valid: true`**:
+1. Copy the content from `new_topic_tree.md` to overwrite `discussion_topics.md`
+2. Delete the temporary files (`discussion_topics.md.bak` and `new_topic_tree.md`)
+3. Flow complete - continue with the discussion
+
+**If `valid: false`**:
+1. **Read the errors**: Check the `errors` array in the JSON output
+2. **Understand the violation**: Each error is prefixed with the rule violated (R1, R2, R3, R4)
+3. **Fix the content**: Modify your `new_topic_tree.md` content to fix the violations
+4. **Retry validation**: Run the validation script again (go back to Step 3)
+5. **Track retry count**: Keep track of consecutive failures
+
+**If consecutive failures reach 3**:
+1. **Restore backup**: Copy `discussion_topics.md.bak` back to `discussion_topics.md`
+2. **Delete temporary files**: Remove `new_topic_tree.md` and `.bak` files
+3. **Report to user**: Display a clear error message:
+   ```
+   ⚠️ 话题树更新失败，已还原到之前的版本。
+   错误原因：[list the errors from the last validation attempt]
+   请注意：话题树未更新，但讨论可以继续。
+   ```
+4. **Continue discussion**: Do not block the discussion due to topic tree update failure
+
+#### Validation Rules Reference
+
+The script checks these rules:
+
+| Rule | Description | Severity |
+|:--|:--|:--|
+| R1 | All historical topic IDs must be preserved | Error |
+| R2 | Cannot use ellipsis ("...", "省略", etc.) to abbreviate history | Error |
+| R3 | Must contain "Last Updated" field | Error |
+| R4 | Status values must be from predefined set | Warning |
+
+#### Important Notes
+
+1. **Never skip this flow**: Even for simple updates, always follow this validation flow
+2. **Temp directory**: Always use `ai_workspace/temp/` for temporary files
+3. **Clean up**: Always delete temporary files after successful validation
+4. **Graceful degradation**: If validation repeatedly fails, continue the discussion without blocking
+
 ### Topic Tree Structure
 
 - **Tree Structure**: Not a simple stack, but a tree structure supporting branches and jumps
@@ -421,11 +504,12 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 ---
 
-**Last Updated**: 2025-12-29
+**Last Updated**: 2026-01-31
 
-**Version**: v1.3
+**Version**: v1.4
 
 **Version History**:
+- v1.4 (2026-01-31): Added Topic Tree Update Flow with Hard Constraint Validation. This uses a Python script (`_scripts/validate_topic_tree.py`) to validate topic tree updates before committing, preventing accidental data loss due to LLM randomness.
 - v1.3 (2025-12-29): Added Intelligent Reminder Rules and Agent Requirement Generation Rules to support `/prompt_engineer` workflow. Updated Topic Structure to include "关联 AGENT-REQUIREMENT" field. Updated AI Workspace directory structure to include `agent_requirements/` directory.
 - v1.2 (2025-12-29): Added execution status fields and plan generation rules to support crew command integration
 - v1.1 (2025-12-29): Added Minimal Action Principle and Context Awareness Rules to prevent over-exploration of project files

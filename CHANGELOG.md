@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-01-31
+
+### Added
+
+- **Hard Constraint Validation System**: New `_scripts/` directory for framework-level validation scripts
+  - `validate_topic_tree.py`: Python script for validating topic tree updates
+  - Validates against 4 rules: ID preservation (R1), no ellipsis (R2), Last Updated field (R3), valid states (R4)
+  - Returns JSON output with `valid`, `errors`, and `warnings` fields
+  - Exit code 0 for success, 1 for failure
+
+- **Double-Buffer Validation Flow**: New topic tree update mechanism in `discussion_assistant.mdc`
+  - Step 1: Backup current file to `ai_workspace/temp/`
+  - Step 2: Generate new content to temporary file
+  - Step 3: Validate using Python script
+  - Step 4: Handle result (commit on success, retry on failure, restore after 3 failures)
+  - Graceful degradation: Discussion continues even if validation fails
+
+### Changed
+
+- Updated `_cursor/rules/discussion_assistant.mdc` to v1.4 with hard constraint validation rules
+- Added `ai_workspace/temp/` directory for temporary files during validation
+
+### Technical Details
+
+- **Architecture**: LLM soft constraints (prompts) + Script hard constraints (Python)
+- **Problem Solved**: Prevents accidental data loss in topic tree due to LLM randomness
+- **Design Principle**: Scripts validate, LLM generates - separation of concerns
+
 ## [0.4.0] - 2026-01-15
 
 ### Added
@@ -115,6 +143,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.5.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.0
+[0.4.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.4.0
 [0.3.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.3.0
 [0.2.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.2.0
 [0.1.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.1.1
