@@ -1,4 +1,9 @@
-ai_workspace/
+# AI Workspace - ignore contents but keep README files for agent guidance
+ai_workspace/*
+!ai_workspace/README.md
+!ai_workspace/*/
+ai_workspace/*/**
+!ai_workspace/*/README.md
 
 # OS files
 .DS_Store
