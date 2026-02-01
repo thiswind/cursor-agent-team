@@ -128,6 +128,73 @@ python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --quiet
 - `0` - 成功
 - `1` - 失败
 
+### tts_speak.py
+
+**用途**：调用 macOS `say` 命令朗读文本（TTS 文字转语音）
+
+**设计原则**：
+- **单一职责**：只负责调用 `say` 命令，不做任何文本预处理
+- **文本整理由智能体负责**：智能体在调用前需将内容转换为可朗读的自然语言
+- **框架级通用功能**：所有角色（/discuss, /crew, /prompt_engineer）都可调用
+- **默认不启用**：仅当用户明确请求语音（"读给我听"、"念出来"等）时才调用
+
+**使用方法**：
+
+```bash
+# 基本用法
+python cursor-agent-team/_scripts/tts_speak.py "要朗读的文本"
+
+# 指定语音
+python cursor-agent-team/_scripts/tts_speak.py --voice "Lili (Premium)" "高质量语音"
+
+# 调整语速（默认 200 词/分钟）
+python cursor-agent-team/_scripts/tts_speak.py --rate 150 "慢速朗读"
+
+# 从标准输入读取（适合长文本）
+echo "长文本内容" | python cursor-agent-team/_scripts/tts_speak.py --stdin
+
+# 列出可用的中文语音
+python cursor-agent-team/_scripts/tts_speak.py --list-voices
+```
+
+**参数说明**：
+
+| 参数 | 说明 |
+|:--|:--|
+| `text` | 要朗读的文本（位置参数） |
+| `--voice`, `-v` | 语音名称（默认 Tingting） |
+| `--rate`, `-r` | 语速，词/分钟（默认 200） |
+| `--stdin` | 从标准输入读取文本 |
+| `--list-voices` | 列出可用的中文语音 |
+
+**输出格式**（JSON）：
+
+```json
+{
+  "success": true,
+  "text_length": 15,
+  "voice": "Tingting",
+  "rate": 200
+}
+```
+
+**退出码**：
+- `0` - 成功
+- `1` - 参数错误或执行失败
+- `2` - 系统不支持（非 macOS）
+
+**智能体使用指南**：
+
+调用此脚本前，智能体需要：
+1. 确认用户明确请求了语音输出
+2. 将内容转换为可朗读的自然语言：
+   - 表格 → "这是一个表格，有N列，第一行是..."
+   - 代码 → "这段代码的作用是..."
+   - 公式 → "这个公式表示 x 等于 y 的平方"
+   - 图片 → "这里有一张图，展示了..."
+3. 移除所有 Markdown 格式符号
+4. 生成纯文本后调用脚本
+
 ## 双缓冲验证流程
 
 LLM 在更新话题树时应遵循以下流程：
@@ -151,5 +218,6 @@ LLM 在更新话题树时应遵循以下流程：
 
 ## 版本历史
 
+- **v1.2.0** (2026-02-01): 添加 tts_speak.py TTS语音输出脚本
 - **v1.1.0** (2026-02-01): 添加 cleanup_topic_tree_temp.py 清理脚本
 - **v1.0.0** (2026-01-31): 初始版本，添加 validate_topic_tree.py
