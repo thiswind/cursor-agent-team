@@ -1,24 +1,24 @@
 #!/usr/bin/env python3
 """
-TTS 语音输出脚本 - 调用 macOS say 命令
+TTS Speech Output Script - Calls macOS say command
 
-职责：只负责调用 say 命令，不做任何文本预处理
-文本整理由调用者（智能体）负责
+Responsibility: Only calls the say command, no text preprocessing
+Text preparation is the caller's (agent's) responsibility
 
-用法:
-    python tts_speak.py "要朗读的文本"
-    python tts_speak.py --voice Tingting "要朗读的文本"
-    python tts_speak.py --rate 180 "要朗读的文本"
-    echo "文本" | python tts_speak.py --stdin
+Usage:
+    python tts_speak.py "text to read aloud"
+    python tts_speak.py --voice Tingting "text to read aloud"
+    python tts_speak.py --rate 180 "text to read aloud"
+    echo "text" | python tts_speak.py --stdin
     python tts_speak.py --list-voices
     python tts_speak.py --check
     python tts_speak.py --force-check
 
-退出码:
-    0 - 成功
-    1 - 参数错误
-    2 - 系统不支持（非 macOS）
-    3 - TTS 不可用（环境检查失败，静默退出）
+Exit codes:
+    0 - Success
+    1 - Parameter error
+    2 - System not supported (not macOS)
+    3 - TTS unavailable (environment check failed, silent exit)
 """
 
 import subprocess
@@ -29,13 +29,13 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-# 缓存文件路径（相对于脚本所在目录的父目录）
+# Cache file path (relative to script's parent directory)
 SCRIPT_DIR = Path(__file__).parent.parent
 CACHE_FILE = SCRIPT_DIR / "ai_workspace" / ".tts_capability.json"
 
 
 def check_tts_capability() -> dict:
-    """检查 TTS 能力"""
+    """Check TTS capability"""
     checks = {
         "platform": platform.system(),
         "os_version": platform.mac_ver()[0] if platform.system() == "Darwin" else None,
@@ -44,7 +44,7 @@ def check_tts_capability() -> dict:
         "test_speak": False
     }
     
-    # 1. 检查是否是 macOS
+    # 1. Check if macOS
     if checks["platform"] != "Darwin":
         return {
             "available": False,
@@ -53,7 +53,7 @@ def check_tts_capability() -> dict:
             **checks
         }
     
-    # 2. 检查 say 命令是否存在
+    # 2. Check if say command exists
     try:
         result = subprocess.run(["which", "say"], capture_output=True)
         checks["say_command"] = result.returncode == 0
@@ -68,7 +68,7 @@ def check_tts_capability() -> dict:
             **checks
         }
     
-    # 3. 检查是否有中文语音
+    # 3. Check if Chinese voice available
     try:
         result = subprocess.run(["say", "-v", "?"], capture_output=True, text=True)
         checks["voice_available"] = "zh_CN" in result.stdout
@@ -83,10 +83,10 @@ def check_tts_capability() -> dict:
             **checks
         }
     
-    # 4. 测试朗读（快速测试，用最快语速）
+    # 4. Test reading (quick test with fastest speech rate)
     try:
         result = subprocess.run(
-            ["say", "-v", "Tingting", "-r", "999", "测试"],
+            ["say", "-v", "Tingting", "-r", "999", "test"],
             capture_output=True,
             timeout=5
         )
@@ -102,147 +102,221 @@ def check_tts_capability() -> dict:
     
     return {
         "available": available,
-        "reason": "All checks passed" if available else "Test speak failed",
+        "reason": None if available else "Speak test failed",
         "checked_at": datetime.now().isoformat(),
         **checks
     }
 
 
-def get_tts_capability(force_check: bool = False) -> dict:
-    """获取 TTS 能力（优先读取缓存）"""
-    
-    # 如果不强制检查，尝试读取缓存
-    if not force_check and CACHE_FILE.exists():
-        try:
-            with open(CACHE_FILE, 'r', encoding='utf-8') as f:
-                return json.load(f)
-        except Exception:
-            pass
-    
-    # 执行检查
-    result = check_tts_capability()
-    
-    # 写入缓存
+def load_cache() -> dict | None:
+    """Load cached TTS capability check result"""
     try:
-        CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
-        with open(CACHE_FILE, 'w', encoding='utf-8') as f:
-            json.dump(result, f, ensure_ascii=False, indent=2)
+        if CACHE_FILE.exists():
+            with open(CACHE_FILE, "r", encoding="utf-8") as f:
+                return json.load(f)
     except Exception:
         pass
+    return None
+
+
+def save_cache(data: dict):
+    """Save TTS capability check result to cache"""
+    try:
+        CACHE_FILE.parent.mkdir(parents=True, exist_ok=True)
+        with open(CACHE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+
+def ensure_tts_available(force_check: bool = False) -> dict:
+    """
+    Ensure TTS is available, check environment on first run
+    
+    Returns:
+        dict: Check result containing 'available' field
+    """
+    # If not forcing check, try to load cache first
+    if not force_check:
+        cached = load_cache()
+        if cached is not None:
+            return cached
+    
+    # Perform check
+    result = check_tts_capability()
+    
+    # Save result
+    save_cache(result)
     
     return result
 
 
-def speak(text: str, voice: str = "Tingting", rate: int = 200) -> dict:
-    """调用 macOS say 命令朗读文本"""
-    
-    if platform.system() != "Darwin":
-        return {"success": False, "error": "此功能仅支持 macOS"}
-    
-    if not text or not text.strip():
-        return {"success": False, "error": "文本为空"}
-    
-    cmd = ["say", "-v", voice, "-r", str(rate), text.strip()]
-    
-    try:
-        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
-        return {"success": True, "text_length": len(text), "voice": voice, "rate": rate}
-    except subprocess.CalledProcessError as e:
-        return {"success": False, "error": f"say 命令执行失败: {e.stderr}"}
-    except FileNotFoundError:
-        return {"success": False, "error": "say 命令不存在"}
-
-
 def list_chinese_voices():
-    """列出可用的中文语音"""
-    if platform.system() != "Darwin":
-        print(json.dumps({"success": False, "error": "此功能仅支持 macOS"}))
-        return 1
-    
+    """List available Chinese voices"""
     try:
         result = subprocess.run(["say", "-v", "?"], capture_output=True, text=True)
-        voices = []
-        for line in result.stdout.split('\n'):
-            if 'zh_' in line:
-                voices.append(line.strip())
+        if result.returncode == 0:
+            voices = []
+            for line in result.stdout.split("\n"):
+                if "zh_CN" in line or "zh_TW" in line or "zh_HK" in line:
+                    voices.append(line.strip())
+            return voices
+    except Exception:
+        pass
+    return []
+
+
+def speak(text: str, voice: str = "Tingting", rate: int = 200) -> dict:
+    """
+    Call macOS say command to read text aloud
+    
+    Args:
+        text: Text to read
+        voice: Voice name (default: Tingting)
+        rate: Speech rate, words/minute (default: 200)
+    
+    Returns:
+        dict: Result containing success, text_length, voice, rate
+    """
+    if not text or not text.strip():
+        return {
+            "success": False,
+            "error": "Text is empty"
+        }
+    
+    try:
+        result = subprocess.run(
+            ["say", "-v", voice, "-r", str(rate), text],
+            capture_output=True,
+            text=True
+        )
         
-        print(json.dumps({
-            "success": True,
-            "voices": voices,
-            "count": len(voices)
-        }, ensure_ascii=False, indent=2))
-        return 0
+        if result.returncode == 0:
+            return {
+                "success": True,
+                "text_length": len(text),
+                "voice": voice,
+                "rate": rate
+            }
+        else:
+            return {
+                "success": False,
+                "error": result.stderr or "say command failed"
+            }
     except Exception as e:
-        print(json.dumps({"success": False, "error": str(e)}))
-        return 1
+        return {
+            "success": False,
+            "error": str(e)
+        }
 
 
 def main():
+    """Main function"""
     parser = argparse.ArgumentParser(
-        description="TTS 语音输出 - 调用 macOS say 命令",
+        description="TTS Speech Output Script - Calls macOS say command",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-示例:
-  python tts_speak.py "你好，这是一个测试"
-  python tts_speak.py --voice "Lili (Premium)" "高质量语音"
-  python tts_speak.py --rate 150 "慢速朗读"
-  echo "长文本内容" | python tts_speak.py --stdin
+Examples:
+  python tts_speak.py "Hello world"
+  python tts_speak.py --voice "Lili (Premium)" "High quality voice"
+  python tts_speak.py --rate 150 "Slow reading"
+  echo "Long text" | python tts_speak.py --stdin
   python tts_speak.py --list-voices
   python tts_speak.py --check
-  python tts_speak.py --force-check
         """
     )
-    parser.add_argument("text", nargs="?", help="要朗读的文本")
-    parser.add_argument("--voice", "-v", default="Tingting", 
-                        help="语音名称（默认 Tingting，可用 --list-voices 查看）")
-    parser.add_argument("--rate", "-r", type=int, default=200, 
-                        help="语速，词/分钟（默认 200）")
-    parser.add_argument("--stdin", action="store_true", 
-                        help="从标准输入读取文本")
-    parser.add_argument("--list-voices", action="store_true", 
-                        help="列出可用的中文语音")
-    parser.add_argument("--check", action="store_true", 
-                        help="检查 TTS 环境并缓存结果")
-    parser.add_argument("--force-check", action="store_true", 
-                        help="强制重新检查（忽略缓存）")
+    
+    parser.add_argument(
+        "text",
+        nargs="?",
+        help="Text to read aloud"
+    )
+    parser.add_argument(
+        "--voice", "-v",
+        default="Tingting",
+        help="Voice name (default: Tingting)"
+    )
+    parser.add_argument(
+        "--rate", "-r",
+        type=int,
+        default=200,
+        help="Speech rate, words/minute (default: 200)"
+    )
+    parser.add_argument(
+        "--stdin",
+        action="store_true",
+        help="Read text from stdin"
+    )
+    parser.add_argument(
+        "--list-voices",
+        action="store_true",
+        help="List available Chinese voices"
+    )
+    parser.add_argument(
+        "--check",
+        action="store_true",
+        help="Check TTS environment and cache result"
+    )
+    parser.add_argument(
+        "--force-check",
+        action="store_true",
+        help="Force environment recheck (ignore cache)"
+    )
     
     args = parser.parse_args()
     
-    # 处理 --check 或 --force-check 参数
-    if args.check or args.force_check:
-        result = get_tts_capability(force_check=args.force_check)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
-        return 0 if result["available"] else 1
-    
-    # 列出语音
+    # Handle --list-voices
     if args.list_voices:
-        return list_chinese_voices()
+        voices = list_chinese_voices()
+        if voices:
+            print("Available Chinese voices:")
+            for v in voices:
+                print(f"  {v}")
+        else:
+            print("No Chinese voices found")
+        sys.exit(0)
     
-    # 获取文本
+    # Handle --check or --force-check
+    if args.check or args.force_check:
+        result = ensure_tts_available(force_check=args.force_check)
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        sys.exit(0 if result["available"] else 3)
+    
+    # Check if system is macOS
+    if platform.system() != "Darwin":
+        result = {
+            "success": False,
+            "error": "This script only runs on macOS"
+        }
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        sys.exit(2)
+    
+    # Check TTS availability (auto-check on first run)
+    capability = ensure_tts_available()
+    if not capability["available"]:
+        # Silent exit, don't print error
+        result = {
+            "success": False,
+            "silent": True,
+            "reason": capability.get("reason", "TTS unavailable")
+        }
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+        sys.exit(3)
+    
+    # Get text
     if args.stdin:
         text = sys.stdin.read()
     elif args.text:
         text = args.text
     else:
         parser.print_help()
-        return 1
+        sys.exit(1)
     
-    # 正常调用前先检查能力
-    capability = get_tts_capability()
-    if not capability.get("available", False):
-        # 静默退出，不报错（但返回特殊退出码）
-        print(json.dumps({
-            "success": False, 
-            "error": "TTS not available on this platform",
-            "silent": True
-        }, ensure_ascii=False))
-        return 3  # 特殊退出码表示环境不支持
-    
-    # 执行朗读
+    # Speak
     result = speak(text, args.voice, args.rate)
-    print(json.dumps(result, ensure_ascii=False))
-    return 0 if result["success"] else 1
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+    sys.exit(0 if result["success"] else 1)
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()

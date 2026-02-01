@@ -1,30 +1,30 @@
 #!/usr/bin/env python3
 """
-AI Workspace 安全删除脚本 - 受限的文件清理工具
+AI Workspace Safe Deletion Script - Restricted File Cleanup Tool
 
-此脚本允许智能体安全地删除 ai_workspace/ 目录内的文件，
-同时确保无法删除目录外的任何内容。
+This script allows agents to safely delete files within the ai_workspace/ directory,
+while ensuring no files outside the directory can be deleted.
 
-安全机制：
-  - 路径硬编码：只能操作 ../ai_workspace/ 目录
-  - 路径验证：所有目标路径必须解析后落在 ai_workspace/ 内
-  - 保护名单：某些关键文件不可删除（除非使用 --force）
-  - 日志记录：所有操作记录到 ai_workspace/temp/cleanup.log
+Safety Mechanisms:
+  - Hardcoded path: Can only operate on ../ai_workspace/ directory
+  - Path validation: All target paths must resolve within ai_workspace/
+  - Protected files: Certain critical files cannot be deleted (unless using --force)
+  - Logging: All operations recorded to ai_workspace/temp/cleanup.log
 
-使用方法:
-    python cleanup_ai_workspace.py [选项]
+Usage:
+    python cleanup_ai_workspace.py [options]
 
-选项:
-    --file <path>       删除指定文件（相对于 ai_workspace/）
-    --dir <path>        删除指定目录（递归删除）
-    --pattern <glob>    按模式删除（如 *.bak, *.tmp）
-    --older-than <days> 删除N天前的文件
-    --dry-run           预览模式，不实际删除
-    --quiet             静默模式，不输出到终端（仍写日志）
-    --force             强制删除（包括保护文件，需谨慎）
-    --help              显示帮助信息
+Options:
+    --file <path>       Delete specified file (relative to ai_workspace/)
+    --dir <path>        Delete specified directory (recursive)
+    --pattern <glob>    Delete by pattern (e.g., *.bak, *.tmp)
+    --older-than <days> Delete files older than N days
+    --dry-run           Preview mode, don't actually delete
+    --quiet             Silent mode, no terminal output (still writes to log)
+    --force             Force delete (including protected files, use with caution)
+    --help              Show help information
 
-输出格式 (JSON):
+Output Format (JSON):
     {
         "success": true/false,
         "deleted": ["file1.md", "temp/file2.txt"],
@@ -35,10 +35,10 @@ AI Workspace 安全删除脚本 - 受限的文件清理工具
         "log_file": "ai_workspace/temp/cleanup.log"
     }
 
-退出码:
-    0 - 成功
-    1 - 失败（参数错误、权限问题等）
-    2 - 部分失败（某些文件删除失败）
+Exit Codes:
+    0 - Success
+    1 - Failure (parameter error, permission issues, etc.)
+    2 - Partial failure (some files failed to delete)
 """
 
 import argparse
@@ -52,7 +52,7 @@ from pathlib import Path
 from typing import List, Set
 
 
-# 保护名单（硬编码，这些文件默认不可删除）
+# Protected files (hardcoded, these files cannot be deleted by default)
 PROTECTED_FILES: Set[str] = {
     "README.md",
     "crew/README.md",
@@ -62,30 +62,30 @@ PROTECTED_FILES: Set[str] = {
     "discussion_topics.md",
 }
 
-# 相对于脚本位置的 ai_workspace 目录路径
+# ai_workspace directory path relative to script location
 WORKSPACE_DIR_RELATIVE = "../ai_workspace"
 
 
 def get_workspace_dir() -> Path:
-    """获取 ai_workspace 目录的绝对路径"""
+    """Get absolute path to ai_workspace directory"""
     script_dir = Path(__file__).parent.resolve()
     workspace_dir = (script_dir / WORKSPACE_DIR_RELATIVE).resolve()
     return workspace_dir
 
 
 def get_log_file(workspace_dir: Path) -> Path:
-    """获取日志文件路径"""
+    """Get log file path"""
     temp_dir = workspace_dir / "temp"
     temp_dir.mkdir(parents=True, exist_ok=True)
     return temp_dir / "cleanup.log"
 
 
 def write_log(log_file: Path, message: str):
-    """写入日志"""
+    """Write to log"""
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     log_entry = f"[{timestamp}] {message}\n"
     
-    # 确保目录存在
+    # Ensure directory exists
     log_file.parent.mkdir(parents=True, exist_ok=True)
     
     with open(log_file, "a", encoding="utf-8") as f:
@@ -94,17 +94,17 @@ def write_log(log_file: Path, message: str):
 
 def is_path_safe(target_path: Path, workspace_dir: Path) -> bool:
     """
-    检查目标路径是否安全（在 ai_workspace 目录内）
+    Check if target path is safe (within ai_workspace directory)
     
-    防止路径逃逸攻击（如 ../../../etc/passwd）
+    Prevents path escape attacks (e.g., ../../../etc/passwd)
     """
     try:
-        # 解析为绝对路径
+        # Resolve to absolute path
         resolved_target = target_path.resolve()
         resolved_workspace = workspace_dir.resolve()
         
-        # 检查目标路径是否在 workspace 目录内
-        # 使用 is_relative_to（Python 3.9+）或手动检查
+        # Check if target path is within workspace directory
+        # Use is_relative_to (Python 3.9+) or manual check
         try:
             resolved_target.relative_to(resolved_workspace)
             return True
@@ -116,19 +116,19 @@ def is_path_safe(target_path: Path, workspace_dir: Path) -> bool:
 
 def is_protected(relative_path: str, force: bool = False) -> bool:
     """
-    检查文件是否在保护名单中
+    Check if file is in protected list
     
     Args:
-        relative_path: 相对于 ai_workspace 的路径
-        force: 是否强制模式（忽略保护）
+        relative_path: Path relative to ai_workspace
+        force: Whether force mode (ignore protection)
     
     Returns:
-        True 如果文件被保护且非强制模式
+        True if file is protected and not force mode
     """
     if force:
         return False
     
-    # 规范化路径分隔符
+    # Normalize path separators
     normalized = relative_path.replace("\\", "/")
     return normalized in PROTECTED_FILES
 
@@ -141,7 +141,7 @@ def delete_file(
     log_file: Path
 ) -> dict:
     """
-    删除单个文件
+    Delete a single file
     
     Returns:
         dict: {"status": "deleted"|"protected"|"skipped"|"error", "path": str, "message": str}
@@ -151,40 +151,40 @@ def delete_file(
     except ValueError:
         relative_path = str(file_path)
     
-    # 检查路径安全
+    # Check path safety
     if not is_path_safe(file_path, workspace_dir):
         write_log(log_file, f"REJECTED: {relative_path} (path escape attempt)")
         return {
             "status": "error",
             "path": relative_path,
-            "message": "路径逃逸被拒绝：目标不在 ai_workspace/ 目录内"
+            "message": "Path escape rejected: target not within ai_workspace/ directory"
         }
     
-    # 检查文件是否存在
+    # Check if file exists
     if not file_path.exists():
         write_log(log_file, f"SKIPPED: {relative_path} (not found)")
         return {
             "status": "skipped",
             "path": relative_path,
-            "message": "文件不存在"
+            "message": "File not found"
         }
     
-    # 检查是否被保护
+    # Check if protected
     if is_protected(relative_path, force):
         write_log(log_file, f"PROTECTED: {relative_path}")
         return {
             "status": "protected",
             "path": relative_path,
-            "message": "文件在保护名单中，使用 --force 强制删除"
+            "message": "File is in protected list, use --force to delete"
         }
     
-    # 执行删除
+    # Execute deletion
     if dry_run:
         write_log(log_file, f"DRY-RUN: Would delete {relative_path}")
         return {
             "status": "deleted",
             "path": relative_path,
-            "message": "预览模式：将被删除"
+            "message": "Preview mode: would be deleted"
         }
     else:
         try:
@@ -196,14 +196,14 @@ def delete_file(
             return {
                 "status": "deleted",
                 "path": relative_path,
-                "message": "已删除"
+                "message": "Deleted"
             }
         except Exception as e:
             write_log(log_file, f"ERROR: Failed to delete {relative_path}: {e}")
             return {
                 "status": "error",
                 "path": relative_path,
-                "message": f"删除失败: {e}"
+                "message": f"Delete failed: {e}"
             }
 
 
@@ -215,10 +215,10 @@ def delete_directory(
     log_file: Path
 ) -> List[dict]:
     """
-    递归删除目录
+    Recursively delete directory
     
     Returns:
-        List[dict]: 每个文件/目录的删除结果
+        List[dict]: Deletion result for each file/directory
     """
     results = []
     
@@ -227,29 +227,29 @@ def delete_directory(
     except ValueError:
         relative_path = str(dir_path)
     
-    # 检查路径安全
+    # Check path safety
     if not is_path_safe(dir_path, workspace_dir):
         write_log(log_file, f"REJECTED: {relative_path} (path escape attempt)")
         return [{
             "status": "error",
             "path": relative_path,
-            "message": "路径逃逸被拒绝：目标不在 ai_workspace/ 目录内"
+            "message": "Path escape rejected: target not within ai_workspace/ directory"
         }]
     
-    # 检查目录是否存在
+    # Check if directory exists
     if not dir_path.exists():
         write_log(log_file, f"SKIPPED: {relative_path} (not found)")
         return [{
             "status": "skipped",
             "path": relative_path,
-            "message": "目录不存在"
+            "message": "Directory not found"
         }]
     
     if not dir_path.is_dir():
-        # 如果是文件，当作文件处理
+        # If it's a file, treat as file
         return [delete_file(dir_path, workspace_dir, dry_run, force, log_file)]
     
-    # 收集目录内所有文件
+    # Collect all files in directory
     protected_found = []
     files_to_delete = []
     
@@ -265,24 +265,24 @@ def delete_directory(
             else:
                 files_to_delete.append(item)
     
-    # 如果有保护文件且非强制模式，拒绝删除整个目录
+    # If protected files found and not force mode, reject deleting entire directory
     if protected_found and not force:
         for p in protected_found:
             results.append({
                 "status": "protected",
                 "path": p,
-                "message": "文件在保护名单中"
+                "message": "File is in protected list"
             })
         write_log(log_file, f"REJECTED: Cannot delete {relative_path} (contains protected files: {protected_found})")
         return results
     
-    # 执行删除
+    # Execute deletion
     if dry_run:
         write_log(log_file, f"DRY-RUN: Would delete directory {relative_path}")
         results.append({
             "status": "deleted",
             "path": relative_path,
-            "message": "预览模式：目录将被删除"
+            "message": "Preview mode: directory would be deleted"
         })
     else:
         try:
@@ -291,14 +291,14 @@ def delete_directory(
             results.append({
                 "status": "deleted",
                 "path": relative_path,
-                "message": "目录已删除"
+                "message": "Directory deleted"
             })
         except Exception as e:
             write_log(log_file, f"ERROR: Failed to delete directory {relative_path}: {e}")
             results.append({
                 "status": "error",
                 "path": relative_path,
-                "message": f"删除失败: {e}"
+                "message": f"Delete failed: {e}"
             })
     
     return results
@@ -312,17 +312,17 @@ def delete_by_pattern(
     log_file: Path
 ) -> List[dict]:
     """
-    按模式删除文件
+    Delete files by pattern
     
     Args:
-        pattern: glob 模式（如 *.bak, temp/*.tmp）
+        pattern: glob pattern (e.g., *.bak, temp/*.tmp)
     
     Returns:
-        List[dict]: 每个文件的删除结果
+        List[dict]: Deletion result for each file
     """
     results = []
     
-    # 使用 glob 查找匹配的文件
+    # Use glob to find matching files
     for item in workspace_dir.rglob(pattern):
         if item.is_file():
             result = delete_file(item, workspace_dir, dry_run, force, log_file)
@@ -342,20 +342,20 @@ def delete_older_than(
     log_file: Path
 ) -> List[dict]:
     """
-    删除 N 天前的文件
+    Delete files older than N days
     
     Args:
-        days: 天数阈值
+        days: Day threshold
     
     Returns:
-        List[dict]: 每个文件的删除结果
+        List[dict]: Deletion result for each file
     """
     results = []
     cutoff_time = datetime.now() - timedelta(days=days)
     
     for item in workspace_dir.rglob("*"):
         if item.is_file():
-            # 获取文件修改时间
+            # Get file modification time
             mtime = datetime.fromtimestamp(item.stat().st_mtime)
             if mtime < cutoff_time:
                 result = delete_file(item, workspace_dir, dry_run, force, log_file)
@@ -368,87 +368,87 @@ def delete_older_than(
 
 
 def main():
-    """主函数"""
+    """Main function"""
     parser = argparse.ArgumentParser(
-        description="AI Workspace 安全删除脚本 - 受限的文件清理工具",
+        description="AI Workspace Safe Deletion Script - Restricted File Cleanup Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
-安全机制:
-  - 路径硬编码：只能操作 ai_workspace/ 目录
-  - 路径验证：防止路径逃逸攻击（如 ../../../etc/passwd）
-  - 保护名单：README.md、discussion_topics.md 等关键文件默认不可删除
-  - 日志记录：所有操作记录到 ai_workspace/temp/cleanup.log
+Safety Mechanisms:
+  - Hardcoded path: Can only operate on ai_workspace/ directory
+  - Path validation: Prevents path escape attacks (e.g., ../../../etc/passwd)
+  - Protected files: README.md, discussion_topics.md, etc. cannot be deleted by default
+  - Logging: All operations recorded to ai_workspace/temp/cleanup.log
 
-示例:
+Examples:
   python cleanup_ai_workspace.py --file temp/old_note.md
   python cleanup_ai_workspace.py --dir temp/test_cleanup
   python cleanup_ai_workspace.py --pattern "*.bak"
   python cleanup_ai_workspace.py --older-than 7
   python cleanup_ai_workspace.py --dry-run --pattern "*.tmp"
-  python cleanup_ai_workspace.py --file README.md --force  # 危险！
+  python cleanup_ai_workspace.py --file README.md --force  # Dangerous!
         """
     )
     
-    # 互斥的删除目标参数
+    # Mutually exclusive deletion target parameters
     target_group = parser.add_mutually_exclusive_group()
     target_group.add_argument(
         "--file",
         type=str,
-        help="删除指定文件（相对于 ai_workspace/）"
+        help="Delete specified file (relative to ai_workspace/)"
     )
     target_group.add_argument(
         "--dir",
         type=str,
-        help="删除指定目录（递归删除）"
+        help="Delete specified directory (recursive)"
     )
     target_group.add_argument(
         "--pattern",
         type=str,
-        help="按 glob 模式删除（如 *.bak, temp/*.tmp）"
+        help="Delete by glob pattern (e.g., *.bak, temp/*.tmp)"
     )
     target_group.add_argument(
         "--older-than",
         type=int,
         metavar="DAYS",
-        help="删除 N 天前的文件"
+        help="Delete files older than N days"
     )
     
-    # 其他选项
+    # Other options
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="预览模式，不实际删除"
+        help="Preview mode, don't actually delete"
     )
     parser.add_argument(
         "--quiet",
         action="store_true",
-        help="静默模式，不输出到终端（仍写日志）"
+        help="Silent mode, no terminal output (still writes to log)"
     )
     parser.add_argument(
         "--force",
         action="store_true",
-        help="强制删除（包括保护文件，需谨慎）"
+        help="Force delete (including protected files, use with caution)"
     )
     
     args = parser.parse_args()
     
-    # 检查是否指定了删除目标
+    # Check if deletion target specified
     if not any([args.file, args.dir, args.pattern, args.older_than]):
         parser.print_help()
         sys.exit(1)
     
-    # 初始化
+    # Initialize
     workspace_dir = get_workspace_dir()
     log_file = get_log_file(workspace_dir)
     
-    # 检查 workspace 目录是否存在
+    # Check if workspace directory exists
     if not workspace_dir.exists():
         result = {
             "success": False,
             "deleted": [],
             "skipped": [],
             "protected": [],
-            "errors": ["ai_workspace/ 目录不存在"],
+            "errors": ["ai_workspace/ directory does not exist"],
             "dry_run": args.dry_run,
             "log_file": str(log_file.relative_to(workspace_dir.parent))
         }
@@ -456,7 +456,7 @@ def main():
             print(json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(1)
     
-    # 执行删除操作
+    # Execute deletion operation
     results = []
     
     if args.file:
@@ -473,7 +473,7 @@ def main():
     elif args.older_than:
         results.extend(delete_older_than(args.older_than, workspace_dir, args.dry_run, args.force, log_file))
     
-    # 汇总结果
+    # Summarize results
     deleted = [r["path"] for r in results if r["status"] == "deleted"]
     skipped = [r["path"] for r in results if r["status"] == "skipped"]
     protected = [r["path"] for r in results if r["status"] == "protected"]
@@ -491,16 +491,16 @@ def main():
         "log_file": str(log_file.relative_to(workspace_dir.parent))
     }
     
-    # 输出结果
+    # Output result
     if not args.quiet:
         print(json.dumps(output, ensure_ascii=False, indent=2))
     
-    # 返回退出码
+    # Return exit code
     if not success:
         if deleted:
-            sys.exit(2)  # 部分失败
+            sys.exit(2)  # Partial failure
         else:
-            sys.exit(1)  # 完全失败
+            sys.exit(1)  # Complete failure
     sys.exit(0)
 
 

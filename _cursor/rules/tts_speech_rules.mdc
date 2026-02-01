@@ -1,204 +1,207 @@
 ---
-description: TTS 语音输出规则 - 框架级通用功能
+description: TTS Speech Output Rules - Framework-level Universal Feature
 globs: 
 alwaysApply: true
 ---
 
-# TTS 语音输出规则
+# TTS Speech Output Rules
 
-此规则为框架级通用规则，适用于所有角色（/discuss、/crew、/prompt_engineer 等）。
+This is a framework-level universal rule, applicable to all roles (/discuss, /crew, /prompt_engineer, etc.).
 
-## 触发条件
+## Trigger Conditions
 
-**只有当用户明确请求语音输出时才调用此功能。**
+**Only invoke this feature when the user explicitly requests voice output.**
 
-### 触发词识别
+### Trigger Phrase Recognition
 
-识别以下用户表达：
-- "读给我听"、"念给我听"、"说给我听"
-- "念出来"、"朗读一下"、"语音播报"
-- "用语音回复"、"语音反馈"
-- "speak"、"read aloud"、"read it out"
+Recognize the following user expressions:
+- "read to me", "say it to me", "tell me"
+- "read aloud", "speak it out", "voice output"
+- "reply with voice", "voice feedback"
+- "读给我听", "念给我听", "说给我听"
+- "念出来", "朗读一下", "语音播报"
+- "用语音回复", "语音反馈"
 
-### 非触发情况
+### Non-Trigger Situations
 
-以下情况**不要**触发语音：
-- 用户没有明确请求语音
-- "我说一下"、"你说的对" 等非请求表达
-- 正常的文字对话
+Do **NOT** trigger voice in these situations:
+- User has not explicitly requested voice
+- Expressions like "I'll say something", "you're right" (not requests)
+- Normal text conversations
 
-### 默认行为
+### Default Behavior
 
-**默认不调用语音**。只有检测到明确的触发词时才调用。
+**Voice is NOT called by default**. Only invoke when explicit trigger phrases are detected.
 
-## 脚本位置
+## Script Location
 
 ```
 cursor-agent-team/_scripts/tts_speak.py
 ```
 
-## 调用方式
+## Usage
 
 ```bash
-# 基本用法
-python cursor-agent-team/_scripts/tts_speak.py "已整理好的文本"
+# Basic usage
+python cursor-agent-team/_scripts/tts_speak.py "prepared text to read"
 
-# 从标准输入读取（适合长文本）
-echo "文本内容" | python cursor-agent-team/_scripts/tts_speak.py --stdin
+# Read from stdin (for long text)
+echo "text content" | python cursor-agent-team/_scripts/tts_speak.py --stdin
 
-# 指定语音（可用语音见 --list-voices）
-python cursor-agent-team/_scripts/tts_speak.py --voice "Lili (Premium)" "文本"
+# Specify voice (see --list-voices for available voices)
+python cursor-agent-team/_scripts/tts_speak.py --voice "Lili (Premium)" "text"
 
-# 调整语速
-python cursor-agent-team/_scripts/tts_speak.py --rate 180 "慢速朗读"
+# Adjust speech rate
+python cursor-agent-team/_scripts/tts_speak.py --rate 180 "slow reading"
 
-# 列出可用中文语音
+# List available Chinese voices
 python cursor-agent-team/_scripts/tts_speak.py --list-voices
 ```
 
-## 内容整理规则（重要）
+## Content Preparation Rules (Important)
 
-**脚本只负责朗读，不做任何文本预处理。**
+**The script only handles reading aloud, no text preprocessing.**
 
-在调用脚本前，**必须**将内容整理为可朗读的自然语言：
+Before calling the script, content **MUST** be prepared as speakable natural language:
 
-### 表格处理
-- ❌ 不要念：`| 列1 | 列2 |` 或 `|---|---|`
-- ✅ 应该说："这是一个表格，有两列。第一行是..."
-- ✅ 或者："我来介绍一下表格内容：第一列是方法名，第二列是准确率..."
+### Table Processing
+- ❌ Do NOT read: `| Column1 | Column2 |` or `|---|---|`
+- ✅ Should say: "This is a table with two columns. The first row is..."
+- ✅ Or: "Let me describe the table: the first column is method name, the second is accuracy..."
 
-### 代码处理
-- ❌ 不要逐字念代码：`for i in range(10):`
-- ✅ 应该说："这段代码的作用是遍历0到9的数字..."
-- ✅ 或者："这是一个循环，它会执行10次..."
+### Code Processing
+- ❌ Do NOT read code literally: `for i in range(10):`
+- ✅ Should say: "This code iterates through numbers 0 to 9..."
+- ✅ Or: "This is a loop that executes 10 times..."
 
-### 公式处理
-- ❌ 不要念 LaTeX：`$x = y^2$` 或 `\frac{a}{b}`
-- ✅ 应该说："这个公式表示 x 等于 y 的平方"
-- ✅ 或者："这里有一个分数，分子是 a，分母是 b"
+### Formula Processing
+- ❌ Do NOT read LaTeX: `$x = y^2$` or `\frac{a}{b}`
+- ✅ Should say: "This formula means x equals y squared"
+- ✅ Or: "This is a fraction where the numerator is a and denominator is b"
 
-### 图片/图表处理
-- ❌ 不要念：`![图片](url)` 或 `<img src="...">`
-- ✅ 应该说："这里有一张图，展示了..."
-- ✅ 如果无法描述，说："这里有一张图片"
+### Image/Chart Processing
+- ❌ Do NOT read: `![image](url)` or `<img src="...">`
+- ✅ Should say: "Here is an image showing..."
+- ✅ If cannot describe, say: "Here is an image"
 
-### Markdown 格式处理
-- 移除所有格式符号：`**`、`##`、`` ` ``、`>`、`-` 列表符号等
-- 保留内容，用自然语气表达
-- 标题可以语气略作强调
+### Markdown Format Processing
+- Remove all format symbols: `**`, `##`, `` ` ``, `>`, `-` list markers, etc.
+- Keep the content, express naturally
+- Headers can be emphasized slightly in tone
 
-### 链接处理
-- ❌ 不要念 URL
-- ✅ 只念链接文字："关于这个话题，可以参考这篇文章"
+### Link Processing
+- ❌ Do NOT read URLs
+- ✅ Only read link text: "About this topic, you can refer to this article"
 
-### 整理后的文本应该
-1. 是**纯文本**，无任何 Markdown 语法
-2. 念出来**听起来自然**
-3. 保留**核心信息**
+### Prepared Text Should Be
+1. **Plain text** with no Markdown syntax
+2. **Sound natural** when read aloud
+3. Retain **core information**
 
-## 使用流程
+## Usage Flow
 
-1. **检测触发词**：用户是否明确请求语音？
-2. **整理内容**：将要朗读的内容转换为自然语言
-3. **调用脚本**：执行 `tts_speak.py`
-4. **处理结果**：如果失败，向用户报告错误
+1. **Detect trigger phrase**: Has user explicitly requested voice?
+2. **Prepare content**: Convert content to be read into natural language
+3. **Call script**: Execute `tts_speak.py`
+4. **Handle result**: If failed, report error to user
 
-## 示例
+## Example
 
-### 用户请求
+### User Request
 ```
-用户: 把这段总结读给我听
+User: Read this summary to me
 ```
 
-### 原始内容（Markdown）
+### Original Content (Markdown)
 ```markdown
-## 主要发现
+## Main Findings
 
-| 方法 | 准确率 |
-|------|--------|
-| A    | 95%    |
-| B    | 98%    |
+| Method | Accuracy |
+|--------|----------|
+| A      | 95%      |
+| B      | 98%      |
 
-这意味着 `方法B` 更优。
+This means `Method B` is better.
 ```
 
-### 整理后（传给脚本）
+### Prepared Text (passed to script)
 ```
-主要发现。这里有一个对比表格：方法A的准确率是95%，方法B的准确率是98%。这意味着方法B更优。
+Main findings. Here is a comparison table: Method A has 95% accuracy, Method B has 98% accuracy. This means Method B is better.
 ```
 
-### 调用命令
+### Command
 ```bash
-python cursor-agent-team/_scripts/tts_speak.py "主要发现。这里有一个对比表格：方法A的准确率是95%，方法B的准确率是98%。这意味着方法B更优。"
+python cursor-agent-team/_scripts/tts_speak.py "Main findings. Here is a comparison table: Method A has 95% accuracy, Method B has 98% accuracy. This means Method B is better."
 ```
 
-## 环境检查机制
+## Environment Check Mechanism
 
-### 自动检查
+### Automatic Check
 
-首次调用 TTS 时，脚本会自动检查环境并缓存结果到：
+On first TTS call, the script automatically checks environment and caches result to:
 ```
 cursor-agent-team/ai_workspace/.tts_capability.json
 ```
 
-### 检查项目
+### Check Items
 
-1. **操作系统**：是否是 macOS (Darwin)
-2. **say 命令**：是否存在
-3. **中文语音**：是否有 zh_CN 语音可用
-4. **功能测试**：能否正常朗读
+1. **Operating System**: Is it macOS (Darwin)
+2. **say command**: Does it exist
+3. **Chinese voice**: Is zh_CN voice available
+4. **Function test**: Can it read aloud normally
 
-### 缓存行为
+### Cache Behavior
 
-- **检查通过**：`available: true`，后续调用正常执行
-- **检查失败**：`available: false`，后续调用静默跳过，返回 `silent: true`
+- **Check passed**: `available: true`, subsequent calls execute normally
+- **Check failed**: `available: false`, subsequent calls silently skip, return `silent: true`
 
-### 智能体行为
+### Agent Behavior
 
-当 TTS 不可用时（`available: false`）：
-- **不要**尝试调用 TTS
-- **不要**每次都告诉用户"语音功能不可用"
-- **静默**使用文字回复即可
-- 只在用户**明确询问**时才说明原因
+When TTS is unavailable (`available: false`):
+- Do **NOT** try to call TTS
+- Do **NOT** tell user "voice feature unavailable" every time
+- **Silently** use text reply instead
+- Only explain when user **explicitly asks**
 
-### 手动检查
+### Manual Check
 
 ```bash
-# 检查当前状态
+# Check current status
 python cursor-agent-team/_scripts/tts_speak.py --check
 
-# 强制重新检查
+# Force recheck
 python cursor-agent-team/_scripts/tts_speak.py --force-check
 
-# 查看缓存内容
+# View cache content
 cat cursor-agent-team/ai_workspace/.tts_capability.json
 ```
 
-### 强制重新检查
+### Force Recheck
 
-删除缓存文件后，下次调用会重新检测：
+Delete cache file, next call will recheck:
 ```bash
 rm cursor-agent-team/ai_workspace/.tts_capability.json
 ```
 
-## 错误处理
+## Error Handling
 
-脚本返回 `success: false` 时：
-- 检查文本是否为空
-- 检查是否在 macOS 上运行
-- 检查语音名称是否正确（用 `--list-voices` 查看）
-- 向用户报告具体错误信息
+When script returns `success: false`:
+- Check if text is empty
+- Check if running on macOS
+- Check if voice name is correct (use `--list-voices` to view)
+- Report specific error message to user
 
-### 退出码说明
+### Exit Code Reference
 
-| 退出码 | 含义 |
+| Exit Code | Meaning |
 |:--|:--|
-| 0 | 成功 |
-| 1 | 参数错误或执行失败 |
-| 2 | 系统不支持（非 macOS） |
-| 3 | TTS 不可用（环境检查失败，静默退出） |
+| 0 | Success |
+| 1 | Parameter error or execution failure |
+| 2 | System not supported (not macOS) |
+| 3 | TTS unavailable (environment check failed, silent exit) |
 
-## 版本历史
+## Version History
 
-- v1.1 (2026-02-01): 添加环境检查机制，支持 `--check` 和 `--force-check` 参数
-- v1.0 (2026-02-01): 初始版本，添加 TTS 语音输出功能
+- v1.2 (2026-02-01): Translated to English for framework consistency
+- v1.1 (2026-02-01): Added environment check mechanism, support `--check` and `--force-check` parameters
+- v1.0 (2026-02-01): Initial version, added TTS voice output feature
