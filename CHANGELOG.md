@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.1] - 2026-02-01
+
+### Added
+
+- **Cleanup Script**: New `_scripts/cleanup_topic_tree_temp.py` for safe temporary file cleanup
+  - Whitelist-based deletion (hardcoded, no arbitrary path exposure)
+  - Only operates on `ai_workspace/temp/` directory
+  - Supports `--dry-run` for preview, `--all` for extended cleanup, `--quiet` for silent mode
+  - JSON output format with `success`, `deleted`, `skipped`, `dry_run` fields
+  - Logs to `ai_workspace/temp/cleanup.log`
+
+### Changed
+
+- Updated `_cursor/rules/discussion_assistant.mdc` to v1.5
+  - Replaced manual `rm` commands with cleanup script calls
+  - Added "Cleanup Script Reference" section with usage examples
+- Updated `_scripts/README.md` to v1.1.0
+  - Added complete documentation for `cleanup_topic_tree_temp.py`
+
+### Technical Details
+
+- **Security**: Whitelist is hardcoded in script, LLM cannot pass arbitrary paths
+- **Authorization Simplification**: User only needs to authorize cleanup script once
+- **Graceful Cleanup**: Script handles both validation success and failure cases
+
 ## [0.5.0] - 2026-01-31
 
 ### Added
@@ -143,6 +168,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.5.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.1
 [0.5.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.0
 [0.4.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.4.0
 [0.3.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.3.0

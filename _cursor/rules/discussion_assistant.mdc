@@ -237,7 +237,10 @@ python cursor-agent-team/_scripts/validate_topic_tree.py \
 
 **If `valid: true`**:
 1. Copy the content from `new_topic_tree.md` to overwrite `discussion_topics.md`
-2. Delete the temporary files (`discussion_topics.md.bak` and `new_topic_tree.md`)
+2. Clean up temporary files by calling the cleanup script:
+   ```bash
+   python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
+   ```
 3. Flow complete - continue with the discussion
 
 **If `valid: false`**:
@@ -249,7 +252,10 @@ python cursor-agent-team/_scripts/validate_topic_tree.py \
 
 **If consecutive failures reach 3**:
 1. **Restore backup**: Copy `discussion_topics.md.bak` back to `discussion_topics.md`
-2. **Delete temporary files**: Remove `new_topic_tree.md` and `.bak` files
+2. **Clean up temporary files**: Call the cleanup script to remove temp files:
+   ```bash
+   python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
+   ```
 3. **Report to user**: Display a clear error message:
    ```
    ⚠️ 话题树更新失败，已还原到之前的版本。
@@ -273,8 +279,34 @@ The script checks these rules:
 
 1. **Never skip this flow**: Even for simple updates, always follow this validation flow
 2. **Temp directory**: Always use `ai_workspace/temp/` for temporary files
-3. **Clean up**: Always delete temporary files after successful validation
+3. **Clean up**: Always use the cleanup script to delete temporary files after validation
 4. **Graceful degradation**: If validation repeatedly fails, continue the discussion without blocking
+
+### Cleanup Script Reference
+
+The cleanup script is located at `cursor-agent-team/_scripts/cleanup_topic_tree_temp.py`.
+
+**When to use**:
+- After successful topic tree validation (to remove backup and temp files)
+- After validation failure and restore (to clean up temp files)
+- When you want to preview what will be deleted (use `--dry-run`)
+
+**Usage examples**:
+
+```bash
+# Normal cleanup after successful validation
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
+
+# Preview before cleanup (optional, for debugging)
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --dry-run
+
+# Silent cleanup (no terminal output)
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --quiet
+```
+
+**Output**: JSON format with `success`, `deleted`, `skipped`, `dry_run` fields.
+
+**Log file**: `ai_workspace/temp/cleanup.log` (managed by the agent, can be deleted when no longer needed)
 
 ### Topic Tree Structure
 
@@ -504,11 +536,12 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 ---
 
-**Last Updated**: 2026-01-31
+**Last Updated**: 2026-02-01
 
-**Version**: v1.4
+**Version**: v1.5
 
 **Version History**:
+- v1.5 (2026-02-01): Added cleanup script reference. Replaced `rm` commands with `cleanup_topic_tree_temp.py` script calls for safer temporary file cleanup.
 - v1.4 (2026-01-31): Added Topic Tree Update Flow with Hard Constraint Validation. This uses a Python script (`_scripts/validate_topic_tree.py`) to validate topic tree updates before committing, preventing accidental data loss due to LLM randomness.
 - v1.3 (2025-12-29): Added Intelligent Reminder Rules and Agent Requirement Generation Rules to support `/prompt_engineer` workflow. Updated Topic Structure to include "关联 AGENT-REQUIREMENT" field. Updated AI Workspace directory structure to include `agent_requirements/` directory.
 - v1.2 (2025-12-29): Added execution status fields and plan generation rules to support crew command integration

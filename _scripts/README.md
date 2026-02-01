@@ -77,6 +77,57 @@ python _scripts/validate_topic_tree.py \
 - `0` - 验证通过（valid=true）
 - `1` - 验证失败（valid=false）
 
+### cleanup_topic_tree_temp.py
+
+**用途**：清理话题树验证流程产生的临时文件
+
+**安全机制**：
+- **白名单限制**：只能删除预定义的文件名（硬编码）
+- **路径限制**：只能操作 `ai_workspace/temp/` 目录
+- **无任意路径暴露**：LLM 无法通过参数删除其他文件
+
+**使用方法**：
+
+```bash
+# 基本用法：清理话题树临时文件
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
+
+# 预览模式：只显示将删除的文件，不实际删除
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --dry-run
+
+# 扩展清理：包括所有 .bak 和 .tmp 文件
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --all
+
+# 静默模式：不输出到终端（仍写日志）
+python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --quiet
+```
+
+**参数说明**：
+
+| 参数 | 说明 |
+|:--|:--|
+| `--dry-run` | 预览模式，只显示将删除的文件 |
+| `--all` | 扩展清理，包括 *.bak 和 *.tmp |
+| `--quiet` | 静默模式，不输出到终端 |
+
+**输出格式**（JSON）：
+
+```json
+{
+  "success": true,
+  "deleted": ["discussion_topics.md.bak"],
+  "skipped": [],
+  "dry_run": false,
+  "log_file": "ai_workspace/temp/cleanup.log"
+}
+```
+
+**日志位置**：`ai_workspace/temp/cleanup.log`
+
+**退出码**：
+- `0` - 成功
+- `1` - 失败
+
 ## 双缓冲验证流程
 
 LLM 在更新话题树时应遵循以下流程：
@@ -100,4 +151,5 @@ LLM 在更新话题树时应遵循以下流程：
 
 ## 版本历史
 
+- **v1.1.0** (2026-02-01): 添加 cleanup_topic_tree_temp.py 清理脚本
 - **v1.0.0** (2026-01-31): 初始版本，添加 validate_topic_tree.py
