@@ -224,6 +224,49 @@ cursor-agent-team/ai_workspace/crew/
 - Suggested retention: Keep files from last 7 days
 - Important execution results should be reflected in plan files and discussion records
 
+### AI Workspace Cleanup Script
+
+For cleaning up files in `ai_workspace/`, use the dedicated cleanup script:
+
+**Script Location**: `cursor-agent-team/_scripts/cleanup_ai_workspace.py`
+
+**When to Use**:
+- Cleaning up old session directories
+- Removing temporary files after execution
+- Batch cleaning by pattern or age
+
+**Usage Examples**:
+
+```bash
+# Delete old session directory
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dir crew/sessions/session_20260101_120000
+
+# Delete files older than 7 days
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --older-than 7
+
+# Preview before deleting
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dry-run --pattern "*.bak"
+
+# Delete specific file
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --file crew/temp_file.md
+```
+
+**Parameters**:
+
+| Parameter | Description |
+|:--|:--|
+| `--file <path>` | Delete specific file (relative to ai_workspace/) |
+| `--dir <path>` | Delete directory recursively |
+| `--pattern <glob>` | Delete files matching pattern |
+| `--older-than <days>` | Delete files older than N days |
+| `--dry-run` | Preview mode |
+| `--quiet` | Silent mode |
+| `--force` | Force delete (including protected files) |
+
+**Protected Files**: README.md, discussion_topics.md, and other core files are protected by default.
+
+**Safety**: Script only operates within `ai_workspace/`, path escape attempts are rejected.
+
 ## Execution Rules
 
 ### Strict Plan Adherence
@@ -327,11 +370,12 @@ The Crew must update discussion records after execution:
 
 ---
 
-**Last Updated**: 2025-12-30
+**Last Updated**: 2026-02-01
 
-**Version**: v1.1.0
+**Version**: v1.2.0
 
 **Version History**:
+- v1.2.0 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/.
 - v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced pre-execution search with general web search alongside academic search, added runtime_research.md workspace file
 - v1.0.0 (2025-12-29): Initial version
 

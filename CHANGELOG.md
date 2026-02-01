@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.4] - 2026-02-01
+
+### Added
+
+- **AI Workspace Cleanup Script**: New `_scripts/cleanup_ai_workspace.py` for safe file deletion within ai_workspace/
+  - Path safety: Only operates within `ai_workspace/` directory, path escape attempts are rejected
+  - Protected files: README.md, discussion_topics.md, and other core files are protected by default
+  - Flexible deletion: Support `--file`, `--dir`, `--pattern`, `--older-than` parameters
+  - Preview mode: `--dry-run` to preview what will be deleted
+  - Force mode: `--force` to delete protected files (use with caution)
+  - Logging: All operations recorded to `ai_workspace/temp/cleanup.log`
+
+### Changed
+
+- Updated `_cursor/rules/discussion_assistant.mdc` to v1.6
+  - Added "AI Workspace Cleanup Script" section with complete usage guide
+- Updated `_cursor/rules/crew_assistant.mdc` to v1.2.0
+  - Added "AI Workspace Cleanup Script" section for crew sessions cleanup
+- Updated `_scripts/README.md` to v1.4.0
+  - Added complete documentation for `cleanup_ai_workspace.py`
+
+### Technical Details
+
+- **Security**: Path is hardcoded, all paths resolved and validated before deletion
+- **Authorization Simplification**: User authorizes cleanup script once, AI can freely manage workspace
+- **Protected Files**: Core files (README, discussion_topics, etc.) cannot be deleted without --force
+- **Exit Codes**: 0=success, 1=complete failure, 2=partial failure
+
 ## [0.5.3] - 2026-02-01
 
 ### Added
@@ -204,6 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.5.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.4
 [0.5.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.3
 [0.5.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.2
 [0.5.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.1

@@ -58,6 +58,69 @@ cursor-agent-team/ai_workspace/
 - AI should check and clean old files at the start of each session
 - Important content must be manually saved to permanent locations
 
+### AI Workspace Cleanup Script
+
+For cleaning up files in `ai_workspace/`, use the dedicated cleanup script:
+
+**Script Location**: `cursor-agent-team/_scripts/cleanup_ai_workspace.py`
+
+**When to Use**:
+- Cleaning up old temporary files (e.g., older than 7 days)
+- Removing specific files or directories no longer needed
+- Cleaning up test files or temporary analysis results
+- Batch cleaning by pattern (e.g., all `.bak` files)
+
+**Usage Examples**:
+
+```bash
+# Delete a specific file
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --file temp/old_note.md
+
+# Delete a directory
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dir temp/old_analysis
+
+# Delete files by pattern
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --pattern "*.bak"
+
+# Delete files older than 7 days
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --older-than 7
+
+# Preview before deleting (recommended for first use)
+python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dry-run --pattern "*.tmp"
+```
+
+**Parameters**:
+
+| Parameter | Description |
+|:--|:--|
+| `--file <path>` | Delete specific file (relative to ai_workspace/) |
+| `--dir <path>` | Delete directory recursively |
+| `--pattern <glob>` | Delete files matching pattern (e.g., *.bak) |
+| `--older-than <days>` | Delete files older than N days |
+| `--dry-run` | Preview mode, show what would be deleted |
+| `--quiet` | Silent mode, no terminal output |
+| `--force` | Force delete (including protected files) |
+
+**Protected Files** (cannot be deleted without `--force`):
+- `README.md`
+- `crew/README.md`
+- `plans/README.md`
+- `plans/INDEX.md`
+- `prompt_engineer/README.md`
+- `discussion_topics.md`
+
+**Safety Mechanisms**:
+- Path is hardcoded to only operate within `ai_workspace/`
+- Path escape attempts (e.g., `../`) are rejected
+- Protected files are safe by default
+- All operations are logged to `ai_workspace/temp/cleanup.log`
+
+**Best Practices**:
+1. Use `--dry-run` first to preview what will be deleted
+2. Use `--older-than 7` for regular cleanup of old files
+3. Never use `--force` unless absolutely necessary
+4. Check the log file if you need to audit deletions
+
 ## Information Retrieval Rules
 
 ### Automatic Search Trigger Conditions
@@ -538,9 +601,10 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 **Last Updated**: 2026-02-01
 
-**Version**: v1.5
+**Version**: v1.6
 
 **Version History**:
+- v1.6 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/, with protected files, path validation, and logging.
 - v1.5 (2026-02-01): Added cleanup script reference. Replaced `rm` commands with `cleanup_topic_tree_temp.py` script calls for safer temporary file cleanup.
 - v1.4 (2026-01-31): Added Topic Tree Update Flow with Hard Constraint Validation. This uses a Python script (`_scripts/validate_topic_tree.py`) to validate topic tree updates before committing, preventing accidental data loss due to LLM randomness.
 - v1.3 (2025-12-29): Added Intelligent Reminder Rules and Agent Requirement Generation Rules to support `/prompt_engineer` workflow. Updated Topic Structure to include "关联 AGENT-REQUIREMENT" field. Updated AI Workspace directory structure to include `agent_requirements/` directory.
