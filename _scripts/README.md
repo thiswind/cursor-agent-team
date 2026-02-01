@@ -155,6 +155,12 @@ echo "长文本内容" | python cursor-agent-team/_scripts/tts_speak.py --stdin
 
 # 列出可用的中文语音
 python cursor-agent-team/_scripts/tts_speak.py --list-voices
+
+# 检查 TTS 环境
+python cursor-agent-team/_scripts/tts_speak.py --check
+
+# 强制重新检查（忽略缓存）
+python cursor-agent-team/_scripts/tts_speak.py --force-check
 ```
 
 **参数说明**：
@@ -166,6 +172,20 @@ python cursor-agent-team/_scripts/tts_speak.py --list-voices
 | `--rate`, `-r` | 语速，词/分钟（默认 200） |
 | `--stdin` | 从标准输入读取文本 |
 | `--list-voices` | 列出可用的中文语音 |
+| `--check` | 检查 TTS 环境并缓存结果 |
+| `--force-check` | 强制重新检查（忽略缓存） |
+
+**环境检查**：
+
+首次调用时自动检查环境，结果缓存到 `ai_workspace/.tts_capability.json`。
+
+检查项目：
+- 操作系统是否为 macOS
+- say 命令是否存在
+- 中文语音是否可用
+- 能否正常朗读
+
+如果检查失败，脚本会静默退出（退出码 3），不会报错。
 
 **输出格式**（JSON）：
 
@@ -182,6 +202,7 @@ python cursor-agent-team/_scripts/tts_speak.py --list-voices
 - `0` - 成功
 - `1` - 参数错误或执行失败
 - `2` - 系统不支持（非 macOS）
+- `3` - TTS 不可用（环境检查失败，静默退出）
 
 **智能体使用指南**：
 
@@ -218,6 +239,7 @@ LLM 在更新话题树时应遵循以下流程：
 
 ## 版本历史
 
+- **v1.3.0** (2026-02-01): tts_speak.py 添加环境检查机制（--check, --force-check）
 - **v1.2.0** (2026-02-01): 添加 tts_speak.py TTS语音输出脚本
 - **v1.1.0** (2026-02-01): 添加 cleanup_topic_tree_temp.py 清理脚本
 - **v1.0.0** (2026-01-31): 初始版本，添加 validate_topic_tree.py

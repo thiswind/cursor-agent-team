@@ -47,6 +47,7 @@ With these three core roles installed, the team can operate. The Prompt Engineer
 - **Rule Management**: Persistent rules via `.mdc` files for consistent behavior
 - **Extensible**: Create custom roles via `/prompt_engineer`
 - **Workflow Automation**: Complete discussion → planning → execution workflow
+- **TTS Speech Output**: Voice feedback via macOS `say` command (with automatic platform detection)
 
 ## Team Roles
 
@@ -139,6 +140,18 @@ When updating the topic tree:
 4. **Commit or Rollback**: Apply changes on success, restore backup on failure
 
 This ensures data integrity even if the LLM makes mistakes.
+
+### Text-to-Speech (TTS) Output
+
+The framework includes optional TTS functionality for voice feedback:
+
+- **Trigger**: Only activated when user explicitly requests ("读给我听", "念出来", etc.)
+- **Platform**: macOS only (uses native `say` command)
+- **Auto-Detection**: Automatically checks platform compatibility on first use
+- **Silent Fallback**: On non-macOS systems, silently falls back to text output
+- **Content Preparation**: AI converts Markdown to natural speech before speaking
+
+**Script Location**: `cursor-agent-team/_scripts/tts_speak.py`
 
 ## Usage Example
 
@@ -246,7 +259,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.5.1**
+Current version: **v0.5.3**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 

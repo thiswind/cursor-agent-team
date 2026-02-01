@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.3] - 2026-02-01
+
+### Added
+
+- **TTS Environment Check**: Automatic environment detection for cross-platform compatibility
+  - Auto-checks on first call: macOS detection, `say` command availability, Chinese voice availability
+  - Results cached to `ai_workspace/.tts_capability.json`
+  - New `--check` parameter for manual environment check
+  - New `--force-check` parameter to ignore cache
+  - Silent exit (code 3) when TTS unavailable, no error message
+
+### Technical Details
+
+- **Caching**: Environment check results are cached to avoid repeated checks
+- **Silent Failure**: On non-macOS systems, TTS silently skips without errors
+- **Exit Codes**: 0=success, 1=error, 2=not macOS, 3=TTS unavailable (cached)
+
 ## [0.5.2] - 2026-02-01
 
 ### Added
@@ -187,6 +204,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.5.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.3
 [0.5.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.2
 [0.5.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.1
 [0.5.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.0
