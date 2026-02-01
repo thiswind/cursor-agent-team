@@ -15,6 +15,20 @@ cursor-agent-team is a **lightweight, IDE-integrated multi-agent collaboration f
 
 For detailed classification analysis, see [Classification Analysis](ai_workspace/cursor_agent_team_classification_analysis.md).
 
+## Relationship with Cursor 2.0
+
+Cursor 2.0 (released October 2025) introduced native multi-agent support with up to 8 parallel agents. This framework complements Cursor's native features:
+
+| Aspect | Cursor 2.0 Native | cursor-agent-team |
+|--------|------------------|-------------------|
+| **Focus** | General coding assistance | Structured workflow (discuss→plan→execute) |
+| **Agent Types** | Generic agents | Specialized roles (Discussion Partner, Crew, Prompt Engineer) |
+| **State Management** | Per-session | Persistent topic tree with validation |
+| **Team Expansion** | Manual | `/prompt_engineer` creates new roles |
+| **Validation** | None | Script-based hard constraints |
+
+**Best Use Together**: Use cursor-agent-team for structured research/development workflows while leveraging Cursor 2.0's parallel agents for independent coding tasks.
+
 ## Overview
 
 This framework installs three core Cursor commands (roles) into your project:
@@ -53,15 +67,16 @@ The HR and trainer. Creates and maintains new roles (Cursor commands). When you 
 
 ## Comparison with Similar Products
 
-| Feature | cursor-agent-team | LangChain/AutoGen | GitHub Copilot |
-|---------|------------------|-------------------|----------------|
-| **Positioning** | IDE Extension Framework | General Application Framework | Code Completion Tool |
-| **Integration** | IDE Native | External API/Library | IDE Plugin |
-| **Multi-Agent** | ✅ Yes | ✅ Yes | ❌ No |
-| **Role System** | ✅ Commands as Roles | ✅ Explicit Definition | ❌ No |
-| **Workflow** | ✅ Discussion→Execution | ✅ Configurable | ❌ No |
-| **Lightweight** | ✅ Yes | ❌ No | ✅ Yes |
-| **Extensible** | ✅ Yes | ✅ Yes | ❌ No |
+| Feature | cursor-agent-team | LangChain/AutoGen | Swarms AI | GitHub Copilot |
+|---------|------------------|-------------------|-----------|----------------|
+| **Positioning** | IDE Extension Framework | General Application Framework | Enterprise Multi-Agent | Code Completion Tool |
+| **Integration** | IDE Native | External API/Library | External API | IDE Plugin |
+| **Multi-Agent** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
+| **Role System** | ✅ Commands as Roles | ✅ Explicit Definition | ✅ Configurable | ❌ No |
+| **Workflow** | ✅ Discussion→Execution | ✅ Configurable | ✅ Hierarchical | ❌ No |
+| **Lightweight** | ✅ Yes | ❌ No | ❌ No | ✅ Yes |
+| **Hard Constraints** | ✅ Script Validation | ❌ No | ❌ No | ❌ No |
+| **Extensible** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
 
 ## Additional Features
 
@@ -89,6 +104,41 @@ A conversion tool for [Spec-Kit](https://github.com/github/spec-kit) workflow in
 **Note**: This is an additional feature, not a core team role. It only processes software development tasks and automatically rejects non-software development plans.
 
 For more information about Spec-Kit, visit the [Spec-Kit repository](https://github.com/github/spec-kit).
+
+## Technical Highlights (v0.5.x)
+
+### Hard Constraint Validation System
+
+The framework uses a hybrid architecture combining LLM soft constraints (prompts) with script hard constraints (Python):
+
+```
+┌─────────────────────────────────────────────────┐
+│                    LLM Layer                    │
+│   (Soft Constraints: Prompt rules)              │
+└────────────────────┬────────────────────────────┘
+                     │ Calls
+                     ▼
+┌─────────────────────────────────────────────────┐
+│                  Script Layer                   │
+│   (Hard Constraints: Python scripts)            │
+│   - validate_topic_tree.py                      │
+│   - cleanup_topic_tree_temp.py                  │
+└─────────────────────────────────────────────────┘
+```
+
+**Why This Matters**: LLM output has inherent randomness. Critical operations (like topic tree updates) use deterministic Python scripts to validate outputs before committing, preventing accidental data loss.
+
+**Scripts Location**: `cursor-agent-team/_scripts/`
+
+### Double-Buffer Validation Flow
+
+When updating the topic tree:
+1. **Backup**: Copy current file to temp directory
+2. **Generate**: Write new content to temp file
+3. **Validate**: Run validation script
+4. **Commit or Rollback**: Apply changes on success, restore backup on failure
+
+This ensures data integrity even if the LLM makes mistakes.
 
 ## Usage Example
 
@@ -196,7 +246,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.3.0**
+Current version: **v0.5.1**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
