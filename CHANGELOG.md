@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.3] - 2026-02-03
+
+### Added
+- **Inspiration Capital Integration**: Integrated Gleaning and Wandering aspects into commands and rules
+  - **Commands**:
+    - `/discuss`: Added Step 0.5 (Wandering) for exploratory mode, Step 10 (Gleaning) before ending response
+    - `/crew`: Added Step 9 (Gleaning) after execution complete
+  - **Rules**:
+    - `discussion_assistant.mdc`: Added Cross-Cutting Concerns section with Wandering and Gleaning aspects
+    - `crew_assistant.mdc`: Added Cross-Cutting Concerns section with Gleaning aspect
+    - New `gleaning.mdc`: Post-execution aspect for collecting valuable insights
+    - New `wandering.mdc`: Pre-exploration aspect for random card browsing
+
+### Changed
+- Updated `_cursor/commands/discuss.md` from v3.5.1 to v3.6.0
+- Updated `_cursor/commands/crew.md` from v1.2.0 to v1.3.0
+- Updated `_cursor/rules/discussion_assistant.mdc` from v1.7 to v1.8
+- Updated `_cursor/rules/crew_assistant.mdc` from v1.3.0 to v1.4.0
+
+### Technical Details
+- **AOP Pattern**: Cross-Cutting Concerns implemented as aspects
+  - Gleaning: Triggered AFTER task completion for all commands
+  - Wandering: Triggered BEFORE exploratory `/discuss` sessions only
+- **Design Principle**: `/crew` does NOT use Wandering - execution requires focus
+
 ## [0.7.2] - 2026-02-03
 
 ### Changed
@@ -346,6 +371,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.3
 [0.7.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.2
 [0.7.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.1
 [0.7.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.0

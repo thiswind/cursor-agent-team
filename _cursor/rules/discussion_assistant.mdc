@@ -2,6 +2,40 @@
 
 > **Purpose**: Persistent rules for the Discussion Partner (讨论伙伴) - these rules are always active and automatically injected.
 
+## Cross-Cutting Concerns (横切关注点)
+
+This role incorporates the following AOP-style aspects from `inspiration_capital` system:
+
+| Aspect | Rule File | Trigger Point | Applies To |
+|--------|-----------|---------------|------------|
+| **Wandering (漫游)** | `wandering.mdc` | Before exploratory discussion | `/discuss` in exploration mode only |
+| **Gleaning (拾穗)** | `gleaning.mdc` | After discussion ends | All `/discuss` sessions |
+
+### Wandering Aspect (漫游切面)
+
+**When**: At the start of **exploratory** discussions (brainstorming, casual chat, open-ended questions).
+
+**NOT When**: Focused tasks, explicit questions, "where are we?" type questions, or when user requests skipping.
+
+**Behavior**: Follow rules in `wandering.mdc`:
+1. Run `draw_cards.py --count 3` to get random inspiration cards
+2. Scan for relevance to current discussion
+3. If relevant: briefly mention the card
+4. If not relevant: proceed silently
+
+### Gleaning Aspect (拾穗切面)
+
+**When**: At the end of **any** `/discuss` session, before final response.
+
+**Behavior**: Follow rules in `gleaning.mdc`:
+1. Reflect: Any valuable insight worth remembering?
+2. If yes: Run `create_card.py` and fill content
+3. If no: Skip silently (don't mention gleaning)
+
+**Quality over quantity**: Do NOT over-collect. Only capture truly valuable insights.
+
+---
+
 ## AI Workspace Rules
 
 ### Directory Structure
@@ -601,9 +635,10 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.7
+**Version**: v1.8
 
 **Version History**:
+- v1.8 (2026-02-03): Added Cross-Cutting Concerns section with Wandering and Gleaning aspects from inspiration_capital system.
 - v1.7 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.6 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/, with protected files, path validation, and logging.
 - v1.5 (2026-02-01): Added cleanup script reference. Replaced `rm` commands with `cleanup_topic_tree_temp.py` script calls for safer temporary file cleanup.

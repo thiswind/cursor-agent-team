@@ -66,7 +66,20 @@ When you use `/discuss`, the AI will follow this workflow:
   ```
 - **Display output**: Show the preflight check results to user
 - **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
-- **Then proceed**: After preflight check passes, continue to Step 1
+- **Then proceed**: After preflight check passes, continue to Step 0.5
+
+### Step 0.5: Wandering (漫游) - Exploratory Mode Only
+- **Check mode**: Is this an exploratory discussion (brainstorming, casual chat, open-ended question)?
+- **If exploratory mode**:
+  - Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3`
+  - Scan drawn cards for relevance to current discussion
+  - If any card is relevant: briefly mention it ("漫游时发现一张可能相关的卡片：[简述]")
+  - If no card is relevant: proceed silently
+- **Skip wandering if**:
+  - Focused task or explicit question (e.g., "review this code", "where are we?")
+  - User requests skipping inspiration phase
+  - Cards directory is empty
+- **Reference**: See `.cursor/rules/wandering.mdc` for detailed rules
 
 ### Step 1: Manage Topic Tree (CRITICAL)
 - **Read topic tree**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
@@ -189,6 +202,19 @@ AI will automatically search when:
 - **Requirement numbering**: Format `AGENT-REQUIREMENT-[话题ID]-[序号]` (e.g., AGENT-REQUIREMENT-A-001)
 - **Requirement content**: Include requirement information, role design details, discussion points, processing records
 - **CRITICAL**: `/discuss` only generates requirements, does NOT execute them. Execution is handled by `/prompt_engineer` command.
+
+### Step 10: Gleaning (拾穗) - Before Ending Response
+- **When**: Before ending the discussion response
+- **Reflect**: Ask yourself:
+  - Any method/technique worth remembering?
+  - Any unexpected discovery?
+  - Any insight that might be useful later?
+- **If valuable insight found**:
+  1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/discuss" --trigger "[what triggered this insight]"`
+  2. Fill in the `[内容待填写]` section with the insight
+- **If no valuable insight**: Skip silently (don't mention gleaning)
+- **Reference**: See `.cursor/rules/gleaning.mdc` for detailed rules
+- **Quality over quantity**: Do NOT over-collect
 
 ## Response Format
 
@@ -360,9 +386,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.5.1 (Updated: 2026-02-03)
+**Version**: v3.6.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v3.6.0 (2026-02-03): Added Inspiration Capital aspects (Wandering and Gleaning) to workflow. Step 0.5 adds Wandering for exploratory mode. Step 10 adds Gleaning before ending response.
 - v3.5.1 (2026-02-03): Added explicit reference to Topic Tree Update Flow (validation) in Step 1 Workflow. Ensures AI follows double-buffer validation when updating topic tree.
 - v3.5.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
 - v3.4.0 (2025-12-29): Added Step 8.5 (Intelligent Reminder) and Step 8.6 (Generate Agent Requirement Document) to support `/prompt_engineer` workflow. Added intelligent reminder feature that suggests generating agent requirements when discussion involves role creation.

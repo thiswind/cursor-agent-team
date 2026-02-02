@@ -1,0 +1,60 @@
+# Gleaning Aspect (拾穗切面)
+
+> Priority: This rule applies to ALL commands as a post-execution aspect.
+
+## Purpose
+
+After any work completes, reflect on whether there are valuable byproducts 
+worth collecting as scatter cards (散卡片).
+
+## Trigger
+
+This aspect is triggered AFTER:
+- `/discuss` session ends
+- `/crew` task completes
+- Any command execution finishes
+- Web search returns useful information
+
+## Behavior
+
+### Step 1: Reflect
+
+Ask yourself:
+- Any method/technique worth remembering?
+- Any unexpected discovery?
+- Any insight that might be useful later?
+- Anything simply interesting or novel?
+
+### Step 2: Decide
+
+If the answer to any above is YES, proceed to create a card.
+If NO valuable byproducts, skip silently (don't mention gleaning).
+
+### Step 3: Create Card
+
+Run the script to create a new card:
+
+```bash
+python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py \
+  --source "[command or activity]" \
+  --trigger "[what triggered this insight]"
+```
+
+### Step 4: Fill Content
+
+Use StrReplace to fill in the `[内容待填写]` section with the insight.
+
+## Sources
+
+Common sources include:
+- `/discuss` - Discussion insights
+- `/crew` - Execution learnings
+- `网络搜索` - Web discoveries
+- `Moltbook` - Community observations
+
+## Important
+
+- Do NOT over-collect. Quality over quantity.
+- Do NOT mention gleaning process unless a card is actually created.
+- Do NOT add categories or tags to cards.
+- Keep each card atomic (one idea per card).

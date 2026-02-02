@@ -2,6 +2,29 @@
 
 > **Purpose**: Persistent rules for the Crew Member (万能打工人) - these rules are always active and automatically injected.
 
+## Cross-Cutting Concerns (横切关注点)
+
+This role incorporates the following AOP-style aspects from `inspiration_capital` system:
+
+| Aspect | Rule File | Trigger Point | Applies To |
+|--------|-----------|---------------|------------|
+| **Gleaning (拾穗)** | `gleaning.mdc` | After task completion | All `/crew` executions |
+
+### Gleaning Aspect (拾穗切面)
+
+**When**: At the end of **any** `/crew` execution, after recording results.
+
+**NOT When**: `/crew` does NOT use Wandering (漫游) - execution requires focus.
+
+**Behavior**: Follow rules in `gleaning.mdc`:
+1. Reflect: Any method/technique/discovery worth remembering?
+2. If yes: Run `create_card.py` and fill content
+3. If no: Skip silently (don't mention gleaning)
+
+**Quality over quantity**: Do NOT over-collect. Only capture truly valuable insights from execution.
+
+---
+
 ## Plan Reading Rules
 
 ### Plan File Location
@@ -372,9 +395,10 @@ The Crew must update discussion records after execution:
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.3.0
+**Version**: v1.4.0
 
 **Version History**:
+- v1.4.0 (2026-02-03): Added Cross-Cutting Concerns section with Gleaning aspect from inspiration_capital system.
 - v1.3.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.2.0 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/.
 - v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced pre-execution search with general web search alongside academic search, added runtime_research.md workspace file

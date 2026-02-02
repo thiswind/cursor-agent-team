@@ -158,6 +158,20 @@ When you use `/crew`, the AI will follow this workflow:
   - Add execution record to plan file
 - **Save updates**: Save all updated files
 
+### Step 9: Gleaning (拾穗) - After Execution Complete
+- **When**: After execution is complete and records are updated
+- **Reflect**: Ask yourself:
+  - Any method/technique discovered during execution worth remembering?
+  - Any unexpected solution found through runtime search?
+  - Any insight that might be useful for future tasks?
+- **If valuable insight found**:
+  1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/crew" --trigger "[what triggered this insight]"`
+  2. Fill in the `[内容待填写]` section with the insight
+- **If no valuable insight**: Skip silently (don't mention gleaning)
+- **Reference**: See `.cursor/rules/gleaning.mdc` for detailed rules
+- **Quality over quantity**: Do NOT over-collect
+- **Note**: `/crew` does NOT use Wandering (漫游) - execution requires focus
+
 ## Response Format
 
 The AI will structure responses as:
@@ -263,9 +277,10 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v1.2.0 (Updated: 2026-02-03)
+**Version**: v1.3.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v1.3.0 (2026-02-03): Added Gleaning aspect to workflow. Step 9 adds Gleaning after execution complete to capture valuable insights from execution.
 - v1.2.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
 - v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced research phase with general web search alongside academic search
 - v1.0.0 (2025-12-29): Initial creation - comprehensive execution command with plan reading, research, document reading, and record updating
