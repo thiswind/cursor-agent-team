@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.4] - 2026-02-03
+
+### Added
+- **Topic Tree Update Command**: One-step update with automatic backup, validation, and commit/rollback
+  - New `update` subcommand: `python validate_topic_tree.py update --stdin`
+  - Supports `--content`, `--file`, or `--stdin` input methods
+  - `--dry-run` for preview, `--force` to skip validation
+  - Returns detailed diagnostic info on failure (old_ids, new_ids, missing_ids, hint)
+  - Automatic rollback on write failure
+
+### Changed
+- **ID Extraction Enhancement**: Now supports both table format `| A |` and bracket format `[A]`
+- **Valid Status Values**: Added "活跃" (active) to valid topic status list
+- **Backward Compatibility**: Old usage `--old X --new Y` still works
+
+### Technical Details
+- Refactored `validate_content()` function for direct content validation
+- Added `_cleanup_temp_files()` for temp file management
+- Exit codes: 0=success, 1=failure (for both validate and update commands)
+
 ## [0.7.3] - 2026-02-03
 
 ### Added
@@ -371,6 +391,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.4
 [0.7.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.3
 [0.7.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.2
 [0.7.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.1
