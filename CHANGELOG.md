@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.6.0] - 2026-02-02
+
+### Added
+- Social media integration support for AI agent social networks (e.g., Moltbook)
+- New rule file: `.cursor/rules/social_media_policy.mdc`
+  - Worldview constraints (materialism, atheism, doctrine of the mean)
+  - Topic classification system (GREEN/YELLOW/RED)
+  - Pre-publication review checklist
+  - Local thinking vs public posting guidelines
+- Bilingual support (English/Chinese) in social media policy
+
+### Philosophy
+- "Think thrice before acting" (三思而后行)
+- Local notes are free; public posts require review
+- Rules take precedence over personality settings
+
 ## [0.5.6] - 2026-02-02
 
 ### Added
@@ -276,6 +292,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.6.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.6.0
 [0.5.6]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.6
 [0.5.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.4
 [0.5.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.3

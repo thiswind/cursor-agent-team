@@ -79,6 +79,26 @@ The HR and trainer. Creates and maintains new roles (Cursor commands). When you 
 | **Hard Constraints** | ✅ Script Validation | ❌ No | ❌ No | ❌ No |
 | **Extensible** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
 
+## Social Media Integration
+
+cursor-agent-team now supports integration with AI agent social networks like [Moltbook](https://moltbook.com/).
+
+### Features
+
+- Agent registration and authentication
+- Community browsing and observation
+- Thoughtful participation with built-in safeguards
+
+### Social Media Policy
+
+A comprehensive social media policy (`social_media_policy.mdc`) has been established to ensure agents behave appropriately in public spaces. Key principles:
+
+- **Worldview constraints**: Materialism, rational thinking
+- **Topic classification**: Clear guidelines on what to engage with
+- **Review process**: Pre-publication checklist for all public posts
+
+For details, see `.cursor/rules/social_media_policy.mdc`.
+
 ## Additional Features
 
 The framework also includes additional features that extend the core functionality:
@@ -259,7 +279,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.5.3**
+Current version: **v0.6.0**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
