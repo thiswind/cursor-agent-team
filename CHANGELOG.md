@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.1] - 2026-02-02
+
+### Added
+- **Preflight Check System**: Automatic status check before any agent action
+  - New `_scripts/preflight_check.py` - displays current time and workspace status
+  - TDD tests with 9 test cases, all passing
+  - Updated all 4 `.mdc` rules to include preflight check instruction
+
+### Fixed
+- **Install/Uninstall Scripts**: Added missing `tts_speech_rules.mdc` to install/uninstall scripts
+  - File was present in `_cursor/rules/` but not being copied during installation
+
 ## [0.7.0] - 2026-02-02
 
 ### Added
@@ -319,6 +331,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.1
 [0.7.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.0
 [0.6.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.6.0
 [0.5.6]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.6
