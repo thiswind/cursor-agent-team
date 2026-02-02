@@ -2,18 +2,6 @@
 
 > **Purpose**: Persistent rules for the Spec-Kit Translator (Spec-Kit 规范转换者) - these rules are always active and automatically injected.
 
-## Preflight Check (CRITICAL - FIRST STEP)
-
-Before ANY action, run this command and display the output:
-
-```bash
-python cursor-agent-team/_scripts/preflight_check.py
-```
-
-Then proceed with your task.
-
----
-
 ## Plan File Reading Rules
 
 ### Plan File Location
@@ -305,11 +293,12 @@ Must follow spec-kit plan template structure:
 
 ---
 
-**Last Updated**: 2026-01-01
+**Last Updated**: 2026-02-03
 
-**Version**: v1.0.0
+**Version**: v1.1.0
 
 **Version History**:
+- v1.1.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator assistant rules
 
 **Note**: These rules are persistent and automatically applied when using the `/spec_translator` command. They define the infrastructure and constraints for the Spec-Kit Translator Assistant, while the command itself defines the role behavior and workflow.

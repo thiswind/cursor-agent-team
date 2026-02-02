@@ -2,18 +2,6 @@
 
 > **Purpose**: Persistent rules for the Prompt Engineer (提示词工程师) - these rules are always active and automatically injected.
 
-## Preflight Check (CRITICAL - FIRST STEP)
-
-Before ANY action, run this command and display the output:
-
-```bash
-python cursor-agent-team/_scripts/preflight_check.py
-```
-
-Then proceed with your task.
-
----
-
 ## File Path Rules
 
 ### Prompt Files
@@ -364,11 +352,12 @@ The Prompt Engineer should update discussion records when:
 
 ---
 
-**Last Updated**: 2025-12-29
+**Last Updated**: 2026-02-03
 
-**Version**: v1.1.0
+**Version**: v1.2.0
 
 **Version History**:
+- v1.2.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.1.0 (2025-12-29): Added discussion record update rules to support crew command integration
 - v1.0.0 (2025-12-29): Initial version
 

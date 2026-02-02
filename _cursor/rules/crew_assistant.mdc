@@ -2,18 +2,6 @@
 
 > **Purpose**: Persistent rules for the Crew Member (万能打工人) - these rules are always active and automatically injected.
 
-## Preflight Check (CRITICAL - FIRST STEP)
-
-Before ANY action, run this command and display the output:
-
-```bash
-python cursor-agent-team/_scripts/preflight_check.py
-```
-
-Then proceed with your task.
-
----
-
 ## Plan Reading Rules
 
 ### Plan File Location
@@ -382,11 +370,12 @@ The Crew must update discussion records after execution:
 
 ---
 
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-02-03
 
-**Version**: v1.2.0
+**Version**: v1.3.0
 
 **Version History**:
+- v1.3.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.2.0 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/.
 - v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced pre-execution search with general web search alongside academic search, added runtime_research.md workspace file
 - v1.0.0 (2025-12-29): Initial version

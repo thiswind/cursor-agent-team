@@ -59,13 +59,16 @@ When you use `/discuss`, the AI plays the role of a **Discussion Partner (讨论
 
 When you use `/discuss`, the AI will follow this workflow:
 
-### Step 0: Get Current Time (CRITICAL)
-- **First action**: Before any discussion, AI will get the current date/time
-- **Why**: Essential for judging whether information is "new" or "old"
-- **Without current time, timeline analysis is impossible**
-- **Display**: Current time is displayed at the start of the response
+### Step 0: Preflight Check (CRITICAL - ABSOLUTE FIRST STEP)
+- **MUST RUN FIRST**: Before ANY other action, run this command and display the output:
+  ```bash
+  python cursor-agent-team/_scripts/preflight_check.py
+  ```
+- **Display output**: Show the preflight check results to user
+- **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
+- **Then proceed**: After preflight check passes, continue to Step 1
 
-### Step 0.5: Manage Topic Tree (CRITICAL)
+### Step 1: Manage Topic Tree (CRITICAL)
 - **Read topic tree**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
 - **Handle first-time use**: 
   - If file does not exist or is empty: This is the first discussion session
@@ -83,7 +86,7 @@ When you use `/discuss`, the AI will follow this workflow:
 - **Save file**: Save updated topic tree
 - **This is like a human discussion partner maintaining a mental map of the conversation**
 
-### Step 1: Understand Context (Minimal Action)
+### Step 2: Understand Context (Minimal Action)
 - Understand your question or topic
 - **Minimal Action Principle**: Only reference project files when:
   - User explicitly mentions a specific file or section
@@ -97,7 +100,7 @@ When you use `/discuss`, the AI will follow this workflow:
   - **Distinction**: Project status (from README) ≠ Discussion history (from topic tree)
   - **Optional**: Can introduce project understanding as context, but clearly distinguish it from discussion history
 
-### Step 2: Use AI Workspace (If Needed)
+### Step 3: Use AI Workspace (If Needed)
 For complex discussions, AI may use `cursor-agent-team/ai_workspace/` to:
 - Record discussion notes and intermediate thoughts
 - Create temporary scripts for verification
@@ -105,12 +108,12 @@ For complex discussions, AI may use `cursor-agent-team/ai_workspace/` to:
 - Store information that needs to be referenced across contexts
 - **See Rules for workspace usage details**
 
-### Step 3: Initial Analysis
+### Step 4: Initial Analysis
 - Provide initial analysis based on existing knowledge
 - **Label**: "Based on existing knowledge (training data cutoff: April 2024)"
 - **Calculate**: Relative time from current time (e.g., "X months ago")
 
-### Step 4: Automatic Search (If Needed)
+### Step 5: Automatic Search (If Needed)
 AI will automatically search when:
 - Discussing specific techniques, methods, or concepts
 - Needing latest research progress or trends
@@ -124,23 +127,23 @@ AI will automatically search when:
 - **General searches**: Trusted sources with time stamps
 - **Hard requirement**: Academic searches **ONLY** use top-tier conferences and journals
 
-### Step 5: Analyze Search Results
+### Step 6: Analyze Search Results
 - **Timeline analysis**: Based on current time, analyze the temporal relationship of all information
 - **Recency judgment**: Determine how "new" or "old" each piece of information is relative to current time
 - **Credibility assessment**: Evaluate the reliability of sources
 - **Label all information**: Include absolute timestamps, relative timestamps, and recency assessment
 
-### Step 6: Synthesize and Respond
+### Step 7: Synthesize and Respond
 - Synthesize all information (existing knowledge + search results)
 - Provide comprehensive discussion and suggestions
 - **Clear time annotations**: All information sources labeled with timestamps and recency
 
-### Step 7: Do NOT Execute
+### Step 8: Do NOT Execute
 - **NOT** modify project files automatically (except AI workspace)
 - **NOT** directly execute operations - provide suggestions instead
 - When operations are needed, recommend calling other agents or commands
 
-### Step 8: Generate Execution Plan (Optional)
+### Step 9: Generate Execution Plan (Optional)
 - **Trigger condition**: User explicitly says "讨论已经可以了，可以生成方案了" or similar expressions like "生成方案", "可以执行了"
 - **Plan generation process** (DO NOT execute):
   1. Analyze current topic discussion content
@@ -154,7 +157,7 @@ AI will automatically search when:
 - **Plan content**: Include plan information, goals, steps, related files, expected results, notes
 - **CRITICAL**: `/discuss` only generates plans, does NOT execute them. Execution is handled by `/crew` command.
 
-### Step 8.5: Intelligent Reminder for Agent Requirements (Optional)
+### Step 9.5: Intelligent Reminder for Agent Requirements (Optional)
 - **Trigger condition**: 
   - Discussion has reached a natural pause (user stops asking questions or finishes expressing ideas)
   - Discussion content contains keywords related to role creation: "创建新角色", "设计新命令", "新功能", "新角色", "新命令"
@@ -163,10 +166,10 @@ AI will automatically search when:
   1. Analyze current discussion content for role creation keywords
   2. If keywords detected and discussion has paused, ask user: "是不是可以生成角色需求？"
   3. Wait for user confirmation
-  4. If user confirms, proceed to Step 8.6
+  4. If user confirms, proceed to Step 9.6
 - **CRITICAL**: This is a suggestion, not automatic generation. User must explicitly confirm.
 
-### Step 8.6: Generate Agent Requirement Document (Optional)
+### Step 9.6: Generate Agent Requirement Document (Optional)
 - **Trigger condition**: User explicitly says "生成角色需求" or "生成需求文档" or "生成需求文档给 /prompt_engineer" or confirms the intelligent reminder
 - **Requirement generation process** (DO NOT execute):
   1. Analyze current topic discussion content
@@ -185,45 +188,46 @@ AI will automatically search when:
 
 The AI will structure responses as:
 
-0. **Current Time** (FIRST STEP - required before any discussion)
-   - Format: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+0. **Preflight Check** (ABSOLUTE FIRST STEP - required before any discussion)
+   - Run `python cursor-agent-team/_scripts/preflight_check.py`
+   - Display output (includes current time)
 
-0.5. **Topic Management** (SECOND STEP - read and update topic tree, identify current topic)
+1. **Topic Management** (read and update topic tree, identify current topic)
    - Read `cursor-agent-team/ai_workspace/discussion_topics.md`
    - Identify current topic (or ask for clarification)
    - Update topic tree
    - Save updated file
 
-1. **Initial Analysis** (based on existing knowledge)
+2. **Initial Analysis** (based on existing knowledge)
    - Label: "Based on existing knowledge (training data cutoff: April 2024)"
    - Calculate relative time from current time
 
-2. **Latest Information Search** (if needed)
+3. **Latest Information Search** (if needed)
    - Academic priority (top-tier conferences/journals only)
    - General information from trusted sources
 
-3. **Search Results Analysis**:
+4. **Search Results Analysis**:
    - Timeline analysis (based on current time)
    - Recency judgment (how new/old relative to current time)
    - Credibility assessment
 
-4. **Synthesized Conclusion** (combining all sources with temporal context)
+5. **Synthesized Conclusion** (combining all sources with temporal context)
    - All information sources clearly labeled with:
      - **Absolute timestamps** (publication date, etc.)
      - **Relative timestamps** (how many months/days ago from current time)
      - **Recency assessment** (new/old relative to current time)
 
-5. **Execution Plan Generation** (if user requests)
+6. **Execution Plan Generation** (if user requests)
    - Plan number: `PLAN-[话题ID]-[序号]`
    - Plan summary: Goals, steps count, related files
    - Execution suggestion: Recommend using `/crew PLAN-[话题ID]-[序号]` to execute the plan
    - **Note**: `/discuss` only generates plans, does NOT execute them. Use `/crew` command for execution.
 
-6. **Intelligent Reminder** (if conditions met)
+7. **Intelligent Reminder** (if conditions met)
    - Ask user: "是不是可以生成角色需求？"
    - Wait for user confirmation
 
-7. **Agent Requirement Generation** (if user requests)
+8. **Agent Requirement Generation** (if user requests)
    - Requirement number: `AGENT-REQUIREMENT-[话题ID]-[序号]`
    - Requirement summary: Role name, core functions, use cases
    - Execution suggestion: Recommend using `/prompt_engineer` command and reference the AGENT-REQUIREMENT file
@@ -350,9 +354,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.4.0 (Updated: 2025-12-29)
+**Version**: v3.5.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v3.5.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
 - v3.4.0 (2025-12-29): Added Step 8.5 (Intelligent Reminder) and Step 8.6 (Generate Agent Requirement Document) to support `/prompt_engineer` workflow. Added intelligent reminder feature that suggests generating agent requirements when discussion involves role creation.
 - v3.3.1 (2025-12-29): Clarified role boundary - `/discuss` only generates plans, does NOT execute them. Execution should use `/crew` command. Updated Step 8 and Response Format to emphasize this distinction.
 - v3.3 (2025-12-29): Clarified first-time use behavior and distinction between project status and discussion history in Step 0.5 and Step 1, added Example 7 for first-time use scenario

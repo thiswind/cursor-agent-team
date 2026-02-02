@@ -2,18 +2,6 @@
 
 > **Purpose**: Persistent rules for the Discussion Partner (讨论伙伴) - these rules are always active and automatically injected.
 
-## Preflight Check (CRITICAL - FIRST STEP)
-
-Before ANY action, run this command and display the output:
-
-```bash
-python cursor-agent-team/_scripts/preflight_check.py
-```
-
-Then proceed with your task.
-
----
-
 ## AI Workspace Rules
 
 ### Directory Structure
@@ -611,11 +599,12 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 ---
 
-**Last Updated**: 2026-02-01
+**Last Updated**: 2026-02-03
 
-**Version**: v1.6
+**Version**: v1.7
 
 **Version History**:
+- v1.7 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.6 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/, with protected files, path validation, and logging.
 - v1.5 (2026-02-01): Added cleanup script reference. Replaced `rm` commands with `cleanup_topic_tree_temp.py` script calls for safer temporary file cleanup.
 - v1.4 (2026-01-31): Added Topic Tree Update Flow with Hard Constraint Validation. This uses a Python script (`_scripts/validate_topic_tree.py`) to validate topic tree updates before committing, preventing accidental data loss due to LLM randomness.

@@ -59,11 +59,14 @@ When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translato
 
 When you use `/spec_translator`, the AI will follow this workflow:
 
-### Step 0: Get Current Time (CRITICAL)
-- **First action**: Before any conversion work, AI will get the current date/time
-- **Why**: Essential for timestamps and file naming
-- **Display**: Current time is displayed at the start of the response
-- **Format**: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+### Step 0: Preflight Check (CRITICAL - ABSOLUTE FIRST STEP)
+- **MUST RUN FIRST**: Before ANY other action, run this command and display the output:
+  ```bash
+  python cursor-agent-team/_scripts/preflight_check.py
+  ```
+- **Display output**: Show the preflight check results to user
+- **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
+- **Then proceed**: After preflight check passes, continue to Step 1
 
 ### Step 1: Parse Plan Number
 - **Extract Plan number**: Parse user input to extract Plan number
@@ -140,8 +143,9 @@ When you use `/spec_translator`, the AI will follow this workflow:
 
 The AI will structure responses as:
 
-0. **Current Time** (FIRST STEP - required before any work)
-   - Format: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+0. **Preflight Check** (ABSOLUTE FIRST STEP - required before any work)
+   - Run `python cursor-agent-team/_scripts/preflight_check.py`
+   - Display output (includes current time)
 
 1. **Plan Validation** (parse and validate Plan number and file)
    - Parse Plan number
@@ -232,8 +236,9 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v1.0.0 (Created: 2026-01-01)
+**Version**: v1.1.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v1.1.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time.
 - v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator command for converting Plan files to spec-kit documents
 

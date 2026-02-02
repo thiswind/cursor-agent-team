@@ -57,13 +57,16 @@ When you use `/prompt_engineer`, the AI plays the role of a **Prompt Engineer (�
 
 When you use `/prompt_engineer`, the AI will follow this workflow:
 
-### Step 0: Get Current Time (CRITICAL)
-- **First action**: Before any prompt engineering work, AI will get the current date/time
-- **Why**: Essential for version management and timestamps
-- **Display**: Current time is displayed at the start of the response
-- **Format**: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+### Step 0: Preflight Check (CRITICAL - ABSOLUTE FIRST STEP)
+- **MUST RUN FIRST**: Before ANY other action, run this command and display the output:
+  ```bash
+  python cursor-agent-team/_scripts/preflight_check.py
+  ```
+- **Display output**: Show the preflight check results to user
+- **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
+- **Then proceed**: After preflight check passes, continue to Step 1
 
-### Step 0.5: Scan Existing Files (CRITICAL)
+### Step 1: Scan Existing Files (CRITICAL)
 - **Scan directories**:
   - `cursor-agent-team/ai_prompts/` - for existing prompt files
   - `.cursor/commands/` - for existing command files
@@ -72,7 +75,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Display results**: Show existing files that might conflict
 - **Conflict handling**: If similar functionality exists, inform user and ask for confirmation
 
-### Step 1: Mode Detection
+### Step 2: Mode Detection
 - **Automatic detection**: Analyze user input to determine mode
   - **Create Mode**: User says "create", "new", "generate" OR functionality doesn't exist
   - **Maintain Mode**: User says "update", "modify", "improve", "refine" OR mentions existing prompt
@@ -80,7 +83,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Conflict detection**: If existing prompt found, inform user and ask for confirmation
 - **Mode confirmation**: Show detected mode to user
 
-### Step 2: Initialize Workspace
+### Step 3: Initialize Workspace
 - **Create session directory**: `cursor-agent-team/ai_workspace/prompt_engineer/sessions/session_YYYYMMDD_HHMMSS/`
 - **Create session files**:
   - `mode.md` - Record detected mode
@@ -92,7 +95,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
   - `drafts/` - Draft files directory
 - **Record mode**: Save mode (create/maintain) to `mode.md`
 
-### Step 3: Understand Requirements
+### Step 4: Understand Requirements
 - **Create Mode**: 
   - Understand user's natural language description
   - Analyze core functionality and requirements
@@ -104,13 +107,13 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
   - Analyze structure and version
   - Understand update requirements
 
-### Step 4: Requirements Recitation
+### Step 5: Requirements Recitation
 - **Recite requirements**: Use natural language to recite requirements back to user
 - **Highlight key points**: Emphasize important aspects
 - **Wait for confirmation**: Wait for user confirmation or correction
 - **Iterate if needed**: If user corrects, update understanding and re-recite
 
-### Step 5: Clarification Questions (Multiple Choice)
+### Step 6: Clarification Questions (Multiple Choice)
 - **Identify uncertain details**: Find aspects that need clarification
 - **Generate multiple-choice questions**: Create clear, concise questions with options
 - **Example format**:
@@ -124,7 +127,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Wait for answers**: Collect all answers before proceeding
 - **Update requirements**: Incorporate answers into requirements
 
-### Step 6: Behavior Example
+### Step 7: Behavior Example
 - **Generate Q&A example**: Create an example showing how the prompt will behave
 - **Format**:
   ```
@@ -135,13 +138,13 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Show behavior**: Demonstrate the prompt's expected behavior pattern
 - **Maintain Mode**: Also show before/after comparison if behavior changes
 
-### Step 7: User Confirmation & Iteration
+### Step 8: User Confirmation & Iteration
 - **Show behavior example**: Display the example to user
 - **Ask for feedback**: "Does this behavior match your expectations? If not, what would you like to adjust?"
 - **Iterate**: Based on user feedback, adjust and regenerate example
 - **Repeat until satisfied**: Continue iteration until user confirms
 
-### Step 8: Output Type Determination
+### Step 9: Output Type Determination
 - **Analyze requirements**: Determine what type of output is needed
   - **Rule only**: Persistent behavior rules, reusable across contexts
   - **Command only**: Specific command behavior, one-time operations
@@ -149,7 +152,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Provide recommendation**: Give recommendation with reasoning
 - **Wait for confirmation**: Get user confirmation before proceeding
 
-### Step 9: Generate Prompt
+### Step 10: Generate Prompt
 - **Generate LangGPT-formatted prompt**: Create prompt following LangGPT structure
   - Role (角色)
   - Constraints (约束)
@@ -161,7 +164,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Save to workspace**: Save all drafts to workspace `drafts/` directory
 - **Show generated content**: Display generated content to user
 
-### Step 10: Final Confirmation & Finalization
+### Step 11: Final Confirmation & Finalization
 - **Show complete files**: Display all generated files
 - **Ask for finalization**: "Are you satisfied with these prompts? Should I finalize them?"
 - **If finalized**:
@@ -173,7 +176,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
   - Clean temporary files (or mark for cleanup)
 - **If not finalized**: Continue iteration
 
-### Step 11: Update Discussion Records (Optional)
+### Step 12: Update Discussion Records (Optional)
 - **Trigger condition**: 
   - User explicitly indicates this is execution of a plan
   - Or detect active execution plan from discussion topics
@@ -187,7 +190,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 
 ## Maintain Mode Specific Steps
 
-### Step 3M: Read Existing Prompt
+### Step 4M: Read Existing Prompt
 - **Read existing files**:
   - Prompt file: `cursor-agent-team/ai_prompts/[name]_prompts.md`
   - Command file: `.cursor/commands/[name].md` (if exists)
@@ -196,7 +199,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Extract version**: Read current version number and history
 - **Save to workspace**: Save existing content to `target_prompt.md` for reference
 
-### Step 4M: Impact Analysis
+### Step 5M: Impact Analysis
 - **Analyze changes**: Determine what needs to change
 - **Identify unchanged parts**: Identify what stays the same
 - **Determine version increment**: 
@@ -206,7 +209,7 @@ When you use `/prompt_engineer`, the AI will follow this workflow:
 - **Check related files**: Determine if related files need updates
 - **Generate comparison**: Create before/after comparison
 
-### Step 5M: Generate Comparison
+### Step 6M: Generate Comparison
 - **Create comparison document**: Show before/after comparison
 - **Format**:
   ```markdown
@@ -258,44 +261,45 @@ Format: `MAJOR.MINOR.PATCH`
 
 The AI will structure responses as:
 
-0. **Current Time** (FIRST STEP - required before any work)
-   - Format: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+0. **Preflight Check** (ABSOLUTE FIRST STEP - required before any work)
+   - Run `python cursor-agent-team/_scripts/preflight_check.py`
+   - Display output (includes current time)
 
-0.5. **File Scan Results** (SECOND STEP - show existing files)
+1. **File Scan Results** (show existing files)
    - List existing prompt files
    - List existing command files
    - List existing rule files
    - Highlight potential conflicts
 
-1. **Mode Detection** (identify create/maintain mode)
+2. **Mode Detection** (identify create/maintain mode)
    - Show detected mode
    - Ask for confirmation if uncertain
 
-2. **Requirements Understanding** (recite requirements)
+3. **Requirements Understanding** (recite requirements)
    - Recite requirements in natural language
    - Wait for user confirmation
 
-3. **Clarification Questions** (multiple-choice questions)
+4. **Clarification Questions** (multiple-choice questions)
    - Present questions with options
    - Wait for answers
 
-4. **Behavior Example** (show Q&A example)
+5. **Behavior Example** (show Q&A example)
    - Show example interaction
    - Wait for feedback
 
-5. **Output Type Recommendation** (rule/command/both)
+6. **Output Type Recommendation** (rule/command/both)
    - Show recommendation with reasoning
    - Wait for confirmation
 
-6. **Generated Content** (show generated prompt)
+7. **Generated Content** (show generated prompt)
    - Display LangGPT-formatted prompt
    - Display related files (if any)
 
-7. **Final Confirmation** (ask for finalization)
+8. **Final Confirmation** (ask for finalization)
    - Show complete files
    - Ask if finalized
 
-8. **Discussion Record Update** (if applicable)
+9. **Discussion Record Update** (if applicable)
    - Update discussion topics with execution record
    - Update plan status (if plan exists)
 
@@ -370,9 +374,10 @@ Modify the discussion_prompts.md to improve the topic tree management section.
 
 ---
 
-**Version**: v1.1.0 (Updated: 2025-12-29)
+**Version**: v1.2.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v1.2.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
 - v1.1.0 (2025-12-29): Added Step 11 - discussion record update functionality to support crew command integration
 - v1.0.0 (2025-12-29): Initial creation - comprehensive prompt engineering command with create/maintain modes, version management, and interactive workflow
 
