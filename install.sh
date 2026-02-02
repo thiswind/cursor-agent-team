@@ -128,6 +128,12 @@ else
     echo -e "${RED}Error: Failed to copy spec_translator_assistant.mdc${NC}"
     exit 1
 fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/tts_speech_rules.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/tts_speech_rules.mdc")
+else
+    echo -e "${RED}Error: Failed to copy tts_speech_rules.mdc${NC}"
+    exit 1
+fi
 
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
@@ -171,7 +177,8 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/rules/discussion_assistant.mdc",
     ".cursor/rules/prompt_engineer_assistant.mdc",
     ".cursor/rules/crew_assistant.mdc",
-    ".cursor/rules/spec_translator_assistant.mdc"
+    ".cursor/rules/spec_translator_assistant.mdc",
+    ".cursor/rules/tts_speech_rules.mdc"
   ]
 }
 EOF

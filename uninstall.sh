@@ -104,6 +104,10 @@ if [ -f "$PROJECT_ROOT/.cursor/rules/spec_translator_assistant.mdc" ]; then
     rm -f "$PROJECT_ROOT/.cursor/rules/spec_translator_assistant.mdc"
     REMOVED_ITEMS+=(".cursor/rules/spec_translator_assistant.mdc")
 fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/tts_speech_rules.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/tts_speech_rules.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/tts_speech_rules.mdc")
+fi
 
 # Step 3: Remove installation info
 if [ -f "$INSTALL_INFO_FILE" ]; then
