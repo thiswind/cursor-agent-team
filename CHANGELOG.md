@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.5] - 2026-02-03
+
+### Fixed
+- **Topic Tree Update Rules**: Simplified 4-step manual flow to ONE-STEP command usage
+  - AI was ignoring complex 4-step validation flow (backup → write temp → validate → commit)
+  - Now uses simple `validate_topic_tree.py update --stdin` command
+  - Added PROHIBITED actions list to prevent manual temp directory creation
+  - Updated `_cursor/rules/discussion_assistant.mdc` from v1.8 to v1.9
+  - Updated `_cursor/commands/discuss.md` from v3.6.0 to v3.6.1
+
+### Technical Details
+- **Root Cause**: LLM tends to skip complex multi-step workflows, especially when they involve file operations
+- **Solution**: Leverage the existing `update` subcommand that handles backup, validation, and commit automatically
+- **PROHIBITED**: Manual `mkdir -p temp`, manual `cp` backup, using old 4-step flow, calling `validate` subcommand separately
+
 ## [0.7.4] - 2026-02-03
 
 ### Added
@@ -391,6 +406,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.5]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.5
 [0.7.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.4
 [0.7.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.3
 [0.7.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.2

@@ -96,13 +96,15 @@ When you use `/discuss`, the AI will follow this workflow:
   - If existing topic: Update state and last active time
   - Record key discussion points
   - Update current active topic
-- **Save file with validation**: When saving updates, **MUST follow the Topic Tree Update Flow** defined in Rules:
-  1. Backup current file to `ai_workspace/temp/discussion_topics.md.bak`
-  2. Write new content to `ai_workspace/temp/new_topic_tree.md`
-  3. Run validation: `python cursor-agent-team/_scripts/validate_topic_tree.py --old [backup] --new [new]`
-  4. If valid: overwrite original file and clean temp files
-  5. If invalid: fix errors and retry (max 3 attempts), then restore backup if still failing
-  - **See Rules for detailed validation requirements**
+- **Save file with validation**: Use the ONE-STEP update command (see Rules for details):
+  ```bash
+  python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin << 'EOF'
+  [完整的新话题树内容]
+  EOF
+  ```
+  - **DO NOT** manually create temp directories or backup files
+  - The script handles backup, validation, and commit/rollback automatically
+  - If fails: read the `errors` and `missing_ids`, fix content, retry (max 3 attempts)
 - **This is like a human discussion partner maintaining a mental map of the conversation**
 
 ### Step 2: Understand Context (Minimal Action)
@@ -386,9 +388,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.6.0 (Updated: 2026-02-03)
+**Version**: v3.6.1 (Updated: 2026-02-03)
 
 **Version History**:
+- v3.6.1 (2026-02-03): Simplified Step 1 topic tree update to use ONE-STEP `update` command. Removed 4-step manual flow reference. Synced with Rules v1.9.
 - v3.6.0 (2026-02-03): Added Inspiration Capital aspects (Wandering and Gleaning) to workflow. Step 0.5 adds Wandering for exploratory mode. Step 10 adds Gleaning before ending response.
 - v3.5.1 (2026-02-03): Added explicit reference to Topic Tree Update Flow (validation) in Step 1 Workflow. Ensures AI follows double-buffer validation when updating topic tree.
 - v3.5.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.

@@ -290,80 +290,70 @@ AI **must automatically search** when:
 - **Purpose**: Maintain tree structure of discussion topics, track discussion hierarchy and switches
 - **Maintenance**: AI must actively maintain this file - this is an important responsibility of the discussion partner
 
-### Topic Tree Update Flow (Hard Constraint Validation)
+### Topic Tree Update (HARD REQUIREMENT)
 
-**CRITICAL**: When updating the topic tree, you **MUST** follow this double-buffer validation flow to prevent data loss.
+**CRITICAL**: When updating the topic tree, you **MUST** use the one-step update command. **DO NOT** manually create temp directories or backup files.
 
-#### Why This Flow Exists
-
-LLM output has inherent randomness. Previous topic tree updates may have accidentally lost historical topic IDs. This validation flow uses a deterministic Python script to catch such errors before they are committed.
-
-#### Step 1: Backup Current File
-
-Before making any changes, backup the current topic tree to a temporary file:
-
-```
-cursor-agent-team/ai_workspace/temp/discussion_topics.md.bak
-```
-
-**Action**: Copy the current content of `discussion_topics.md` to the backup file.
-
-#### Step 2: Generate New Content
-
-Write the updated topic tree content to a temporary file:
-
-```
-cursor-agent-team/ai_workspace/temp/new_topic_tree.md
-```
-
-**Action**: Write your updated topic tree content to this temporary file.
-
-#### Step 3: Validate
-
-Call the validation script to check the new content against the backup:
+#### The ONE Command You Need
 
 ```bash
-python cursor-agent-team/_scripts/validate_topic_tree.py \
-  --old cursor-agent-team/ai_workspace/temp/discussion_topics.md.bak \
-  --new cursor-agent-team/ai_workspace/temp/new_topic_tree.md
+echo "新的话题树内容..." | python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin
 ```
 
-**Expected Output**: JSON with `valid`, `errors`, and `warnings` fields.
+Or with a heredoc for multiline content:
 
-#### Step 4: Handle Validation Result
+```bash
+python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin << 'EOF'
+# 讨论话题树
 
-**If `valid: true`**:
-1. Copy the content from `new_topic_tree.md` to overwrite `discussion_topics.md`
-2. Clean up temporary files by calling the cleanup script:
-   ```bash
-   python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
-   ```
-3. Flow complete - continue with the discussion
+## 当前活跃话题
+- 话题 X: ...
 
-**If `valid: false`**:
-1. **Read the errors**: Check the `errors` array in the JSON output
-2. **Understand the violation**: Each error is prefixed with the rule violated (R1, R2, R3, R4)
-3. **Fix the content**: Modify your `new_topic_tree.md` content to fix the violations
-4. **Retry validation**: Run the validation script again (go back to Step 3)
-5. **Track retry count**: Keep track of consecutive failures
+... (完整的话题树内容)
 
-**If consecutive failures reach 3**:
-1. **Restore backup**: Copy `discussion_topics.md.bak` back to `discussion_topics.md`
-2. **Clean up temporary files**: Call the cleanup script to remove temp files:
-   ```bash
-   python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
-   ```
-3. **Report to user**: Display a clear error message:
-   ```
-   ⚠️ 话题树更新失败，已还原到之前的版本。
-   错误原因：[list the errors from the last validation attempt]
-   请注意：话题树未更新，但讨论可以继续。
-   ```
-4. **Continue discussion**: Do not block the discussion due to topic tree update failure
+*Last Updated: 2026-02-03*
+EOF
+```
 
-#### Validation Rules Reference
+#### What This Command Does Automatically
 
-The script checks these rules:
+1. **Backup**: Automatically backs up the current topic tree
+2. **Validate**: Checks all rules (R1-R4) against the backup
+3. **Commit or Rollback**: If valid, commits; if invalid, returns detailed errors
+4. **Cleanup**: Automatically cleans up temp files
+
+#### Handling the Output
+
+The command outputs JSON:
+
+**Success**:
+```json
+{
+  "success": true,
+  "message": "话题树更新成功"
+}
+```
+
+**Failure** (with diagnostic info for fixing):
+```json
+{
+  "success": false,
+  "errors": ["R1 violation: The following topic IDs are missing: ['A', 'B']"],
+  "hint": "请确保新内容包含所有历史话题 ID: A, B",
+  "old_ids": ["A", "B", "C"],
+  "new_ids": ["C"],
+  "missing_ids": ["A", "B"]
+}
+```
+
+#### If Update Fails
+
+1. **Read the errors**: Check `errors` and `missing_ids` in the JSON output
+2. **Fix your content**: Add the missing topic IDs back
+3. **Retry**: Run the command again with fixed content
+4. **Max 3 retries**: If still failing after 3 attempts, report to user and continue discussion
+
+#### Validation Rules
 
 | Rule | Description | Severity |
 |:--|:--|:--|
@@ -372,38 +362,14 @@ The script checks these rules:
 | R3 | Must contain "Last Updated" field | Error |
 | R4 | Status values must be from predefined set | Warning |
 
-#### Important Notes
+#### PROHIBITED Actions
 
-1. **Never skip this flow**: Even for simple updates, always follow this validation flow
-2. **Temp directory**: Always use `ai_workspace/temp/` for temporary files
-3. **Clean up**: Always use the cleanup script to delete temporary files after validation
-4. **Graceful degradation**: If validation repeatedly fails, continue the discussion without blocking
+- ❌ **DO NOT** manually `mkdir -p temp`
+- ❌ **DO NOT** manually `cp` files to backup
+- ❌ **DO NOT** use the old 4-step flow
+- ❌ **DO NOT** call `validate` subcommand separately (use `update` instead)
 
-### Cleanup Script Reference
-
-The cleanup script is located at `cursor-agent-team/_scripts/cleanup_topic_tree_temp.py`.
-
-**When to use**:
-- After successful topic tree validation (to remove backup and temp files)
-- After validation failure and restore (to clean up temp files)
-- When you want to preview what will be deleted (use `--dry-run`)
-
-**Usage examples**:
-
-```bash
-# Normal cleanup after successful validation
-python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py
-
-# Preview before cleanup (optional, for debugging)
-python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --dry-run
-
-# Silent cleanup (no terminal output)
-python cursor-agent-team/_scripts/cleanup_topic_tree_temp.py --quiet
-```
-
-**Output**: JSON format with `success`, `deleted`, `skipped`, `dry_run` fields.
-
-**Log file**: `ai_workspace/temp/cleanup.log` (managed by the agent, can be deleted when no longer needed)
+The script handles everything. Just pipe your content and check the result.
 
 ### Topic Tree Structure
 
@@ -635,9 +601,10 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.8
+**Version**: v1.9
 
 **Version History**:
+- v1.9 (2026-02-03): **BREAKING**: Simplified Topic Tree Update Flow to use ONE-STEP `update` command. Removed 4-step manual flow. Added PROHIBITED actions list. AI should now use `validate_topic_tree.py update --stdin` instead of manually managing temp files.
 - v1.8 (2026-02-03): Added Cross-Cutting Concerns section with Wandering and Gleaning aspects from inspiration_capital system.
 - v1.7 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.6 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/, with protected files, path validation, and logging.
