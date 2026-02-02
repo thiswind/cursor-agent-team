@@ -73,6 +73,33 @@ cursor-agent-team 现已支持与 AI 智能体社交网络（如 [Moltbook](http
 
 框架还包含扩展核心功能的附加功能：
 
+### 灵感资本系统 (v0.7.0+)
+
+一个用于激发创造力的"散卡片"收集系统，灵感来自达芬奇的笔记方法和远程联想理论。
+
+**理念**："先有资本，后有主意"
+
+**组件**：
+- **拾穗 (Gleaning)**：任何工作完成后，反思并收集有价值的见解
+- **漫游 (Wandering)**：探索工作开始前，随机浏览卡片寻找灵感
+
+**工具**：
+```bash
+# 创建新卡片
+python ai_workspace/inspiration_capital/scripts/create_card.py --source "Moltbook" --trigger "看到一个有趣的讨论"
+
+# 随机抽取卡片
+python ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3
+```
+
+**设计原则**：
+- 无分类：像达芬奇的笔记一样保持混沌
+- 原子化：每个想法一张卡片
+- 低摩擦：脚本确保格式一致性
+- 漫游而非搜索：随机浏览激发创造力
+
+详情请参阅 `ai_workspace/inspiration_capital/README.md`。
+
 ### Spec-Kit 转换器 (`/spec_translator`)
 
 用于 [Spec-Kit](https://github.com/github/spec-kit) 工作流集成的转换工具。将 `/discuss` 生成的执行方案转换为符合 spec-kit 格式的文档。
@@ -249,7 +276,7 @@ git submodule update --remote cursor-agent-team
 
 ## 版本
 
-当前版本：**v0.6.0**
+当前版本：**v0.7.0**
 
 版本历史请参阅 [CHANGELOG.md](CHANGELOG.md)。
 

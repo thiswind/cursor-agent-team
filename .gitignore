@@ -5,6 +5,19 @@ ai_workspace/*
 ai_workspace/*/**
 !ai_workspace/*/README.md
 
+# Inspiration Capital - keep scripts and tests (they are part of the framework)
+!ai_workspace/inspiration_capital/scripts/
+!ai_workspace/inspiration_capital/scripts/**
+!ai_workspace/inspiration_capital/tests/
+!ai_workspace/inspiration_capital/tests/**
+# But ignore the actual cards (user-generated content)
+ai_workspace/inspiration_capital/cards/*
+!ai_workspace/inspiration_capital/cards/.gitkeep
+# Ignore pytest cache and pycache
+ai_workspace/inspiration_capital/.pytest_cache/
+__pycache__/
+*.pyc
+
 # OS files
 .DS_Store
 Thumbs.db

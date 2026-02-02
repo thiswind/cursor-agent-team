@@ -49,6 +49,10 @@ ai_workspace/
 ├── discussion_topics.md          # Topic tree (/discuss)
 ├── plans/                        # Execution plans
 ├── agent_requirements/           # Agent requirements
+├── inspiration_capital/          # Scatter cards for creativity
+│   ├── cards/                    # Card storage (no categories!)
+│   ├── scripts/                  # Python tools
+│   └── tests/                    # Test cases
 ├── crew/sessions/                # /crew sessions
 ├── prompt_engineer/sessions/     # /prompt_engineer sessions
 ├── spec_translator/sessions/     # /spec_translator sessions
@@ -125,6 +129,25 @@ Output documents (in ai_workspace root):
 - `spec-kit-constitution-[TopicID]-[Seq].md`
 - `spec-kit-specify-[TopicID]-[Seq].md`
 - `spec-kit-plan-[TopicID]-[Seq].md`
+
+### Inspiration Capital (`inspiration_capital/`)
+
+A "scatter card" system for collecting and browsing insights that might spark creativity.
+
+**Key Directories:**
+- `cards/` - Scatter cards storage (no categories!)
+- `scripts/` - Python tools for creating and drawing cards
+- `tests/` - Test cases for scripts
+
+**Tools:**
+- `create_card.py` - Create a new card with standardized format
+- `draw_cards.py` - Randomly draw cards for inspiration
+
+**Integration:**
+- Used by Gleaning aspect (post-work collection)
+- Used by Wandering aspect (pre-exploration browsing)
+
+See `inspiration_capital/README.md` for details.
 
 ---
 

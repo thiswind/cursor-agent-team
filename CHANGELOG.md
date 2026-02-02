@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2026-02-02
+
+### Added
+- **Inspiration Capital System**: A "scatter card" (散卡片) collection system for sparking creativity
+  - New directory: `ai_workspace/inspiration_capital/`
+  - Two AOP-style aspects for cross-cutting concerns:
+    - **Gleaning (拾穗)**: Post-execution aspect that collects valuable insights after any work
+    - **Wandering (漫游)**: Pre-exploration aspect that randomly browses cards for inspiration
+  - Python scripts with TDD approach:
+    - `create_card.py` - Create cards with standardized format and auto-timestamp
+    - `draw_cards.py` - Randomly draw cards with structured output
+  - Full test coverage: 9 test cases, all passing
+  - New rule files: `gleaning.mdc`, `wandering.mdc`
+
+### Philosophy
+- "先有资本，后有主意" (First capital, then ideas) - inspired by Da Vinci's notebooks
+- No categories: Keep chaos like Da Vinci's notebooks
+- Atomic: One idea per card
+- Low friction: Scripts ensure format consistency
+- Wander, don't search: Random browsing sparks creativity
+
+### Technical Details
+- **Dual-Track Validation**: Scripts use TDD (pytest), rules use AI semantic verification
+- **Card Format**: Markdown with timestamp, source, trigger, content, and "why interesting" fields
+- **Integration**: Rules apply across all commands as cross-cutting concerns
+- **Scripts Location**: `ai_workspace/inspiration_capital/scripts/`
+
 ## [0.6.0] - 2026-02-02
 
 ### Added
@@ -292,6 +319,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.0
 [0.6.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.6.0
 [0.5.6]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.6
 [0.5.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.4
