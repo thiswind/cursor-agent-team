@@ -2,6 +2,18 @@
 
 > **Purpose**: Persistent rules for the Prompt Engineer (提示词工程师) - these rules are always active and automatically injected.
 
+## Preflight Check (CRITICAL - FIRST STEP)
+
+Before ANY action, run this command and display the output:
+
+```bash
+python cursor-agent-team/_scripts/preflight_check.py
+```
+
+Then proceed with your task.
+
+---
+
 ## File Path Rules
 
 ### Prompt Files

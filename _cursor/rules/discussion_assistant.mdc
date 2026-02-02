@@ -2,6 +2,18 @@
 
 > **Purpose**: Persistent rules for the Discussion Partner (讨论伙伴) - these rules are always active and automatically injected.
 
+## Preflight Check (CRITICAL - FIRST STEP)
+
+Before ANY action, run this command and display the output:
+
+```bash
+python cursor-agent-team/_scripts/preflight_check.py
+```
+
+Then proceed with your task.
+
+---
+
 ## AI Workspace Rules
 
 ### Directory Structure

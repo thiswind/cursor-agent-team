@@ -2,6 +2,18 @@
 
 > **Purpose**: Persistent rules for the Spec-Kit Translator (Spec-Kit 规范转换者) - these rules are always active and automatically injected.
 
+## Preflight Check (CRITICAL - FIRST STEP)
+
+Before ANY action, run this command and display the output:
+
+```bash
+python cursor-agent-team/_scripts/preflight_check.py
+```
+
+Then proceed with your task.
+
+---
+
 ## Plan File Reading Rules
 
 ### Plan File Location
