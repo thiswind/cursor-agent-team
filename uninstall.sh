@@ -108,6 +108,14 @@ if [ -f "$PROJECT_ROOT/.cursor/rules/tts_speech_rules.mdc" ]; then
     rm -f "$PROJECT_ROOT/.cursor/rules/tts_speech_rules.mdc"
     REMOVED_ITEMS+=(".cursor/rules/tts_speech_rules.mdc")
 fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/gleaning.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/gleaning.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/gleaning.mdc")
+fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/wandering.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/wandering.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/wandering.mdc")
+fi
 
 # Step 3: Remove installation info
 if [ -f "$INSTALL_INFO_FILE" ]; then

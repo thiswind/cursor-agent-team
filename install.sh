@@ -134,6 +134,18 @@ else
     echo -e "${RED}Error: Failed to copy tts_speech_rules.mdc${NC}"
     exit 1
 fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/gleaning.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/gleaning.mdc")
+else
+    echo -e "${RED}Error: Failed to copy gleaning.mdc${NC}"
+    exit 1
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/wandering.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/wandering.mdc")
+else
+    echo -e "${RED}Error: Failed to copy wandering.mdc${NC}"
+    exit 1
+fi
 
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
@@ -178,7 +190,9 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/rules/prompt_engineer_assistant.mdc",
     ".cursor/rules/crew_assistant.mdc",
     ".cursor/rules/spec_translator_assistant.mdc",
-    ".cursor/rules/tts_speech_rules.mdc"
+    ".cursor/rules/tts_speech_rules.mdc",
+    ".cursor/rules/gleaning.mdc",
+    ".cursor/rules/wandering.mdc"
   ]
 }
 EOF
