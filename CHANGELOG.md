@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.6] - 2026-02-02
+
+### Added
+
+- **AI Workspace Directory Structure**: Created missing directories required by `/discuss` command
+  - `scratchpad/` - Temporary workspace root
+  - `scratchpad/notes/` - Discussion notes
+  - `scratchpad/scripts/` - Temporary scripts
+  - `scratchpad/analysis/` - Analysis results
+  - `scratchpad/temp/` - Other temporary files
+  - `agent_requirements/` - Agent requirement documents
+  - `spec_translator/` - Spec translator workspace
+  - `spec_translator/sessions/` - Spec translator sessions
+
+### Changed
+
+- **AI Workspace README Rewrite**: Rewrote all README files following AI agent documentation best practices
+  - Restructured for machine-readability (Quick Reference first, NEVER DO section, tables over prose)
+  - Unified all READMEs to English (previously `plans/README.md` was in Chinese)
+  - Added Protected Files section
+  - Added Error Handling guidance
+  - Removed redundant FAQ sections
+  - Based on GitHub's agents.md research from 2,500+ repositories
+
+### Technical Details
+
+- **Best Practices Applied**: 
+  - Instructions placed at the beginning
+  - Specific paths and naming conventions in tables
+  - Clear constraints (NEVER DO sections)
+  - Consistent English language across all documentation
+- **Files Updated**:
+  - `ai_workspace/README.md` (new)
+  - `ai_workspace/crew/README.md` (rewritten)
+  - `ai_workspace/plans/README.md` (rewritten, translated from Chinese)
+  - `ai_workspace/prompt_engineer/README.md` (rewritten)
+  - `ai_workspace/scratchpad/README.md` (new)
+  - `ai_workspace/scratchpad/notes/README.md` (new)
+  - `ai_workspace/scratchpad/scripts/README.md` (new)
+  - `ai_workspace/scratchpad/analysis/README.md` (new)
+  - `ai_workspace/scratchpad/temp/README.md` (new)
+  - `ai_workspace/agent_requirements/README.md` (new)
+  - `ai_workspace/spec_translator/README.md` (new)
+
 ## [0.5.4] - 2026-02-01
 
 ### Added
@@ -232,6 +276,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.5.6]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.6
 [0.5.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.4
 [0.5.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.3
 [0.5.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.5.2
