@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.2] - 2026-02-03
+
+### Changed
+- **Discuss Command**: Added explicit reference to Topic Tree Update Flow (validation) in Step 1 Workflow
+  - Ensures AI follows double-buffer validation when updating topic tree
+  - Updated `_cursor/commands/discuss.md` from v3.5.0 to v3.5.1
+
+### Technical Details
+- **Validation Integration**: Step 1 now explicitly documents the 5-step validation flow:
+  1. Backup current file
+  2. Write to temp file
+  3. Run validation script
+  4. Commit on success or retry on failure
+  5. Restore backup after max retries
+
 ## [0.7.1] - 2026-02-02
 
 ### Added
@@ -331,6 +346,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.7.2]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.2
 [0.7.1]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.1
 [0.7.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.0
 [0.6.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.6.0
