@@ -24,6 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Topic Tree Update Command**: One-step update with automatic backup, validation, and commit/rollback
+
+### Fixed
+- **Gleaning Step Enhancement**: Strengthened Step 10 (Gleaning) in `/discuss` and Step 9 in `/crew` commands
+  - Added mandatory checklist to prevent skipping after complex operations
+  - Added visual markers (⚠️ MANDATORY CHECK) and warning signs
+  - Common skip scenarios: after API calls, file edits, social interactions, multi-step executions
+  - Updated `_cursor/commands/discuss.md` from v3.6.0 to v3.6.1
+  - Updated `_cursor/commands/crew.md` from v1.3.0 to v1.3.1
   - New `update` subcommand: `python validate_topic_tree.py update --stdin`
   - Supports `--content`, `--file`, or `--stdin` input methods
   - `--dry-run` for preview, `--force` to skip validation

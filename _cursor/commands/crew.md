@@ -158,18 +158,31 @@ When you use `/crew`, the AI will follow this workflow:
   - Add execution record to plan file
 - **Save updates**: Save all updated files
 
-### Step 9: Gleaning (拾穗) - After Execution Complete
+### Step 9: Gleaning (拾穗) - ⚠️ MANDATORY CHECK AFTER EXECUTION
+
+> **🚨 DO NOT SKIP THIS STEP** - Execution tasks often produce the most valuable insights!
+
 - **When**: After execution is complete and records are updated
-- **Reflect**: Ask yourself:
-  - Any method/technique discovered during execution worth remembering?
-  - Any unexpected solution found through runtime search?
-  - Any insight that might be useful for future tasks?
-- **If valuable insight found**:
-  1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/crew" --trigger "[what triggered this insight]"`
-  2. Fill in the `[内容待填写]` section with the insight
-- **If no valuable insight**: Skip silently (don't mention gleaning)
+- **Mandatory Checklist**:
+  - [ ] Did I discover any useful method/technique during execution?
+  - [ ] Did any runtime search reveal an unexpected solution?
+  - [ ] Did I encounter and solve any interesting problems?
+  - [ ] Did I learn something that might help future tasks?
+- **If ANY checkbox is ✅**: Run `create_card.py` and fill content
+- **If ALL checkboxes are ❌**: Skip silently (don't mention gleaning)
+
+**Warning Signs You're About to Forget Gleaning**:
+- You just finished a multi-step execution (plan completed)
+- You're about to say "执行完成!", "任务完成!", "Done!" or similar
+- You're summarizing execution results for the user
+- Runtime search helped you solve a problem
+
+**If valuable insight found**:
+1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/crew" --trigger "[what triggered this insight]"`
+2. Fill in the `[内容待填写]` section with the insight
+
 - **Reference**: See `.cursor/rules/gleaning.mdc` for detailed rules
-- **Quality over quantity**: Do NOT over-collect
+- **Quality over quantity**: Do NOT over-collect - only truly valuable insights
 - **Note**: `/crew` does NOT use Wandering (漫游) - execution requires focus
 
 ## Response Format
@@ -277,9 +290,10 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v1.3.0 (Updated: 2026-02-03)
+**Version**: v1.3.1 (Updated: 2026-02-03)
 
 **Version History**:
+- v1.3.1 (2026-02-03): Enhanced Step 9 (Gleaning) with mandatory checklist and warning signs to prevent skipping. Added visual markers (⚠️ MANDATORY CHECK) and explicit scenarios where gleaning is often forgotten.
 - v1.3.0 (2026-02-03): Added Gleaning aspect to workflow. Step 9 adds Gleaning after execution complete to capture valuable insights from execution.
 - v1.2.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
 - v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced research phase with general web search alongside academic search

@@ -205,18 +205,31 @@ AI will automatically search when:
 - **Requirement content**: Include requirement information, role design details, discussion points, processing records
 - **CRITICAL**: `/discuss` only generates requirements, does NOT execute them. Execution is handled by `/prompt_engineer` command.
 
-### Step 10: Gleaning (拾穗) - Before Ending Response
-- **When**: Before ending the discussion response
-- **Reflect**: Ask yourself:
-  - Any method/technique worth remembering?
-  - Any unexpected discovery?
-  - Any insight that might be useful later?
-- **If valuable insight found**:
-  1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/discuss" --trigger "[what triggered this insight]"`
-  2. Fill in the `[内容待填写]` section with the insight
-- **If no valuable insight**: Skip silently (don't mention gleaning)
+### Step 10: Gleaning (拾穗) - ⚠️ MANDATORY CHECK BEFORE ENDING
+
+> **🚨 DO NOT SKIP THIS STEP** - Even after complex operations like API calls, file edits, or social interactions.
+
+- **When**: Before ending **ANY** `/discuss` session (this includes sessions with Moltbook, web searches, etc.)
+- **Mandatory Checklist**:
+  - [ ] Did I execute any interesting operations in this session?
+  - [ ] Did I discover any useful insights or patterns?
+  - [ ] Did anyone (user, commenter, search result) say something worth remembering?
+  - [ ] Did I learn a new technique or approach?
+- **If ANY checkbox is ✅**: Run `create_card.py` and fill content
+- **If ALL checkboxes are ❌**: Skip silently (don't mention gleaning)
+
+**Warning Signs You're About to Forget Gleaning**:
+- You just finished a multi-step operation (API calls, file edits)
+- You're about to say "Done!", "完成了!", "搞定~" or similar
+- You're summarizing results for the user
+- The conversation involved social interaction (Moltbook, comments, etc.)
+
+**If valuable insight found**:
+1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "[activity]" --trigger "[what triggered this insight]"`
+2. Fill in the `[内容待填写]` section with the insight
+
 - **Reference**: See `.cursor/rules/gleaning.mdc` for detailed rules
-- **Quality over quantity**: Do NOT over-collect
+- **Quality over quantity**: Do NOT over-collect - only truly valuable insights
 
 ## Response Format
 
@@ -388,9 +401,10 @@ for time series? Are there any recent papers we should be aware of?
 
 ---
 
-**Version**: v3.6.1 (Updated: 2026-02-03)
+**Version**: v3.6.2 (Updated: 2026-02-03)
 
 **Version History**:
+- v3.6.2 (2026-02-03): Enhanced Step 10 (Gleaning) with mandatory checklist and warning signs to prevent skipping. Added visual markers (⚠️ MANDATORY CHECK) and explicit scenarios where gleaning is often forgotten.
 - v3.6.1 (2026-02-03): Simplified Step 1 topic tree update to use ONE-STEP `update` command. Removed 4-step manual flow reference. Synced with Rules v1.9.
 - v3.6.0 (2026-02-03): Added Inspiration Capital aspects (Wandering and Gleaning) to workflow. Step 0.5 adds Wandering for exploratory mode. Step 10 adds Gleaning before ending response.
 - v3.5.1 (2026-02-03): Added explicit reference to Topic Tree Update Flow (validation) in Step 1 Workflow. Ensures AI follows double-buffer validation when updating topic tree.
