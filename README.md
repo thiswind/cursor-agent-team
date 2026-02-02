@@ -57,6 +57,8 @@ The strategist. Engages in discussions, analyzes problems, explores solutions, a
 ### Crew Member (`/crew`)
 The executor. Receives plans from the Discussion Partner and executes them step by step. Strictly follows plan specifications without deviation.
 
+**Direct Use**: Crew can also be used standalone without a pre-generated plan. Just type `/crew` followed by your task. Benefits: auto-research before execution, pre-execution confirmation, execution records, runtime problem-solving.
+
 ### Prompt Engineer (`/prompt_engineer`)
 The HR and trainer. Creates and maintains new roles (Cursor commands). When you need a new specialized role, the Prompt Engineer helps create it as a new command file and rule file.
 
