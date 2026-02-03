@@ -1,211 +1,141 @@
+<p align="center">
+  <img src="logo.png" alt="Logo" width="200">
+</p>
+
 # Cursor AI Agent Team Framework
 
 ![Framework Banner](banner.png)
 
-A three-agent collaboration system for Cursor IDE and Qwen Code that installs custom commands and enables team expansion.
+A lightweight multi-agent collaboration framework for Cursor IDE and Qwen Code.
 
-**Now supports both Cursor IDE and Qwen Code platforms!**
+## Quick Start
+
+```bash
+# 1. Add as submodule
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+
+# 2. Install
+./cursor-agent-team/install.sh
+
+# 3. Start discussing
+# Type /discuss in Cursor
+```
 
 ## What is cursor-agent-team?
 
-cursor-agent-team is a **lightweight, IDE-integrated multi-agent collaboration framework** that enables multiple specialized AI agents to work together within Cursor IDE. It belongs to:
+A **lightweight, IDE-integrated multi-agent collaboration framework** that enables multiple specialized AI agents to work together within Cursor IDE. It provides:
 
-- **Academic**: Multi-Agent System (MAS), Prompt Engineering Toolchain, Workflow Automation Framework
-- **Industry**: Developer Tools (AI-enhanced), AI Agent Platform (lightweight), IDE Extension Framework
+- **Structured workflow**: discuss → plan → execute
+- **Specialized roles**: Each agent has distinct responsibilities
+- **Hard constraint validation**: Python scripts ensure deterministic output
+- **Extensible team**: Create new roles via `/prompt_engineer`
 
-For detailed classification analysis, see [Classification Analysis](ai_workspace/cursor_agent_team_classification_analysis.md).
+## Core Roles
 
-## Relationship with Cursor 2.0
-
-Cursor 2.0 (released October 2025) introduced native multi-agent support with up to 8 parallel agents. This framework complements Cursor's native features:
-
-| Aspect | Cursor 2.0 Native | cursor-agent-team |
-|--------|------------------|-------------------|
-| **Focus** | General coding assistance | Structured workflow (discuss→plan→execute) |
-| **Agent Types** | Generic agents | Specialized roles (Discussion Partner, Crew, Prompt Engineer) |
-| **State Management** | Per-session | Persistent topic tree with validation |
-| **Team Expansion** | Manual | `/prompt_engineer` creates new roles |
-| **Validation** | None | Script-based hard constraints |
-
-**Best Use Together**: Use cursor-agent-team for structured research/development workflows while leveraging Cursor 2.0's parallel agents for independent coding tasks.
-
-## Overview
-
-This framework installs three core Cursor commands (roles) into your project:
-
-- **`/discuss`** - Discussion Partner: The strategist who analyzes problems, explores ideas, and creates execution plans
-- **`/crew`** - Crew Member: The executor who implements plans strictly according to specifications
-- **`/prompt_engineer`** - Prompt Engineer: The HR and trainer who creates new roles (new Cursor commands)
-
-With these three core roles installed, the team can operate. The Prompt Engineer can create additional roles as needed, allowing the team to expand.
-
-## Key Features
-
-- **Lightweight**: File-based architecture, no complex infrastructure required
-- **IDE Native Integration**: Deeply integrated with Cursor IDE, seamless user experience
-- **Command-Driven**: Commands as roles (Commands as Roles philosophy)
-- **Rule Management**: Persistent rules via `.mdc` files for consistent behavior
-- **Extensible**: Create custom roles via `/prompt_engineer`
-- **Workflow Automation**: Complete discussion → planning → execution workflow
-- **TTS Speech Output**: Voice feedback via macOS `say` command (with automatic platform detection)
-- **Persona System** (v0.8.0+): Script-driven persona integration with sandboxing to preserve work quality
-
-## Team Roles
-
-### Discussion Partner (`/discuss`)
-The strategist. Engages in discussions, analyzes problems, explores solutions, and generates executable plans. Does not modify project files directly—only provides strategies and plans.
-
-### Crew Member (`/crew`)
-The executor. Receives plans from the Discussion Partner and executes them step by step. Strictly follows plan specifications without deviation.
-
-**Direct Use**: Crew can also be used standalone without a pre-generated plan. Just type `/crew` followed by your task. Benefits: auto-research before execution, pre-execution confirmation, execution records, runtime problem-solving.
-
-### Prompt Engineer (`/prompt_engineer`)
-The HR and trainer. Creates and maintains new roles (Cursor commands). When you need a new specialized role, the Prompt Engineer helps create it as a new command file and rule file.
+| Role | Command | Description |
+|------|---------|-------------|
+| **Discussion Partner** | `/discuss` | Analyzes problems, explores ideas, creates execution plans |
+| **Crew Member** | `/crew` | Executes plans strictly according to specifications |
+| **Prompt Engineer** | `/prompt_engineer` | Creates and maintains new roles (commands) |
 
 ## Workflow
+
+```
+/discuss → [Explore & Plan] → /crew → [Execute] → Done
+                ↓
+         /prompt_engineer → [Create New Role] → Use New Command
+```
 
 1. **Plan**: Use `/discuss` to explore ideas and generate execution plans
 2. **Execute**: Use `/crew` to execute the plans
 3. **Expand**: Use `/prompt_engineer` to create new roles when needed
 
-## Comparison with Similar Products
+## Installation
 
-| Feature | cursor-agent-team | LangChain/AutoGen | Swarms AI | GitHub Copilot |
-|---------|------------------|-------------------|-----------|----------------|
-| **Positioning** | IDE Extension Framework | General Application Framework | Enterprise Multi-Agent | Code Completion Tool |
-| **Integration** | IDE Native | External API/Library | External API | IDE Plugin |
-| **Multi-Agent** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
-| **Role System** | ✅ Commands as Roles | ✅ Explicit Definition | ✅ Configurable | ❌ No |
-| **Workflow** | ✅ Discussion→Execution | ✅ Configurable | ✅ Hierarchical | ❌ No |
-| **Lightweight** | ✅ Yes | ❌ No | ❌ No | ✅ Yes |
-| **Hard Constraints** | ✅ Script Validation | ❌ No | ❌ No | ❌ No |
-| **Extensible** | ✅ Yes | ✅ Yes | ✅ Yes | ❌ No |
+### Cursor IDE
 
-## Social Media Integration
-
-cursor-agent-team now supports integration with AI agent social networks like [Moltbook](https://moltbook.com/).
-
-### Features
-
-- Agent registration and authentication
-- Community browsing and observation
-- Thoughtful participation with built-in safeguards
-
-### Social Media Policy
-
-A comprehensive social media policy (`social_media_policy.mdc`) has been established to ensure agents behave appropriately in public spaces. Key principles:
-
-- **Worldview constraints**: Materialism, rational thinking
-- **Topic classification**: Clear guidelines on what to engage with
-- **Review process**: Pre-publication checklist for all public posts
-
-For details, see `.cursor/rules/social_media_policy.mdc`.
-
-## Additional Features
-
-The framework also includes additional features that extend the core functionality:
-
-### Inspiration Capital System (v0.7.0+)
-
-A "scatter card" (散卡片) collection system for sparking creativity, inspired by Da Vinci's notebooks and remote association theory.
-
-**Philosophy**: "先有资本，后有主意" (First capital, then ideas)
-
-**Components**:
-- **Gleaning (拾穗)**: After any work completes, reflect and collect valuable insights
-- **Wandering (漫游)**: Before exploration, randomly browse cards for inspiration
-
-**Tools**:
 ```bash
-# Create a new card
-python ai_workspace/inspiration_capital/scripts/create_card.py --source "Moltbook" --trigger "Saw an interesting discussion"
+# Add submodule
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 
-# Randomly draw cards
-python ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3
+# Install
+./cursor-agent-team/install.sh
+
+# Update
+git submodule update --remote cursor-agent-team && ./cursor-agent-team/install.sh
+
+# Uninstall
+./cursor-agent-team/uninstall.sh
 ```
 
-**Design Principles**:
-- No categories: Keep chaos like Da Vinci's notebooks
-- Atomic: One idea per card
-- Low friction: Scripts ensure format consistency
-- Wander, don't search: Random browsing sparks creativity
+### Qwen Code
 
-For details, see `ai_workspace/inspiration_capital/README.md`.
+```bash
+# Add submodule
+git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+
+# Install (uses .qwen/ directory)
+./cursor-agent-team/install_qwen.sh
+
+# Update
+git submodule update --remote cursor-agent-team && ./cursor-agent-team/install_qwen.sh
+
+# Uninstall
+./cursor-agent-team/uninstall_qwen.sh
+```
+
+**Note**: The workspace at `cursor-agent-team/ai_workspace/` is shared between both platforms.
+
+## Advanced Features
 
 ### Persona System (v0.8.0+)
 
-A script-driven persona integration system that applies personality characteristics **without degrading work quality**.
+Script-driven persona integration that applies personality **without degrading work quality**. Based on [persona-spec](https://github.com/thiswind/persona-spec).
 
-**The Problem**: Loading persona during work causes "Persona Contamination" - the model constrains itself to persona characteristics, degrading output quality. (Validated by PersonaGym, ACL 2025)
-
-**The Solution**: Persona Sandboxing - persona is only active in the Output Phase, after work is complete. The work layer remains persona-free.
-
-**Specification**: Based on [persona-spec](https://github.com/thiswind/persona-spec) - a platform-agnostic 7-layer persona definition:
-1. Identity - Basic identity (name, age, profession)
-2. Personality - Big Five (OCEAN) traits
-3. Affective - Emotional response patterns
-4. Relationship - Relationship with user
-5. Communication - Tone, honorifics, emoji usage
-6. Behavior Rules - Core principles and boundaries
-7. Examples - Few-shot learning dialogues
-
-**Installation**:
-
-1. Create or clone a persona following [persona-spec](https://github.com/thiswind/persona-spec):
-   ```bash
-   # Example: clone an existing persona
-   git clone https://github.com/yourname/your-persona.git
-   ```
-
-2. Configure the persona path in `cursor-agent-team/config/persona_config.yaml`:
-   ```yaml
-   enabled: true
-   path: "/absolute/path/to/your-persona/persona.yaml"
-   ```
-
-3. Verify configuration:
-   ```bash
-   python cursor-agent-team/_scripts/persona_output.py --check
-   ```
-
-**How It Works**:
-```
-[User Request] → [Work Layer (persona-free)] → [Output Layer (full persona)] → [User]
+```bash
+# Configure in config/persona_config.yaml, then verify:
+python cursor-agent-team/_scripts/persona_output.py --check
 ```
 
-The agent completes work without persona interference, then presents results using the full 7-layer persona characteristics.
+### Inspiration Capital (v0.7.0+)
 
-For details, see [persona-spec INSTALL_GUIDE_FOR_AGENTS.md](https://github.com/thiswind/persona-spec/blob/main/INSTALL_GUIDE_FOR_AGENTS.md).
+A "scatter card" collection system for sparking creativity.
 
-### Spec-Kit Translator (`/spec_translator`)
+```bash
+# Create card
+python ai_workspace/inspiration_capital/scripts/create_card.py --source "Source" --trigger "What triggered this"
 
-A conversion tool for [Spec-Kit](https://github.com/github/spec-kit) workflow integration. Converts execution plans generated by `/discuss` into spec-kit formatted documents.
+# Draw random cards
+python ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3
+```
 
-**Purpose**: When your project uses Spec-Kit for specification-driven development, this tool automatically converts Plan files into three spec-kit documents:
-- `constitution.md` - Project governance principles and development guidelines
-- `specify.md` - Feature specification document
-- `plan.md` - Technical implementation plan
+See `ai_workspace/inspiration_capital/README.md` for details.
 
-**Usage**:
+### Text-to-Speech (macOS)
+
+Voice feedback via native `say` command. Only activated when user explicitly requests ("读给我听", "read to me").
+
+```bash
+python cursor-agent-team/_scripts/tts_speak.py --check  # Check availability
+```
+
+### Social Media Integration
+
+Integration with AI agent social networks like [Moltbook](https://moltbook.com/). See `.cursor/rules/social_media_policy.mdc` for guidelines.
+
+### Spec-Kit Translator
+
+Converts `/discuss` plans into [spec-kit](https://github.com/github/spec-kit) format for specification-driven development.
+
 ```
 /spec_translator PLAN-B-001
 ```
 
-**Workflow Integration**:
-1. Use `/discuss` to generate an execution plan for a software development task
-2. Use `/spec_translator` to convert the plan to spec-kit documents
-3. Use spec-kit commands (clarify, tasks, etc.) to continue development
+## Technical Architecture
 
-**Note**: This is an additional feature, not a core team role. It only processes software development tasks and automatically rejects non-software development plans.
+### Hard Constraint Validation
 
-For more information about Spec-Kit, visit the [Spec-Kit repository](https://github.com/github/spec-kit).
-
-## Technical Highlights (v0.5.x)
-
-### Hard Constraint Validation System
-
-The framework uses a hybrid architecture combining LLM soft constraints (prompts) with script hard constraints (Python):
+The framework uses a hybrid architecture combining LLM soft constraints with script hard constraints:
 
 ```
 ┌─────────────────────────────────────────────────┐
@@ -218,143 +148,22 @@ The framework uses a hybrid architecture combining LLM soft constraints (prompts
 │                  Script Layer                   │
 │   (Hard Constraints: Python scripts)            │
 │   - validate_topic_tree.py                      │
-│   - cleanup_topic_tree_temp.py                  │
+│   - cleanup_ai_workspace.py                     │
+│   - preflight_check.py                          │
 └─────────────────────────────────────────────────┘
 ```
 
-**Why This Matters**: LLM output has inherent randomness. Critical operations (like topic tree updates) use deterministic Python scripts to validate outputs before committing, preventing accidental data loss.
+**Why**: LLM output has inherent randomness. Critical operations use deterministic Python scripts to validate outputs before committing.
 
-**Scripts Location**: `cursor-agent-team/_scripts/`
-
-### Double-Buffer Validation Flow
-
-When updating the topic tree:
-1. **Backup**: Copy current file to temp directory
-2. **Generate**: Write new content to temp file
-3. **Validate**: Run validation script
-4. **Commit or Rollback**: Apply changes on success, restore backup on failure
-
-This ensures data integrity even if the LLM makes mistakes.
-
-### Text-to-Speech (TTS) Output
-
-The framework includes optional TTS functionality for voice feedback:
-
-- **Trigger**: Only activated when user explicitly requests ("读给我听", "念出来", etc.)
-- **Platform**: macOS only (uses native `say` command)
-- **Auto-Detection**: Automatically checks platform compatibility on first use
-- **Silent Fallback**: On non-macOS systems, silently falls back to text output
-- **Content Preparation**: AI converts Markdown to natural speech before speaking
-
-**Script Location**: `cursor-agent-team/_scripts/tts_speak.py`
-
-## Usage Example
-
-### Step 1: Discuss and Plan
-```
-/discuss
-I want to add a new section about computational complexity to the paper. 
-What should be included?
-```
-
-After discussion, generate a plan:
-```
-/discuss
-The discussion is ready, please generate the execution plan
-```
-
-The Discussion Partner generates a plan: `PLAN-A-001`
-
-### Step 2: Execute the Plan
-```
-/crew PLAN-A-001
-```
-
-The Crew Member executes the plan step by step.
-
-### Step 3: Create New Roles (Optional)
-If you need a specialized role for a specific task:
-```
-/prompt_engineer
-I need a role for generating figure captions
-```
-
-The Prompt Engineer creates:
-- `.cursor/commands/figure_caption.md` - A new command `/figure_caption`
-- `.cursor/rules/figure_caption_assistant.mdc` - Rules for this role
-
-You can now use `/figure_caption` in Cursor, just like the three core commands.
-
-## Installation
-
-### For Cursor IDE
-
-#### Step 1: Add as Git Submodule
-```bash
-git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-```
-
-#### Step 2: Run Install Script
-```bash
-./cursor-agent-team/install.sh
-```
-
-This installs the three core commands into `.cursor/commands/` and rules into `.cursor/rules/`.
-
-#### Update
-```bash
-git submodule update --remote cursor-agent-team
-./cursor-agent-team/install.sh
-```
-
-#### Uninstall
-```bash
-./cursor-agent-team/uninstall.sh
-```
-
-### For Qwen Code
-
-#### Step 1: Add as Git Submodule
-```bash
-git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-```
-
-#### Step 2: Run Qwen Code Install Script
-```bash
-./cursor-agent-team/install_qwen.sh
-```
-
-This installs the three core commands into `.qwen/commands/` (TOML format) and context files into `.qwen/context/` (Markdown format).
-
-**Note**: The workspace at `cursor-agent-team/ai_workspace/` is **SHARED** between Cursor and Qwen Code platforms. This allows seamless switching between platforms while maintaining the same discussion history, plans, and execution records.
-
-#### Update
-```bash
-git submodule update --remote cursor-agent-team
-./cursor-agent-team/install_qwen.sh
-```
-
-#### Uninstall
-```bash
-./cursor-agent-team/uninstall_qwen.sh
-```
-
-### Platform Compatibility
-
-- **Cursor IDE**: Uses `.cursor/` directory with `.md` commands and `.mdc` rules
-- **Qwen Code**: Uses `.qwen/` directory with `.toml` commands and `.md` context files
-- **Shared Workspace**: `cursor-agent-team/ai_workspace/` is shared between both platforms
-- **Compatibility**: You can install both versions in the same project - they work independently
+**Scripts**: See `cursor-agent-team/_scripts/README.md` for details.
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 (GPL-3.0).
-
-See [LICENSE](LICENSE) file for details.
+GNU General Public License v3.0 (GPL-3.0). See [LICENSE](LICENSE).
 
 ## Version
 
-Current version: **v0.8.0**
+Current version: **v0.10.0**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
@@ -364,6 +173,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## Author
 
-**thiswind**
-
-- GitHub: [@thiswind](https://github.com/thiswind)
+**thiswind** - [@thiswind](https://github.com/thiswind)
