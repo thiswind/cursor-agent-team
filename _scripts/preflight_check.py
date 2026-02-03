@@ -39,41 +39,26 @@ def run_preflight_check() -> str:
     project_root = get_project_root()
     ai_workspace = project_root / "ai_workspace"
     
-    # Get current time
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Get current time (compact format, no seconds)
+    current_time = datetime.now().strftime("%Y-%m-%dT%H:%M")
     
     # Check key files and directories
     topics_path = ai_workspace / "discussion_topics.md"
-    topics_exists, topics_status = check_file_exists(topics_path)
+    topics_status = "OK" if topics_path.exists() else "MISSING"
     
     cards_dir = ai_workspace / "inspiration_capital" / "cards"
     cards_count = count_files_in_directory(cards_dir, "*.md")
-    cards_status = "✅" if cards_dir.exists() else "❌"
     
     notes_dir = ai_workspace / "notes"
     notes_count = count_files_in_directory(notes_dir, "*.md")
-    notes_status = "✅" if notes_dir.exists() else "❌"
     
-    # Build output
+    # Build compact output
     output_lines = [
-        "=== Preflight Check ===",
-        f"⏰ Current Time: {current_time}",
-        "",
-        "📋 Workspace Status:",
-        f"  {topics_status} discussion_topics.md",
-        f"  {cards_status} inspiration_capital/ ({cards_count} cards)",
-        f"  {notes_status} notes/ ({notes_count} files)",
-        "",
-        "📌 Operation Conventions:",
-        "  • Delete → _scripts/cleanup_ai_workspace.py",
-        "  • Create card → ai_workspace/inspiration_capital/scripts/create_card.py",
-        "  • Draw cards → ai_workspace/inspiration_capital/scripts/draw_cards.py",
-        "",
-        "⚠️ Before Ending (DO NOT SKIP):",
-        "  1. persona_output.py → Load persona before output",
-        "  2. Gleaning → Create card if valuable insights found",
-        "",
-        "=== Ready ===",
+        f"PREFLIGHT {current_time}",
+        f"STATUS: topics[{topics_status}] cards[{cards_count}] notes[{notes_count}]",
+        "SCRIPTS: cleanup_ai_workspace.py | create_card.py | draw_cards.py",
+        "END_CHECKLIST: persona_output.py → gleaning",
+        "READY",
     ]
     
     return "\n".join(output_lines)
