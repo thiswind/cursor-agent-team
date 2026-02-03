@@ -10,28 +10,15 @@ A lightweight multi-agent collaboration framework for Cursor IDE and Qwen Code.
 
 ## Quick Start
 
-### Let Cursor Install It (Recommended)
-
-Just tell Cursor Agent:
+Tell Cursor Agent:
 
 ```
 Install cursor-agent-team from https://github.com/thiswind/cursor-agent-team.git as a submodule and run the install script.
 ```
 
-Cursor will handle everything automatically.
+Then type `/discuss` to start.
 
-### Manual Installation
-
-```bash
-# 1. Add as submodule
-git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-
-# 2. Install
-./cursor-agent-team/install.sh
-
-# 3. Start discussing
-# Type /discuss in Cursor
-```
+For manual installation or Qwen Code, see [Installation](#installation).
 
 ## What is cursor-agent-team?
 
