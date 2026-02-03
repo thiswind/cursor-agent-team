@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """
-Preflight Check - AI Agent 预飞检查系统
+Preflight Check - AI Agent Pre-flight Check System
 
-在所有角色启动时自动运行，提供：
-1. 当前时间
-2. 工作区状态检查
-3. 操作约定提醒
+Runs automatically when all roles start, provides:
+1. Current time
+2. Workspace status check
+3. Operation conventions reminder
 
-核心理念：用脚本替代记忆，减轻 AI 认知负担。
+Core principle: Use scripts to replace memory, reduce AI cognitive load.
 """
 
 import os
@@ -16,33 +16,33 @@ from pathlib import Path
 
 
 def get_project_root() -> Path:
-    """获取项目根目录 (cursor-agent-team/)"""
+    """Get project root directory (cursor-agent-team/)"""
     return Path(__file__).parent.parent
 
 
 def check_file_exists(filepath: Path) -> tuple[bool, str]:
-    """检查文件是否存在"""
+    """Check if file exists"""
     exists = filepath.exists()
     status = "✅" if exists else "❌"
     return exists, status
 
 
 def count_files_in_directory(dirpath: Path, pattern: str = "*.md") -> int:
-    """统计目录中符合模式的文件数量"""
+    """Count files matching pattern in directory"""
     if not dirpath.exists():
         return 0
     return len(list(dirpath.glob(pattern)))
 
 
 def run_preflight_check() -> str:
-    """执行预飞检查，返回格式化的输出"""
+    """Execute preflight check, return formatted output"""
     project_root = get_project_root()
     ai_workspace = project_root / "ai_workspace"
     
-    # 获取当前时间
+    # Get current time
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
-    # 检查关键文件和目录
+    # Check key files and directories
     topics_path = ai_workspace / "discussion_topics.md"
     topics_exists, topics_status = check_file_exists(topics_path)
     
@@ -54,24 +54,24 @@ def run_preflight_check() -> str:
     notes_count = count_files_in_directory(notes_dir, "*.md")
     notes_status = "✅" if notes_dir.exists() else "❌"
     
-    # 构建输出
+    # Build output
     output_lines = [
         "=== Preflight Check ===",
-        f"⏰ 当前时间: {current_time}",
+        f"⏰ Current Time: {current_time}",
         "",
-        "📋 工作区状态:",
+        "📋 Workspace Status:",
         f"  {topics_status} discussion_topics.md",
         f"  {cards_status} inspiration_capital/ ({cards_count} cards)",
         f"  {notes_status} notes/ ({notes_count} files)",
         "",
-        "📌 操作约定:",
-        "  • 删除 → _scripts/cleanup_ai_workspace.py",
-        "  • 创卡 → ai_workspace/inspiration_capital/scripts/create_card.py",
-        "  • 抽卡 → ai_workspace/inspiration_capital/scripts/draw_cards.py",
+        "📌 Operation Conventions:",
+        "  • Delete → _scripts/cleanup_ai_workspace.py",
+        "  • Create card → ai_workspace/inspiration_capital/scripts/create_card.py",
+        "  • Draw cards → ai_workspace/inspiration_capital/scripts/draw_cards.py",
         "",
-        "⚠️ 结束前必做 (DO NOT SKIP):",
-        "  1. persona_output.py → 加载人格后再输出",
-        "  2. Gleaning → 有价值洞见就创卡",
+        "⚠️ Before Ending (DO NOT SKIP):",
+        "  1. persona_output.py → Load persona before output",
+        "  2. Gleaning → Create card if valuable insights found",
         "",
         "=== Ready ===",
     ]
@@ -80,7 +80,7 @@ def run_preflight_check() -> str:
 
 
 def main():
-    """主函数"""
+    """Main function"""
     print(run_preflight_check())
 
 

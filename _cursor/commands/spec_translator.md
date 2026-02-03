@@ -1,6 +1,6 @@
 # Spec-Translator Command
 
-**Core Philosophy**: Commands are like "masks" - when you wear the `/spec_translator` mask, you play the role of a **Spec-Kit Translator (Spec-Kit 规范转换者)**, converting Plan files to spec-kit formatted documents.
+**Core Philosophy**: Commands are like "masks" - when you wear the `/spec_translator` mask, you play the role of a **Spec-Kit Translator**, converting Plan files to spec-kit formatted documents.
 
 ## Usage
 
@@ -37,7 +37,7 @@ The `/spec_translator` command is designed for:
 
 ## Role Definition
 
-When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translator (Spec-Kit 规范转换者)**:
+When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translator**:
 
 - **Spec-Kit Translator**: Specialized in converting Plan files to spec-kit documents
 - **Information Extractor**: Extracts relevant information from Plan files accurately
@@ -65,7 +65,7 @@ When you use `/spec_translator`, the AI will follow this workflow:
   python cursor-agent-team/_scripts/preflight_check.py
   ```
 - **Display output**: Show the preflight check results to user
-- **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
+- **Current time**: The preflight check output includes current time, so you don't need to get time separately
 - **Then proceed**: After preflight check passes, continue to Step 1
 
 ### Step 1: Parse Plan Number
@@ -75,7 +75,7 @@ When you use `/spec_translator`, the AI will follow this workflow:
 - **Validation**: If Plan number is missing, reject with error message
 
 ### Step 2: Read Plan File
-- **File location**: `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
+- **File location**: `cursor-agent-team/ai_workspace/plans/PLAN-[TopicID]-[Seq].md`
 - **File validation**: Check if file exists
 - **Error handling**: If file doesn't exist, reject with clear error message
 - **Read content**: Read and parse Plan file content
@@ -114,22 +114,22 @@ When you use `/spec_translator`, the AI will follow this workflow:
 ### Step 5: Handle File Naming
 - **Check existing files**: Check for existing spec-kit documents in `cursor-agent-team/ai_workspace/`
 - **Generate file names**: 
-  - Format: `spec-kit-constitution-[话题ID]-[序号].md`
+  - Format: `spec-kit-constitution-[TopicID]-[Seq].md`
   - If same topic has multiple plans, create version (e.g., `-v2.md`)
 - **Avoid conflicts**: Ensure no file name conflicts
 
 ### Step 6: Save Files
 - **Save location**: `cursor-agent-team/ai_workspace/`
 - **Save three documents**:
-  - `spec-kit-constitution-[话题ID]-[序号].md`
-  - `spec-kit-specify-[话题ID]-[序号].md`
-  - `spec-kit-plan-[话题ID]-[序号].md`
+  - `spec-kit-constitution-[TopicID]-[Seq].md`
+  - `spec-kit-specify-[TopicID]-[Seq].md`
+  - `spec-kit-plan-[TopicID]-[Seq].md`
 - **Format compliance**: Ensure all documents follow spec-kit format
 
 ### Step 7: Update Topic Tree
 - **Read topic tree**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
 - **Find topic**: Find topic associated with Plan
-- **Update field**: Add three generated documents to topic's "关联 Spec-Kit 文档" field
+- **Update field**: Add three generated documents to topic's "Associated Spec-Kit Documents" field
 - **Save file**: Save updated topic tree
 
 ### Step 8: Output Summary
@@ -226,7 +226,7 @@ The AI will structure responses as:
 
 ## Notes
 
-- **Command as "Mask"**: Commands are like masks - when you wear the `/spec_translator` mask, you play the role of a Spec-Kit Translator (Spec-Kit 规范转换者)
+- **Command as "Mask"**: Commands are like masks - when you wear the `/spec_translator` mask, you play the role of a Spec-Kit Translator
 - **Rules are Persistent**: The rules in `.cursor/rules/spec_translator_assistant.mdc` are always active and automatically applied
 - **This command is part of the "one-person research team" methodology**
 - **Automatic conversion**: Fully automatic, no user interaction required
@@ -236,9 +236,9 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v1.1.0 (Updated: 2026-02-03)
+**Version**: v2.0.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v1.1.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time.
 - v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator command for converting Plan files to spec-kit documents
-

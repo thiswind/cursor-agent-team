@@ -1,4 +1,10 @@
-# Wandering Aspect (漫游切面)
+---
+description: Pre-execution aspect for /discuss exploratory mode - draw inspiration cards
+globs: 
+alwaysApply: false
+---
+
+# Wandering Aspect
 
 > Priority: This rule applies ONLY to `/discuss` in exploratory mode.
 
@@ -40,7 +46,7 @@ Quickly scan the drawn cards:
 
 If any card seems relevant, briefly mention:
 
-> "漫游时发现一张可能相关的卡片：[简述内容]"
+> "Found a potentially relevant card while wandering: [brief summary]"
 
 If no card is relevant, proceed silently without mentioning wandering.
 
@@ -59,3 +65,11 @@ If no card is relevant, proceed silently without mentioning wandering.
 ## When Cards Directory is Empty
 
 If no cards exist yet, skip wandering silently and proceed normally.
+
+---
+
+**Version**: v2.0.0 (Updated: 2026-02-03)
+
+**Version History**:
+- v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content.
+- v1.0.0 (2026-02-03): Initial creation - Wandering aspect for exploratory inspiration

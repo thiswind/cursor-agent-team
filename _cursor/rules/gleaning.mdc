@@ -1,11 +1,17 @@
-# Gleaning Aspect (拾穗切面)
+---
+description: Post-execution aspect - capture valuable insights as inspiration cards
+globs: 
+alwaysApply: true
+---
+
+# Gleaning Aspect
 
 > Priority: This rule applies to ALL commands as a post-execution aspect.
 
 ## Purpose
 
 After any work completes, reflect on whether there are valuable byproducts 
-worth collecting as scatter cards (散卡片).
+worth collecting as scatter cards.
 
 ## Trigger
 
@@ -42,14 +48,14 @@ python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py
 
 ### Step 4: Fill Content
 
-Use StrReplace to fill in the `[内容待填写]` section with the insight.
+Use StrReplace to fill in the `[Content to fill]` section with the insight.
 
 ## Sources
 
 Common sources include:
 - `/discuss` - Discussion insights
 - `/crew` - Execution learnings
-- `网络搜索` - Web discoveries
+- `Web Search` - Web discoveries
 - `Moltbook` - Community observations
 
 ## Important
@@ -58,3 +64,11 @@ Common sources include:
 - Do NOT mention gleaning process unless a card is actually created.
 - Do NOT add categories or tags to cards.
 - Keep each card atomic (one idea per card).
+
+---
+
+**Version**: v2.0.0 (Updated: 2026-02-03)
+
+**Version History**:
+- v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content.
+- v1.0.0 (2026-02-03): Initial creation - Gleaning aspect for capturing valuable insights

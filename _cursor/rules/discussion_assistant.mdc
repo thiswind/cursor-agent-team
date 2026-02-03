@@ -1,206 +1,38 @@
+---
+description: Rules for /discuss command - Discussion Partner behavior and workflow
+globs: 
+alwaysApply: false
+---
+
 # Discussion Assistant Rules
 
-> **Purpose**: Persistent rules for the Discussion Partner (讨论伙伴) - these rules are always active and automatically injected.
+> **Purpose**: Persistent rules for the Discussion Partner - these rules are always active and automatically injected.
 
-## Cross-Cutting Concerns (横切关注点)
+## Cross-Cutting Concerns
 
-This role incorporates the following AOP-style aspects:
-
-| Aspect | Rule File | Trigger Point | Applies To |
-|--------|-----------|---------------|------------|
-| **History Context Handler (历史上下文处理)** | `history_context_handler.mdc` | When reading conversation history | All work layers |
-| **Input Persona (输入人格层)** | `persona_input_layer.mdc` | Before understanding user input | All user interactions |
-| **Wandering (漫游)** | `wandering.mdc` | Before exploratory discussion | `/discuss` in exploration mode only |
-| **Gleaning (拾穗)** | `gleaning.mdc` | After discussion ends | All `/discuss` sessions |
-| **Output Persona (输出人格层)** | `persona_output_layer.mdc` | Before final output | All user interactions |
-
-### History Context Handler Aspect (历史上下文处理切面)
-
-**When**: When reading conversation history at the start of each turn.
-
-**Purpose**: Isolate persona-styled content in history from work layer thinking.
-
-**Behavior**: Follow rules in `history_context_handler.mdc`:
-1. Identify content wrapped in `<persona_styled>` tags
-2. Extract technical facts (code, paths, data, conclusions)
-3. Ignore expression style (tone, emoji, colloquial phrases)
-4. Maintain technical neutrality in work layer thinking
-
-**Key Principle**: Historical persona-styled output is for user experience, not for work layer imitation.
-
-### Input Persona Aspect (输入人格层切面)
-
-**When**: At the very start of every user interaction, before any command processing.
-
-**Purpose**: Translate user's natural, emotional, or colloquial input into precise, normalized task descriptions.
-
-**Behavior**: Follow rules in `persona_input_layer.mdc`:
-1. Recognize emotional context from user input
-2. Extract core intent
-3. Normalize context and parameters
-4. Generate clean task description for work layer
-5. Preserve original input and emotional context for output layer
-
-**Key Principle**: Use persona to **comprehend**, but output **neutral** task descriptions.
-
-### Output Persona Aspect (输出人格层切面)
-
-**When**: After all work is complete, before final output to user (but before TTS rendering).
-
-**Purpose**: Reshape technical output using persona style while preserving accuracy.
-
-**Behavior**: Follow rules in `persona_output_layer.mdc`:
-1. Load persona definition (if configured)
-2. Retrieve emotional context from input layer
-3. Segment content (code, data, explanations)
-4. Apply persona style to appropriate segments
-5. Verify technical accuracy is preserved
-
-**Key Principle**: Transform **expression**, not **content**.
-
-### Wandering Aspect (漫游切面)
-
-**When**: At the start of **exploratory** discussions (brainstorming, casual chat, open-ended questions).
-
-**NOT When**: Focused tasks, explicit questions, "where are we?" type questions, or when user requests skipping.
-
-**Behavior**: Follow rules in `wandering.mdc`:
-1. Run `draw_cards.py --count 3` to get random inspiration cards
-2. Scan for relevance to current discussion
-3. If relevant: briefly mention the card
-4. If not relevant: proceed silently
-
-### Gleaning Aspect (拾穗切面)
-
-**When**: At the end of **any** `/discuss` session, before final response.
-
-**Behavior**: Follow rules in `gleaning.mdc`:
-1. Reflect: Any valuable insight worth remembering?
-2. If yes: Run `create_card.py` and fill content
-3. If no: Skip silently (don't mention gleaning)
-
-**Quality over quantity**: Do NOT over-collect. Only capture truly valuable insights.
+Shared aspects (see individual `.mdc` files for details):
+- **Persona**: Run `persona_output.py` before final output
+- **History**: `history_context_handler.mdc` applied when reading conversation history
+- **Wandering/Gleaning**: `wandering.mdc` (before exploration), `gleaning.mdc` (after discussion)
 
 ---
 
-## AI Workspace Rules
+## AI Workspace
 
-### Directory Structure
+Location: `cursor-agent-team/ai_workspace/`
 
-The AI workspace is located at `cursor-agent-team/ai_workspace/`:
+| Directory | Purpose | Naming Convention |
+|-----------|---------|-------------------|
+| `plans/` | Execution plans | `PLAN-[TopicID]-[Seq].md` |
+| `agent_requirements/` | Agent requirements | `AGENT-REQUIREMENT-[TopicID]-[Seq].md` |
+| `discussion_topics.md` | Topic tree | Managed by `validate_topic_tree.py` |
+| `scratchpad/` | Temporary files | Auto-cleanup after 7 days |
 
-```
-cursor-agent-team/ai_workspace/
-├── README.md
-├── discussion_topics.md          # Topic tree management (AI's private notebook)
-├── plans/                        # Execution plans (for /crew)
-│   ├── INDEX.md
-│   └── PLAN-[话题ID]-[序号].md
-├── agent_requirements/           # Agent requirement documents (for /prompt_engineer)
-│   ├── INDEX.md
-│   └── AGENT-REQUIREMENT-[话题ID]-[序号].md
-└── scratchpad/                   # Temporary workspace
-    ├── notes/                    # Discussion notes
-    ├── scripts/                  # Temporary scripts
-    ├── analysis/                 # Analysis results
-    └── temp/                     # Other temporary files
-```
+### Scripts
 
-### File Naming Conventions
-
-**Notes**:
-- Format: `note_YYYYMMDD_HHMMSS.md` or `note_[topic]_YYYYMMDD.md`
-- Example: `note_20251229_140530.md` or `note_riemannian_metric_20251229.md`
-
-**Scripts**:
-- Format: `script_[purpose]_YYYYMMDD_HHMMSS.[ext]`
-- Example: `script_verify_formula_20251229_140530.py`
-
-**Analysis**:
-- Format: `analysis_[topic]_YYYYMMDD_HHMMSS.md`
-- Example: `analysis_complexity_20251229_140530.md`
-
-**Temp Files**:
-- Format: `temp_[description]_YYYYMMDD_HHMMSS.[ext]`
-- Example: `temp_data_export_20251229_140530.csv`
-
-### Usage Rules
-
-1. **Purpose**: Record intermediate thoughts, temporary scripts, and analysis results during discussions
-2. **Scope**: Only accessible during `/discuss` command execution
-3. **Temporary Nature**: Files are temporary and can be cleaned periodically (suggested: keep last 7 days)
-4. **Important Content**: Important content should be manually saved to `discussions/` or `collaboration_outputs/`
-5. **Human Access**: Humans can view AI workspace to understand AI's thinking process, but don't need to actively manage it
-
-### Cleanup Policy
-
-- Files in `scratchpad/` are temporary
-- Suggested retention: Keep files from last 7 days
-- AI should check and clean old files at the start of each session
-- Important content must be manually saved to permanent locations
-
-### AI Workspace Cleanup Script
-
-For cleaning up files in `ai_workspace/`, use the dedicated cleanup script:
-
-**Script Location**: `cursor-agent-team/_scripts/cleanup_ai_workspace.py`
-
-**When to Use**:
-- Cleaning up old temporary files (e.g., older than 7 days)
-- Removing specific files or directories no longer needed
-- Cleaning up test files or temporary analysis results
-- Batch cleaning by pattern (e.g., all `.bak` files)
-
-**Usage Examples**:
-
-```bash
-# Delete a specific file
-python cursor-agent-team/_scripts/cleanup_ai_workspace.py --file temp/old_note.md
-
-# Delete a directory
-python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dir temp/old_analysis
-
-# Delete files by pattern
-python cursor-agent-team/_scripts/cleanup_ai_workspace.py --pattern "*.bak"
-
-# Delete files older than 7 days
-python cursor-agent-team/_scripts/cleanup_ai_workspace.py --older-than 7
-
-# Preview before deleting (recommended for first use)
-python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dry-run --pattern "*.tmp"
-```
-
-**Parameters**:
-
-| Parameter | Description |
-|:--|:--|
-| `--file <path>` | Delete specific file (relative to ai_workspace/) |
-| `--dir <path>` | Delete directory recursively |
-| `--pattern <glob>` | Delete files matching pattern (e.g., *.bak) |
-| `--older-than <days>` | Delete files older than N days |
-| `--dry-run` | Preview mode, show what would be deleted |
-| `--quiet` | Silent mode, no terminal output |
-| `--force` | Force delete (including protected files) |
-
-**Protected Files** (cannot be deleted without `--force`):
-- `README.md`
-- `crew/README.md`
-- `plans/README.md`
-- `plans/INDEX.md`
-- `prompt_engineer/README.md`
-- `discussion_topics.md`
-
-**Safety Mechanisms**:
-- Path is hardcoded to only operate within `ai_workspace/`
-- Path escape attempts (e.g., `../`) are rejected
-- Protected files are safe by default
-- All operations are logged to `ai_workspace/temp/cleanup.log`
-
-**Best Practices**:
-1. Use `--dry-run` first to preview what will be deleted
-2. Use `--older-than 7` for regular cleanup of old files
-3. Never use `--force` unless absolutely necessary
-4. Check the log file if you need to audit deletions
+Run `--help` for detailed usage:
+- `python _scripts/cleanup_ai_workspace.py --help`
+- `python _scripts/validate_topic_tree.py --help`
 
 ## Information Retrieval Rules
 
@@ -328,329 +160,58 @@ AI **must automatically search** when:
 - ✅ **Good**: User asks "看一下 method.md 中的损失函数" → Read the specific file mentioned
 - ❌ **Bad**: User asks "讨论一下损失函数" → Proactively read method.md without user mentioning it (unless question cannot be answered otherwise)
 
-## Topic Tree Management Rules
+## Topic Tree Management
 
-### File Location
+File: `cursor-agent-team/ai_workspace/discussion_topics.md`
 
-- **File**: `cursor-agent-team/ai_workspace/discussion_topics.md`
-- **Nature**: AI's private notebook, humans don't need to view it
-- **Purpose**: Maintain tree structure of discussion topics, track discussion hierarchy and switches
-- **Maintenance**: AI must actively maintain this file - this is an important responsibility of the discussion partner
-
-### Topic Tree Update (HARD REQUIREMENT)
-
-**CRITICAL**: When updating the topic tree, you **MUST** use the one-step update command. **DO NOT** manually create temp directories or backup files.
-
-#### The ONE Command You Need
+### Update Command (HARD REQUIREMENT)
 
 ```bash
-echo "新的话题树内容..." | python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin
+echo "new content..." | python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin
 ```
 
-Or with a heredoc for multiline content:
+Script automatically: backup → validate → commit/rollback → cleanup. Run `--help` for details.
 
-```bash
-python cursor-agent-team/_scripts/validate_topic_tree.py update --stdin << 'EOF'
-# 讨论话题树
+### Topic ID Format
 
-## 当前活跃话题
-- 话题 X: ...
+| Level | Format | Example |
+|-------|--------|---------|
+| Root | Single letter | A, B, C |
+| Sub-topic | Letter.Number | A.1, A.2 |
+| Deeper | Letter.Number.Number | A.1.1 |
 
-... (完整的话题树内容)
+### Valid States
 
-*Last Updated: 2026-02-03*
-EOF
-```
+`in_progress`, `completed`, `paused`, `pending`, `closed`
 
-#### What This Command Does Automatically
+### Validation Rules (enforced by script)
 
-1. **Backup**: Automatically backs up the current topic tree
-2. **Validate**: Checks all rules (R1-R4) against the backup
-3. **Commit or Rollback**: If valid, commits; if invalid, returns detailed errors
-4. **Cleanup**: Automatically cleans up temp files
+| Rule | Description |
+|------|-------------|
+| R1 | All historical topic IDs must be preserved |
+| R2 | No ellipsis markers ("...", "omit") |
+| R3 | Must contain "Last Updated" field |
 
-#### Handling the Output
+### Plan/Requirement Generation
 
-The command outputs JSON:
+When user requests:
+- **Plan**: Generate `PLAN-[TopicID]-[Seq].md` in `plans/`, update topic tree
+- **Agent Requirement**: Generate `AGENT-REQUIREMENT-[TopicID]-[Seq].md` in `agent_requirements/`, suggest `/prompt_engineer`
 
-**Success**:
-```json
-{
-  "success": true,
-  "message": "话题树更新成功"
-}
-```
-
-**Failure** (with diagnostic info for fixing):
-```json
-{
-  "success": false,
-  "errors": ["R1 violation: The following topic IDs are missing: ['A', 'B']"],
-  "hint": "请确保新内容包含所有历史话题 ID: A, B",
-  "old_ids": ["A", "B", "C"],
-  "new_ids": ["C"],
-  "missing_ids": ["A", "B"]
-}
-```
-
-#### If Update Fails
-
-1. **Read the errors**: Check `errors` and `missing_ids` in the JSON output
-2. **Fix your content**: Add the missing topic IDs back
-3. **Retry**: Run the command again with fixed content
-4. **Max 3 retries**: If still failing after 3 attempts, report to user and continue discussion
-
-#### Validation Rules
-
-| Rule | Description | Severity |
-|:--|:--|:--|
-| R1 | All historical topic IDs must be preserved | Error |
-| R2 | Cannot use ellipsis ("...", "省略", etc.) to abbreviate history | Error |
-| R3 | Must contain "Last Updated" field | Error |
-| R4 | Status values must be from predefined set | Warning |
-
-#### PROHIBITED Actions
-
-- ❌ **DO NOT** manually `mkdir -p temp`
-- ❌ **DO NOT** manually `cp` files to backup
-- ❌ **DO NOT** use the old 4-step flow
-- ❌ **DO NOT** call `validate` subcommand separately (use `update` instead)
-
-The script handles everything. Just pipe your content and check the result.
-
-### Topic Tree Structure
-
-- **Tree Structure**: Not a simple stack, but a tree structure supporting branches and jumps
-- **Multiple Roots**: Can have multiple root topics (different themes)
-- **Sibling Nodes**: Topics can be parallel (not hierarchical)
-- **Arbitrary Depth**: Can go deep into multiple sub-topic levels
-- **Topic Jumps**: Can jump from topic A to topic B (B may be A's sibling, not child)
-
-### Topic Identification Mechanism
-
-**Automatic Identification**: Automatically identify current discussion topic from conversation content.
-
-**Identification Strategy**:
-- Keyword matching: Extract keywords from conversation, match with keywords in topic tree
-- Semantic similarity: Analyze conversation semantics, compare with semantics of existing topics
-- Temporal association: Recently active topics are more likely to be current topic
-- Context analysis: Combine conversation context for judgment
-
-**Query Mechanism**: If unable to uniquely identify topic, must ask user:
-- List possible matching topics (2-3)
-- Ask: "Are you continuing topic [Topic ID], or switching to a new topic?"
-
-### Topic ID Naming Rules
-
-- **Root Topics**: A, B, C, ...
-- **Sub-Topics**: A1, A2, A3, ... (children of A)
-- **Deeper Levels**: A1.1, A1.2, ... (children of A1)
-
-### Topic States
-
-- **Active**: Currently being discussed
-- **Paused**: Discussion interrupted, may return
-- **Completed**: Discussion finished
-- **Not Started**: Created but not yet started
-
-### Topic Structure with Execution Status
-
-Topics can have execution-related fields to track plan execution and agent requirements:
-
-- **执行状态** (Execution Status): 无 / 待执行 / 执行中 / 已完成
-  - **无**: No executable plan exists
-  - **待执行**: Plan exists but not yet started
-  - **执行中**: Currently executing
-  - **已完成**: Execution completed
-
-- **关联方案** (Associated Plans): List of plan IDs (e.g., PLAN-C-001, PLAN-C-002)
-  - Format: `PLAN-[话题ID]-[序号]`
-  - Example: `PLAN-C-001 (2025-12-29) - 状态：待执行`
-
-- **关联 AGENT-REQUIREMENT** (Associated Agent Requirements): List of agent requirement IDs (e.g., AGENT-REQUIREMENT-A-001, AGENT-REQUIREMENT-B-001)
-  - Format: `AGENT-REQUIREMENT-[话题ID]-[序号]`
-  - Example: `AGENT-REQUIREMENT-A-001 (2025-12-29) - 状态：待处理`
-
-- **执行记录** (Execution Records): List of execution activities
-  - Format: `[时间] - [执行者] - [方案编号/需求编号] - [执行结果]`
-  - Example: `2025-12-29 15:50:00 - /crew - PLAN-C-001 - 执行完成（成功）`
-  - Example: `2025-12-29 15:55:00 - /prompt_engineer - AGENT-REQUIREMENT-A-001 - 执行完成（成功）`
-
-### Topic Structure Example
-
-```markdown
-### 话题 C：通用执行者（crew）的设计和创建
-- **话题ID**: C
-- **话题名称**: 通用执行者（crew）的设计和创建
-- **创建时间**: 2025-12-29 15:19:03
-- **最后活跃时间**: 2025-12-29 15:44:56
-- **状态**: 进行中
-- **执行状态**: 待执行
-- **关联方案**: 
-  - PLAN-C-001 (2025-12-29) - 状态：待执行
-- **关联 AGENT-REQUIREMENT**: 
-  - AGENT-REQUIREMENT-C-001 (2025-12-29) - 状态：待处理
-- **执行记录**:
-  - 2025-12-29 15:50:00 - /crew - PLAN-C-001 - 开始执行
-  - 2025-12-29 15:55:00 - /crew - PLAN-C-001 - 执行完成（成功）
-```
-
-### Maintenance Workflow
-
-1. **Read Topic Tree**: At the start of each discussion, read `cursor-agent-team/ai_workspace/discussion_topics.md`
-2. **Analyze Conversation**: Extract keywords and themes, try to locate topic
-3. **Match Topic**: Match with existing topic tree, determine if new topic or continuation of existing topic
-4. **Query User**: If uncertain, list possible matches and ask user
-5. **Update Topic Tree**:
-   - If new topic: Add to topic tree (assign new ID: A, B, C...)
-   - If existing topic: Update its state and last active time
-   - Record key discussion points
-   - Update current active topic
-6. **Save File**: Save updated topic tree file
-
-### Plan Generation Rules
-
-When user explicitly requests plan generation (e.g., "讨论已经可以了，可以生成方案了"), the Discussion Partner should:
-
-1. **Analyze Discussion Content**: Extract executable steps and goals from current topic discussion
-2. **Generate Plan File**: 
-   - Format: `PLAN-[话题ID]-[序号].md`
-   - Location: `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
-   - Content: Include plan information, goals, steps, related files, expected results, notes
-3. **Update Plan Index**: Add entry to `cursor-agent-team/ai_workspace/plans/INDEX.md`
-4. **Update Topic Tree**: 
-   - Add plan ID to topic's "关联方案" field
-   - Update topic's "执行状态" to "待执行"
-5. **Display Plan Summary**: Show plan number and summary in response
-
-**Plan Numbering**:
-- Format: `PLAN-[话题ID]-[序号]`
-- Sequence number starts from 001 for each topic
-- Example: PLAN-C-001, PLAN-C-002, PLAN-A-001
-
-**Plan File Structure**:
-- Plan information (number, topic, creation time, creator, status)
-- Plan goal
-- Execution steps
-- Related files
-- Expected results
-- Notes
-- Execution records
-
-### Intelligent Reminder Rules
-
-When discussion reaches a natural pause (user stops asking questions or finishes expressing ideas), the Discussion Partner should:
-
-1. **Check for Role Creation Keywords**: Analyze current discussion content for keywords:
-   - "创建新角色"
-   - "设计新命令"
-   - "新功能"
-   - "新角色"
-   - "新命令"
-   - Other semantically similar expressions related to role/command creation
-
-2. **Trigger Condition**: 
-   - Discussion has reached a natural pause
-   - Keywords detected in discussion content
-   - Discussion involves role design, command design, or new functionality design
-
-3. **Reminder Process**:
-   - Ask user: "是不是可以生成角色需求？"
-   - Wait for user confirmation
-   - If user confirms, proceed to Agent Requirement Generation Rules
-   - If user declines, continue normal discussion
-
-4. **CRITICAL**: This is a suggestion, not automatic generation. User must explicitly confirm.
-
-### Agent Requirement Generation Rules
-
-When user explicitly requests agent requirement generation (e.g., "生成角色需求", "生成需求文档", "生成需求文档给 /prompt_engineer") or confirms the intelligent reminder, the Discussion Partner should:
-
-1. **Analyze Discussion Content**: Extract role design requirements from current topic discussion:
-   - Role name
-   - Role positioning and responsibilities
-   - Core functions
-   - Use cases
-   - Constraints
-   - Expected behavior
-   - Reference examples (if any)
-   - Key design decisions from discussion
-
-2. **Generate Requirement File**: 
-   - Format: `AGENT-REQUIREMENT-[话题ID]-[序号].md`
-   - Location: `cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[话题ID]-[序号].md`
-   - Create directory if it doesn't exist: `cursor-agent-team/ai_workspace/agent_requirements/`
-   - Content: Include requirement information, role design details, discussion points, processing records
-
-3. **Update Requirement Index**: Add entry to `cursor-agent-team/ai_workspace/agent_requirements/INDEX.md` (create if doesn't exist)
-
-4. **Update Topic Tree**: 
-   - Add requirement ID to topic's "关联 AGENT-REQUIREMENT" field
-   - Format: `AGENT-REQUIREMENT-[话题ID]-[序号] (YYYY-MM-DD) - 状态：待处理`
-
-5. **Display Requirement Summary**: Show requirement number and summary in response
-
-6. **Suggest Execution**: Recommend using `/prompt_engineer` command and reference the AGENT-REQUIREMENT file to create the role
-
-**Requirement Numbering**:
-- Format: `AGENT-REQUIREMENT-[话题ID]-[序号]`
-- Sequence number starts from 001 for each topic
-- Example: AGENT-REQUIREMENT-A-001, AGENT-REQUIREMENT-A-002, AGENT-REQUIREMENT-B-001
-
-**Requirement File Structure**:
-```markdown
-# 需求规格说明 AGENT-REQUIREMENT-[话题ID]-[序号]
-
-## 需求信息
-- **需求编号**: AGENT-REQUIREMENT-[话题ID]-[序号]
-- **关联话题**: [话题ID] - [话题名称]
-- **创建时间**: YYYY-MM-DD HH:MM:SS
-- **创建者**: /discuss
-- **目标执行者**: /prompt_engineer
-- **状态**: 待处理 / 处理中 / 已完成
-
-## 角色设计需求
-
-### 角色名称
-[角色名称]
-
-### 角色定位
-[角色的核心定位和职责]
-
-### 核心功能
-1. [功能1描述]
-2. [功能2描述]
-3. [功能3描述]
-
-### 使用场景
-[什么情况下使用这个角色]
-
-### 约束条件
-- [约束1]
-- [约束2]
-
-### 预期行为
-[期望这个角色如何表现]
-
-### 参考示例
-[如果有类似的角色，可以作为参考]
-
-## 讨论要点
-[从讨论中提取的关键设计决策]
-
-## 处理记录
-- [处理时间] - [处理者] - [处理结果]
-```
-
-**CRITICAL**: `/discuss` only generates requirements, does NOT execute them. Execution is handled by `/prompt_engineer` command.
+Templates: See `ai_workspace/templates/` for file structure examples.
 
 ---
 
 **Last Updated**: 2026-02-03
 
-**Version**: v2.1
+**Version**: v4.0.0
 
 **Version History**:
+- v4.0.0 (2026-02-03): **MAJOR** - Refined Topic Tree Management section - reduced from ~234 lines to ~35 lines. Significant restructure following "Script as Truth" and "Tables over Prose" principles.
+- v3.3.0 (2026-02-03): Refined AI Workspace Rules section - reduced from ~83 lines to 14 lines using table format and "Script as Truth" principle.
+- v3.2.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~25 lines to 5 lines following "Script as Truth" principle.
+- v3.1.0 (2026-02-03): Content refinement - simplified Cross-Cutting Concerns details, Cleanup Script examples, Topic Tree Update examples, and Agent Requirement template (moved to templates/). Reduced file from ~675 to ~500 lines.
+- v3.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers while preserving Chinese in topic tree examples.
 - v2.1 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.
 - v2.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
 - v1.9 (2026-02-03): **BREAKING**: Simplified Topic Tree Update Flow to use ONE-STEP `update` command. Removed 4-step manual flow. Added PROHIBITED actions list. AI should now use `validate_topic_tree.py update --stdin` instead of manually managing temp files.

@@ -65,8 +65,7 @@ from pathlib import Path
 
 # Valid topic status values
 VALID_STATES = {
-    "进行中", "已完成", "已关闭", "待讨论", "暂停", "活跃",
-    "✅ 已关闭", "✅ 已完成", "🔄 进行中", "⏸️ 暂停"
+    "in_progress", "completed", "closed", "pending", "paused", "active"
 }
 
 # Prohibited ellipsis markers
@@ -241,7 +240,7 @@ def validate_content(old_content: str, new_content: str) -> dict:
     
     # Add hint if validation failed
     if not result["valid"] and result["missing_ids"]:
-        result["hint"] = f"请确保新内容包含所有历史话题 ID: {', '.join(result['missing_ids'])}"
+        result["hint"] = f"Please ensure new content includes all historical topic IDs: {', '.join(result['missing_ids'])}"
     
     return result
 
@@ -359,7 +358,7 @@ def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = Fal
     # Step 4: Commit (unless dry_run)
     if dry_run:
         result["success"] = True
-        result["message"] = "验证通过（预览模式，未实际写入）"
+        result["message"] = "Validation passed (dry-run mode, no actual write)"
         _cleanup_temp_files()
         return result
     
@@ -367,7 +366,7 @@ def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = Fal
         # Write new content
         TOPIC_TREE_PATH.write_text(new_content, encoding="utf-8")
         result["success"] = True
-        result["message"] = "话题树更新成功"
+        result["message"] = "Topic tree updated successfully"
         
         # Clean up temp files on success
         _cleanup_temp_files()

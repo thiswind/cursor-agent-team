@@ -5,6 +5,35 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-02-03
+
+### Changed
+- **MAJOR Rules Refinement**: Significant reduction in rules file sizes following prompt engineering best practices
+  - `discussion_assistant.mdc`: 504 → 228 lines (55% reduction), v3.1.0 → v4.0.0
+  - `crew_assistant.mdc`: ~465 → ~400 lines (~14% reduction), v2.0.0 → v2.1.0
+  - `prompt_engineer_assistant.mdc`: ~430 → ~380 lines (~12% reduction), v2.0.0 → v2.1.0
+- **Cross-Cutting Concerns**: Simplified from verbose tables (~25-70 lines) to concise 5-line format
+- **AI Workspace Rules**: Reduced from ~83 lines to 14 lines using table format
+- **Topic Tree Management**: Reduced from ~234 lines to ~35 lines
+
+### Added
+- **English Standardization**: All internal content standardized to English
+  - `VALID_STATES` in `validate_topic_tree.py`: Chinese → English states
+  - `preflight_check.py`: All output messages in English
+  - `persona_output.py`: All output messages in English
+  - `discussion_topics.md`: Topic tree migrated to English
+
+### Philosophy
+- **Script as Truth**: Rules describe WHAT and WHY, scripts enforce HOW
+- **Tables over Prose**: Use tables instead of verbose lists
+- **Reference via `--help`**: Instead of duplicating script documentation in rules
+
+### Technical Details
+- **PLAN-F-001**: 4-phase execution plan for rules refinement and English standardization
+  - Phase 1-3: `/prompt_engineer` refined rules files
+  - Phase 4: `/crew` standardized scripts and data to English
+- Total lines reduced: ~413 lines across rules files
+
 ## [0.8.1] - 2026-02-03
 
 ### Added
@@ -467,6 +496,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.9.0]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.8.0
 [0.7.5]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.5

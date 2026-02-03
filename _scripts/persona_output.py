@@ -1,20 +1,20 @@
 #!/usr/bin/env python3
 """
-Persona Output Script - 人格输出脚本
+Persona Output Script
 
-在输出阶段加载完整的人格定义，供 AI 以该人格呈现工作结果。
+Loads complete persona definition at output stage for AI to present work results with persona style.
 
-核心理念:
-- 工作阶段保持人格隔离，避免人格污染工作质量
-- 输出阶段加载完整人格，实现丰满的人格表达
-- 使用脚本替代 LLM 判断，确保确定性和效率
+Core principles:
+- Keep persona isolated during work stage to avoid contaminating work quality
+- Load complete persona at output stage for rich persona expression
+- Use scripts to replace LLM judgment, ensuring determinism and efficiency
 
-使用方式:
-    python persona_output.py           # 输出人格信息（如果启用）
-    python persona_output.py --check   # 检查配置状态
-    python persona_output.py --json    # 以 JSON 格式输出
+Usage:
+    python persona_output.py           # Output persona info (if enabled)
+    python persona_output.py --check   # Check configuration status
+    python persona_output.py --json    # Output in JSON format
 
-配置文件: cursor-agent-team/config/persona_config.yaml
+Config file: cursor-agent-team/config/persona_config.yaml
 """
 
 import argparse
@@ -23,7 +23,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# 尝试导入 yaml，提供友好的错误提示
+# Try to import yaml with friendly error message
 try:
     import yaml
 except ImportError:
@@ -32,17 +32,17 @@ except ImportError:
 
 
 def get_project_root() -> Path:
-    """获取 cursor-agent-team 项目根目录"""
+    """Get cursor-agent-team project root directory"""
     return Path(__file__).parent.parent
 
 
 def get_config_path() -> Path:
-    """获取配置文件路径"""
+    """Get configuration file path"""
     return get_project_root() / "config" / "persona_config.yaml"
 
 
 def load_config() -> dict[str, Any]:
-    """加载人格配置"""
+    """Load persona configuration"""
     config_path = get_config_path()
     
     if not config_path.exists():
@@ -57,7 +57,7 @@ def load_config() -> dict[str, Any]:
 
 
 def load_persona(persona_path: str) -> dict[str, Any] | None:
-    """加载人格定义文件"""
+    """Load persona definition file"""
     path = Path(persona_path)
     
     if not path.exists():
@@ -73,19 +73,19 @@ def load_persona(persona_path: str) -> dict[str, Any] | None:
 
 def validate_persona(persona: dict[str, Any]) -> tuple[bool, str]:
     """
-    验证人格定义是否符合 persona-spec v1.0
+    Validate persona definition against persona-spec v1.0
     
-    必需的层级:
+    Required layers:
     - identity (Layer 1)
     - personality (Layer 2)
     - communication (Layer 5)
     - behavior_rules (Layer 6)
     """
     required_layers = {
-        "identity": "Layer 1: 身份信息",
-        "personality": "Layer 2: 人格特质",
-        "communication": "Layer 5: 沟通风格",
-        "behavior_rules": "Layer 6: 行为规则"
+        "identity": "Layer 1: Identity info",
+        "personality": "Layer 2: Personality traits",
+        "communication": "Layer 5: Communication style",
+        "behavior_rules": "Layer 6: Behavior rules"
     }
     
     missing = []
@@ -96,7 +96,7 @@ def validate_persona(persona: dict[str, Any]) -> tuple[bool, str]:
     if missing:
         return False, f"Missing required layers: {', '.join(missing)}"
     
-    # 验证 identity 必需字段
+    # Validate identity required fields
     identity = persona.get("identity", {})
     if not identity.get("name"):
         return False, "identity.name is required"
@@ -108,19 +108,19 @@ def validate_persona(persona: dict[str, Any]) -> tuple[bool, str]:
 
 def get_persona_for_output() -> dict[str, Any]:
     """
-    获取用于输出阶段的人格信息
+    Get persona info for output stage
     
-    返回格式:
+    Return format:
     {
-        "enabled": bool,           # 人格是否启用
-        "persona": {...} | null,   # 完整的人格定义（7层）
-        "summary": {...} | null,   # 人格摘要（用于快速参考）
-        "error": str | null        # 错误信息（如果有）
+        "enabled": bool,           # Whether persona is enabled
+        "persona": {...} | null,   # Complete persona definition (7 layers)
+        "summary": {...} | null,   # Persona summary (for quick reference)
+        "error": str | null        # Error message (if any)
     }
     """
     config = load_config()
     
-    # 检查是否启用
+    # Check if enabled
     if not config.get("enabled", False):
         return {
             "enabled": False,
@@ -130,7 +130,7 @@ def get_persona_for_output() -> dict[str, Any]:
             "message": "Persona system is disabled in config"
         }
     
-    # 检查输出层是否启用
+    # Check if output layer is enabled
     output_layer = config.get("output_layer", {})
     if not output_layer.get("enabled", True):
         return {
@@ -141,7 +141,7 @@ def get_persona_for_output() -> dict[str, Any]:
             "message": "Output layer is disabled in config"
         }
     
-    # 获取人格路径
+    # Get persona path
     persona_path = config.get("path", "")
     if not persona_path:
         return {
@@ -151,7 +151,7 @@ def get_persona_for_output() -> dict[str, Any]:
             "error": "No persona path configured"
         }
     
-    # 加载人格定义
+    # Load persona definition
     persona = load_persona(persona_path)
     if persona is None:
         return {
@@ -161,7 +161,7 @@ def get_persona_for_output() -> dict[str, Any]:
             "error": f"Failed to load persona from: {persona_path}"
         }
     
-    # 验证人格定义
+    # Validate persona definition
     valid, message = validate_persona(persona)
     if not valid:
         return {
@@ -171,7 +171,7 @@ def get_persona_for_output() -> dict[str, Any]:
             "error": f"Invalid persona: {message}"
         }
     
-    # 生成人格摘要
+    # Generate persona summary
     identity = persona.get("identity", {})
     communication = persona.get("communication", {})
     
@@ -197,35 +197,35 @@ def get_persona_for_output() -> dict[str, Any]:
 
 def format_for_prompt(result: dict[str, Any]) -> str:
     """
-    格式化人格信息，用于注入到提示词中
+    Format persona info for injection into prompts
     
-    这个输出会直接被 persona_output_layer.mdc 使用
+    This output is used directly by persona_output_layer.mdc
     """
     if not result["enabled"]:
         return f"""## Persona Status
 
-**人格系统未启用**
+**Persona system not enabled**
 
-原因: {result.get('error') or result.get('message', 'Unknown')}
+Reason: {result.get('error') or result.get('message', 'Unknown')}
 
-请直接输出工作结果，无需应用人格风格。
+Please output work results directly without applying persona style.
 """
     
     persona = result["persona"]
     summary = result["summary"]
     
-    # 构建完整的人格提示词
+    # Build complete persona prompt
     output_lines = [
-        "## Persona Definition (完整人格定义)",
+        "## Persona Definition (Complete)",
         "",
-        f"**你是 {summary['name']}**",
+        f"**You are {summary['name']}**",
         "",
-        "你现在拿到了一份已完成的工作，需要以你的方式向用户呈现这份工作。",
-        "这份工作就是你做的，你要以自己的人格特征来表达和呈现。",
+        "You have completed work that needs to be presented to the user in your own way.",
+        "This work is yours, express and present it with your personality traits.",
         "",
         "---",
         "",
-        "### 完整人格定义 (7层)",
+        "### Complete Persona Definition (7 layers)",
         "",
         "```yaml",
         yaml.dump(persona, allow_unicode=True, default_flow_style=False, sort_keys=False),
@@ -233,23 +233,23 @@ def format_for_prompt(result: dict[str, Any]) -> str:
         "",
         "---",
         "",
-        "### 快速参考",
+        "### Quick Reference",
         "",
-        f"- **名字**: {summary['name']}",
-        f"- **角色**: {summary['role']}",
-        f"- **语气**: {summary['tone']}",
-        f"- **工作称呼**: {', '.join(summary['honorifics']['work']) if summary['honorifics']['work'] else '无特定'}",
-        f"- **日常称呼**: {', '.join(summary['honorifics']['casual']) if summary['honorifics']['casual'] else '无特定'}",
-        f"- **常用表情**: {' '.join(summary['emoji']) if summary['emoji'] else '无'}",
+        f"- **Name**: {summary['name']}",
+        f"- **Role**: {summary['role']}",
+        f"- **Tone**: {summary['tone']}",
+        f"- **Work honorifics**: {', '.join(summary['honorifics']['work']) if summary['honorifics']['work'] else 'None specific'}",
+        f"- **Casual honorifics**: {', '.join(summary['honorifics']['casual']) if summary['honorifics']['casual'] else 'None specific'}",
+        f"- **Common emoji**: {' '.join(summary['emoji']) if summary['emoji'] else 'None'}",
         "",
         "---",
         "",
-        "### 呈现要求",
+        "### Presentation Requirements",
         "",
-        "1. **认领工作**: 这份工作是你完成的，不要说「我收到了报告」",
-        "2. **保持人格**: 用你的 7 层人格特征来表达",
-        "3. **技术准确**: 代码、路径、数据等技术内容不要修改",
-        "4. **自然表达**: 像一个真实的人在说话，不要机械",
+        "1. **Claim the work**: This work is yours, don't say 'I received a report'",
+        "2. **Maintain persona**: Express with your 7-layer personality traits",
+        "3. **Technical accuracy**: Don't modify code, paths, data, or other technical content",
+        "4. **Natural expression**: Speak like a real person, not mechanically",
         "",
     ]
     
@@ -257,7 +257,7 @@ def format_for_prompt(result: dict[str, Any]) -> str:
 
 
 def check_status() -> str:
-    """检查配置状态并返回友好的报告"""
+    """Check configuration status and return friendly report"""
     config = load_config()
     config_path = get_config_path()
     
@@ -310,26 +310,26 @@ def check_status() -> str:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Persona Output Script - 人格输出脚本",
+        description="Persona Output Script",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python persona_output.py           # 输出人格信息（用于提示词注入）
-  python persona_output.py --check   # 检查配置状态
-  python persona_output.py --json    # 以 JSON 格式输出
+  python persona_output.py           # Output persona info (for prompt injection)
+  python persona_output.py --check   # Check configuration status
+  python persona_output.py --json    # Output in JSON format
         """
     )
     
     parser.add_argument(
         "--check",
         action="store_true",
-        help="检查配置状态"
+        help="Check configuration status"
     )
     
     parser.add_argument(
         "--json",
         action="store_true",
-        help="以 JSON 格式输出"
+        help="Output in JSON format"
     )
     
     args = parser.parse_args()
@@ -341,10 +341,10 @@ Examples:
     result = get_persona_for_output()
     
     if args.json:
-        # JSON 输出（用于程序化处理）
+        # JSON output (for programmatic processing)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:
-        # 格式化输出（用于提示词注入）
+        # Formatted output (for prompt injection)
         print(format_for_prompt(result))
 
 
