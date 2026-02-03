@@ -123,9 +123,11 @@ python cursor-agent-team/ai_workspace/inspiration_capital/scripts/draw_cards.py 
 - Discuss only, do not execute
 - Recommend other commands when operations needed
 
-**Optional Outputs** (when user explicitly requests):
-- "Generate plan" → Generate PLAN file
-- "Generate agent requirement" → Generate AGENT-REQUIREMENT file
+**Serious Work Products** (when user explicitly requests):
+- "Generate plan" → Generate content → **Write directly to file** → Notify user
+- "Generate agent requirement" → Generate content → **Write directly to file** → Notify user
+
+⚠️ **CRITICAL**: Serious work products (PLAN, AGENT-REQUIREMENT) must be written to file BEFORE Phase 3. Do NOT output file content to conversation. See `discussion_assistant.mdc` for detailed rules.
 
 ---
 
@@ -137,8 +139,9 @@ python cursor-agent-team/ai_workspace/inspiration_capital/scripts/draw_cards.py 
 ```bash
 python cursor-agent-team/_scripts/persona_output.py
 ```
-- If persona enabled: present work results with persona style, wrap with `<persona_styled>` tags
+- If persona enabled: present **discussion results** with persona style, wrap with `<persona_styled>` tags
 - If persona disabled: output directly
+- **Exception**: Serious work products (already written to file) → Only notify file path, do NOT repeat content
 
 **Step 3.2: Gleaning Check**
 
@@ -179,17 +182,20 @@ Current topic: [TopicID] - [Topic Name]
 ### Phase 2 Output: Discussion Content
 ```
 [Analysis, search results, synthesized answer]
-[Optional: PLAN or AGENT-REQUIREMENT file]
+[If generating PLAN/REQUIREMENT: write to file silently, no content output here]
 ```
 
 ### Phase 3 Output: Persona-styled Presentation
 ```xml
 <persona_styled>
-[Final answer presented with persona style]
+[Discussion answer presented with persona style]
+[If file was generated: "计划已生成，在 plans/PLAN-xxx.md"]
 </persona_styled>
 ```
 
-**Note**: Phase 3 persona output wraps the entire final answer, not just a separate paragraph.
+**Note**: 
+- Persona wraps discussion answers and notifications
+- Serious work products (file content) are NOT wrapped - they were already written to file in Phase 2
 
 ## Example Usage
 
@@ -234,7 +240,7 @@ for time series? Are there any recent papers we should be aware of?
 /discuss
 [After discussion] The discussion is sufficient, please generate the plan.
 ```
-*Note: AI will generate an execution plan, save it to `cursor-agent-team/ai_workspace/plans/PLAN-[TopicID]-[Seq].md`, and display the plan number*
+*Note: AI will generate an execution plan and **write directly to file** (`cursor-agent-team/ai_workspace/plans/PLAN-[TopicID]-[Seq].md`). The plan content is NOT output to conversation - only a notification with file path is shown.*
 
 ### Example 7: First-Time Use / "Where Are We?"
 ```
@@ -255,7 +261,7 @@ analyze code quality, check best practices, and provide improvement suggestions.
 [Discussion process...]
 Generate agent requirement
 ```
-*Note: AI will generate an agent requirement document, save it to `cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[TopicID]-[Seq].md`, and display the requirement number*
+*Note: AI will generate an agent requirement document and **write directly to file** (`cursor-agent-team/ai_workspace/agent_requirements/AGENT-REQUIREMENT-[TopicID]-[Seq].md`). The document content is NOT output to conversation - only a notification with file path is shown.*
 
 ### Example 9: Intelligent Reminder
 ```
@@ -314,9 +320,10 @@ This command should be able to generate various types of documents based on temp
 
 ---
 
-**Version**: v5.0.0 (Updated: 2026-02-03)
+**Version**: v5.1.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v5.1.0 (2026-02-03): Added "Serious Work Products" rule - PLAN and AGENT-REQUIREMENT must be written directly to file in Phase 2, bypassing persona layer. Only notification is persona-styled in Phase 3.
 - v5.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v4.3.0 (2026-02-03): Added MANDATORY execution rules - every message must execute full workflow.
 - v4.2.0 (2026-02-03): Merge role declaration into Phase 0 as Step 0.1. Remove "Step -1" to follow industry conventions.

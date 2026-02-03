@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.1] - 2026-02-03
+
+### Added
+- **Serious Work Products Rule**: New hard rule to ensure PLAN and AGENT-REQUIREMENT files bypass persona layer
+  - Files must be written directly in Phase 2 (work layer), before Phase 3 (persona layer)
+  - Persona layer only presents notification ("File generated at XXX"), not file content
+  - Prevents persona styling from causing quality drift in serious work products
+  - Updated `discussion_assistant.mdc` v4.0.0 → v4.1.0
+  - Updated `discuss.md` v5.0.0 → v5.1.0
+
+### Philosophy
+- **Content Isolation**: Serious work products (plans, requirements, code) are work-layer outputs that must not pass through persona layer
+- **Notification Only**: Persona layer wraps delivery notifications, not work product content
+- **Quality Protection**: Persona styling may cause expression ambiguity or loss of technical rigor in serious documents
+
+### Technical Details
+- **Correct Flow**: Generate content → Write directly to file → Persona wraps notification only
+- **Incorrect Flow (PROHIBITED)**: Generate content → Output to user → Persona wraps entire output including plan content
+- **Affected Files**: PLAN-*.md, AGENT-REQUIREMENT-*.md, code files, technical reports
+
 ## [0.9.0] - 2026-02-03
 
 ### Changed
@@ -496,6 +516,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.9.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.9.0...v0.9.1
 [0.9.0]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.8.0

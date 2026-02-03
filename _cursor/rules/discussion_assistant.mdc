@@ -200,13 +200,59 @@ When user requests:
 
 Templates: See `ai_workspace/templates/` for file structure examples.
 
+### Serious Work Products (Hard Rule)
+
+**Definition**: Outputs requiring high precision and professionalism:
+- Execution plans (`PLAN-*.md`)
+- Agent requirements (`AGENT-REQUIREMENT-*.md`)
+- Code files
+- Technical analysis reports
+
+**Hard Rules** (MUST follow):
+
+| Rule | Description |
+|------|-------------|
+| **WRITE FIRST** | Generate content → Write directly to file → Then notify user |
+| **NO PRE-OUTPUT** | Do NOT output file content to conversation before writing |
+| **NOTIFY ONLY** | Persona layer only presents notification: "File generated at XXX" |
+| **CONTENT ISOLATION** | File content is work-layer product, must NOT pass through persona layer |
+
+**Rationale**: Serious work products require maximum precision. Persona styling may cause quality drift, expression ambiguity, or loss of technical rigor. By writing directly to file, content naturally bypasses persona layer.
+
+**Correct Flow**:
+```
+Phase 2: Generate plan content (work layer, no persona)
+         ↓
+         Write directly to file (plans/PLAN-xxx.md)
+         ↓
+         Prepare notification info (file path, brief summary)
+         
+Phase 3: persona_output.py
+         ↓
+         Persona only wraps notification: "搭档，计划整理好了～在 plans/PLAN-A.1-01.md"
+         ↓
+         File content remains untouched by persona
+```
+
+**Incorrect Flow** (PROHIBITED):
+```
+Phase 2: Generate plan content
+         ↓
+         Output plan content to user  ← ❌ WRONG
+         ↓
+         Write to file
+         
+Phase 3: persona_output.py wraps entire output including plan content  ← ❌ WRONG
+```
+
 ---
 
 **Last Updated**: 2026-02-03
 
-**Version**: v4.0.0
+**Version**: v4.1.0
 
 **Version History**:
+- v4.1.0 (2026-02-03): Added "Serious Work Products" hard rule - PLAN and AGENT-REQUIREMENT files must be written directly to file before persona layer, ensuring work products bypass persona styling to maintain quality and precision.
 - v4.0.0 (2026-02-03): **MAJOR** - Refined Topic Tree Management section - reduced from ~234 lines to ~35 lines. Significant restructure following "Script as Truth" and "Tables over Prose" principles.
 - v3.3.0 (2026-02-03): Refined AI Workspace Rules section - reduced from ~83 lines to 14 lines using table format and "Script as Truth" principle.
 - v3.2.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~25 lines to 5 lines following "Script as Truth" principle.
