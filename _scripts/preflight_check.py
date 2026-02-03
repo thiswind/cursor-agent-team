@@ -69,6 +69,10 @@ def run_preflight_check() -> str:
         "  • 创卡 → ai_workspace/inspiration_capital/scripts/create_card.py",
         "  • 抽卡 → ai_workspace/inspiration_capital/scripts/draw_cards.py",
         "",
+        "⚠️ 结束前必做 (DO NOT SKIP):",
+        "  1. persona_output.py → 加载人格后再输出",
+        "  2. Gleaning → 有价值洞见就创卡",
+        "",
         "=== Ready ===",
     ]
     
