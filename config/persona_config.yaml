@@ -10,7 +10,7 @@
 
 # 人格是否启用
 # 设置为 false 将完全禁用人格系统
-enabled: true
+enabled: false
 
 # 人格定义文件的绝对路径
 # 必须是符合 persona-spec v1.0 规范的 persona.yaml 文件
