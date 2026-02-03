@@ -58,173 +58,113 @@ When you use `/crew`, the AI plays the role of a **Crew Member (万能打工人)
 7. **Time Awareness**: Always considers timeliness of information
 8. **Proactive Error Handling**: Searches for solutions before reporting errors to user
 
-## Workflow
+## Workflow（简化版 4 阶段）
 
-When you use `/crew`, the AI will follow this workflow:
+> **设计原则**：减少步骤数量，让 LLM 更容易记住和执行。
 
-### Step 0: Preflight Check (CRITICAL - ABSOLUTE FIRST STEP)
-- **MUST RUN FIRST**: Before ANY other action, run this command and display the output:
-  ```bash
-  python cursor-agent-team/_scripts/preflight_check.py
-  ```
-- **Display output**: Show the preflight check results to user
-- **Current time**: The preflight check output includes current time (⏰ 当前时间), so you don't need to get time separately
-- **Then proceed**: After preflight check passes, continue to Step 1
+When you use `/crew`, the AI will follow this **4-phase** workflow:
 
-### Step 1: Read Discussion Records and Plans
-- **Read discussion topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
-- **Read plan index**: Read `cursor-agent-team/ai_workspace/plans/INDEX.md`
-- **Identify plan to execute**:
-  - If user specifies plan number: Read specified plan
-  - If user says "执行刚才的方案": Identify most recent plan from current topic
-  - If user says "执行话题X的方案": Identify latest plan for topic X
-  - If only `/crew` is used: Auto-identify latest pending plan from current topic
-- **Display plan identification**: Show which plan will be executed
+---
 
-### Step 2: Load Execution Plan
-- **Read plan file**: Read plan file from `cursor-agent-team/ai_workspace/plans/PLAN-[话题ID]-[序号].md`
-- **Confirm plan content**: Display plan summary to user
-- **Save plan copy**: Save plan copy to workspace for reference
-- **Update plan status**: Update plan status to "执行中" in plan file
+### 阶段 0: 启动 (BOOT)
 
-### Step 3: Search Latest Information
-- **Analyze plan content**: Identify what information needs to be searched
-- **Determine search type needed**:
-  - **Academic search**: For research concepts, methods, latest papers
-  - **General web search**: For practical implementation, tools, troubleshooting guides, best practices
-- **Search latest information**: 
-  - **Academic search**: Use same search strategy as `/discuss` (academic-first, time-aware)
-    - Top-tier conferences/journals only
-    - Google Scholar, arXiv (sorted by time)
-    - Prioritize recent work (last 1-2 years)
-  - **General web search**: Official documentation, Stack Overflow, GitHub issues, technical blogs
-    - Prioritize official documentation and reputable sources
-    - Include timestamps and cross-validate from multiple sources
-- **Record search results**: Save search results to workspace `research.md`
-- **Display search summary**: Show key findings from both academic and general searches
+**Step 0.1: 角色声明**（首先执行）
+```bash
+python cursor-agent-team/_scripts/role_identity/crew.py
+```
 
-### Step 4: Read Related Documents
-- **Identify related files**: List files mentioned in plan's "相关文件" section
-- **Read documents**: Read all related files
-- **Analyze documents**: Analyze document content in relation to plan
-- **Record findings**: Save document analysis to workspace `documents.md`
-- **Display document summary**: Show key findings from documents
+**Step 0.2: Preflight Check**
+```bash
+python cursor-agent-team/_scripts/preflight_check.py
+```
 
-### Step 5: Plan Confirmation
-- **Synthesize information**: Combine search results and document findings
-- **Display execution plan**: Show complete execution plan with all information
-- **Ask for confirmation**: "Ready to execute? Should I proceed?"
-- **Wait for user confirmation**: Proceed only after user confirms
+---
 
-### Step 6: Execute Plan
-- **Execute step by step**: Execute each step in plan strictly as specified
-- **Record each step**: Document each step's execution status in `execution_steps.md`
-- **Handle errors and difficulties**:
-  - **Detect difficulties**: Identify when errors occur or plan step cannot be completed
-  - **Automatic runtime search**: When difficulty detected, automatically search for solutions
-    - **Search triggers**:
-      - Error occurs during execution
-      - Plan step cannot be completed as specified
-      - Encounter unexpected behavior or unclear requirements
-      - Need clarification on implementation approach
-    - **Search strategy**:
-      - Error-specific search: Search for error messages or error types
-      - Solution-focused search: Search for "how to solve [problem]"
-      - Best practice search: Search for best practices for [task]
-    - **Analyze search results**: Evaluate solutions from search results
-    - **Apply solutions**: Use search results as guidance to overcome obstacles (without modifying plan)
-    - **Record search**: Save runtime search results to `runtime_research.md` with timestamp and context
-    - **Report to user**: If no solution found or significant plan modification needed, report and wait for guidance
-- **Wait for authorization**: If authorization needed, wait for user confirmation (Cursor will prompt)
-- **No deviation**: Do not modify plan steps without user confirmation (search provides guidance only)
+### 阶段 1: 准备 (PREPARE)
 
-### Step 7: Record Execution Results
-- **Record execution results**: Document final execution results in `results.md`
-- **Record issues**: Document any issues or problems encountered
-- **Record completion status**: Document completion status for each step
-- **Record runtime searches**: Document any runtime searches performed and their outcomes
-- **Summarize results**: Create summary of execution results
+**核心任务**：
+1. 读取 `cursor-agent-team/ai_workspace/discussion_topics.md`
+2. 读取 `cursor-agent-team/ai_workspace/plans/INDEX.md`
+3. 识别并加载要执行的方案
+4. 显示方案摘要，等待用户确认
 
-### Step 8: Update Discussion Records
-- **Read discussion topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
-- **Identify associated topic**: Find topic that generated the plan
-- **Update execution status**: 
-  - Update topic's "执行状态" to "已完成"
-- **Add execution record**: 
-  - Format: `[时间] - /crew - [方案编号] - 执行完成（成功/失败/部分完成）`
-  - Add to topic's "执行记录" field
-- **Update plan file**: 
-  - Update plan file status to "已完成"
-  - Add execution record to plan file
-- **Save updates**: Save all updated files
+**可选**（根据方案内容判断）：
+- 搜索最新信息（学术/通用）
+- 读取相关文档
 
-### Step 9: Gleaning (拾穗) - ⚠️ MANDATORY CHECK AFTER EXECUTION
+---
 
-> **🚨 DO NOT SKIP THIS STEP** - Execution tasks often produce the most valuable insights!
+### 阶段 2: 执行 (EXECUTE)
 
-- **When**: After execution is complete and records are updated
-- **Mandatory Checklist**:
-  - [ ] Did I discover any useful method/technique during execution?
-  - [ ] Did any runtime search reveal an unexpected solution?
-  - [ ] Did I encounter and solve any interesting problems?
-  - [ ] Did I learn something that might help future tasks?
-- **If ANY checkbox is ✅**: Run `create_card.py` and fill content
-- **If ALL checkboxes are ❌**: Skip silently (don't mention gleaning)
+**核心任务**：
+- 按方案步骤逐一执行
+- 遇到问题时自动搜索解决方案
+- 不偏离方案，需要修改时报告用户
 
-**Warning Signs You're About to Forget Gleaning**:
-- You just finished a multi-step execution (plan completed)
-- You're about to say "执行完成!", "任务完成!", "Done!" or similar
-- You're summarizing execution results for the user
-- Runtime search helped you solve a problem
+**约束**：
+- 严格按方案执行，不自行决定
+- 需要授权时等待用户确认
 
-**If valuable insight found**:
-1. Run: `python cursor-agent-team/ai_workspace/inspiration_capital/scripts/create_card.py --source "/crew" --trigger "[what triggered this insight]"`
-2. Fill in the `[内容待填写]` section with the insight
+---
 
-- **Reference**: See `.cursor/rules/gleaning.mdc` for detailed rules
-- **Quality over quantity**: Do NOT over-collect - only truly valuable insights
-- **Note**: `/crew` does NOT use Wandering (漫游) - execution requires focus
+### 阶段 3: 收尾 (WRAP-UP) ⚠️ 不可跳过
 
-## Response Format
+> **🚨 每次结束前必须执行此阶段**
 
-The AI will structure responses as:
+**Step 3.1: 记录结果**
+- 更新方案状态为"已完成"
+- 更新 `discussion_topics.md` 执行记录
+- 格式：`[时间] - /crew - [方案编号] - 执行完成（成功/失败/部分完成）`
 
-0. **Preflight Check** (ABSOLUTE FIRST STEP - required before any execution)
-   - Run `python cursor-agent-team/_scripts/preflight_check.py`
-   - Display output (includes current time)
+**Step 3.2: 拾穗检查 (Gleaning)**
 
-1. **Plan Identification** (identify plan to execute)
-   - Show identified plan number
-   - Show plan summary
+快速自检：
+- 执行过程中发现了什么有用的方法/技巧？
+- 运行时搜索揭示了什么意外的解决方案？
+- 有 → 运行 `create_card.py` 创建灵感卡
+- 没有 → 静默跳过
 
-2. **Plan Loading** (load and confirm plan)
-   - Display plan summary
-   - Confirm plan content
+---
 
-3. **Research Results** (search latest information)
-   - Show search summary (academic + general web search)
-   - Key findings from both search types
+## 阶段检查清单
 
-4. **Document Analysis** (read related documents)
-   - Show document summary
-   - Key findings
+每次使用 `/crew` 时，确保完成：
 
-5. **Execution Plan** (synthesize and confirm)
-   - Show complete execution plan
-   - Ask for confirmation
+| 阶段 | 必做项 | 检查 |
+|------|--------|------|
+| 0: 启动 | preflight_check.py | ☐ |
+| 1: 准备 | 加载方案 + 确认 | ☐ |
+| 2: 执行 | 按方案执行 | ☐ |
+| 3: 收尾 | 记录 + Gleaning | ☐ |
 
-6. **Execution Progress** (execute step by step)
-   - Show execution progress
-   - Record each step
-   - Show runtime searches if triggered
-   - Show solutions applied from search results
+## Response Format（简化版）
 
-7. **Execution Results** (record results)
-   - Show execution results
-   - Summary including runtime search outcomes
+AI 的响应结构与 4 阶段对应：
 
-8. **Discussion Record Update** (update records)
-   - Confirm record updates
+### 阶段 0 输出：启动信息
+```
+[Preflight Check 输出]
+```
+
+### 阶段 1 输出：准备确认
+```
+方案：[方案编号] - [方案名称]
+摘要：[方案摘要]
+确认执行？
+```
+
+### 阶段 2 输出：执行进度
+```
+[执行步骤 1]... ✅
+[执行步骤 2]... ✅
+...
+```
+
+### 阶段 3 输出：收尾
+```
+执行完成。
+[可选：灵感卡创建提示]
+```
 
 ## Example Usage
 
@@ -290,12 +230,15 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v1.3.1 (Updated: 2026-02-03)
+**Version**: v2.1.0 (Updated: 2026-02-03)
 
 **Version History**:
-- v1.3.1 (2026-02-03): Enhanced Step 9 (Gleaning) with mandatory checklist and warning signs to prevent skipping. Added visual markers (⚠️ MANDATORY CHECK) and explicit scenarios where gleaning is often forgotten.
-- v1.3.0 (2026-02-03): Added Gleaning aspect to workflow. Step 9 adds Gleaning after execution complete to capture valuable insights from execution.
-- v1.2.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time. Renumbered all subsequent steps.
-- v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution, enhanced research phase with general web search alongside academic search
-- v1.0.0 (2025-12-29): Initial creation - comprehensive execution command with plan reading, research, document reading, and record updating
+- v2.1.0 (2026-02-03): Merge role declaration into Phase 0 as Step 0.1. Remove "Step -1" to follow industry conventions.
+- v2.0.0 (2026-02-03): **MAJOR REFACTOR** - 简化 Workflow 从 11 步到 4 阶段。
+- v1.4.0 (2026-02-03): Added Step -1 (Role Declaration).
+- v1.3.1 (2026-02-03): Enhanced Step 9 (Gleaning) with mandatory checklist and warning signs to prevent skipping.
+- v1.3.0 (2026-02-03): Added Gleaning aspect to workflow.
+- v1.2.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step.
+- v1.1.0 (2025-12-30): Added runtime search capability for problem-solving during execution.
+- v1.0.0 (2025-12-29): Initial creation.
 
