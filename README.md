@@ -12,7 +12,7 @@ A lightweight multi-agent collaboration framework for Cursor IDE and Qwen Code.
 
 ```bash
 # 1. Add as submodule
-git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 
 # 2. Install
 ./cursor-agent-team/install.sh
@@ -56,7 +56,7 @@ A **lightweight, IDE-integrated multi-agent collaboration framework** that enabl
 
 ```bash
 # Add submodule
-git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 
 # Install
 ./cursor-agent-team/install.sh
@@ -72,7 +72,7 @@ git submodule update --remote cursor-agent-team && ./cursor-agent-team/install.s
 
 ```bash
 # Add submodule
-git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 
 # Install (uses .qwen/ directory)
 ./cursor-agent-team/install_qwen.sh
