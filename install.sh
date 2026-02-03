@@ -65,6 +65,7 @@ echo "Step 2: Creating directory structure..."
 
 mkdir -p "$PROJECT_ROOT/.cursor/commands"
 mkdir -p "$PROJECT_ROOT/.cursor/rules"
+mkdir -p "$PROJECT_ROOT/$SUBMODULE_DIR/config"
 
 echo -e "${GREEN}✓ Directories created${NC}"
 echo ""
@@ -165,6 +166,15 @@ else
     exit 1
 fi
 
+# Copy config files (only if not exists, to preserve user settings)
+echo "  Copying config files..."
+if [ ! -f "$PROJECT_ROOT/$SUBMODULE_DIR/config/persona_config.yaml" ]; then
+    echo -e "${YELLOW}  persona_config.yaml not found in source, skipping${NC}"
+else
+    # Config file already exists in submodule, just note it
+    INSTALLED_ITEMS+=("$SUBMODULE_DIR/config/persona_config.yaml")
+fi
+
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
 
@@ -213,7 +223,8 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/rules/wandering.mdc",
     ".cursor/rules/persona_input_layer.mdc",
     ".cursor/rules/persona_output_layer.mdc",
-    ".cursor/rules/persona_definition.mdc"
+    ".cursor/rules/persona_definition.mdc",
+    "$SUBMODULE_DIR/config/persona_config.yaml"
   ]
 }
 EOF
@@ -275,5 +286,10 @@ echo "  /discuss - Discussion partner"
 echo "  /prompt_engineer - Prompt engineer"
 echo "  /crew - Crew member"
 echo "  /spec_translator - Spec-Kit translator (additional feature)"
+echo ""
+echo "Persona System:"
+echo "  To enable persona, edit: $SUBMODULE_DIR/config/persona_config.yaml"
+echo "  Set 'enabled: true' and provide the absolute path to your persona.yaml"
+echo "  Check status: python $SUBMODULE_DIR/_scripts/persona_output.py --check"
 echo ""
 

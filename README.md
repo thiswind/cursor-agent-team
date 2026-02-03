@@ -48,6 +48,7 @@ With these three core roles installed, the team can operate. The Prompt Engineer
 - **Extensible**: Create custom roles via `/prompt_engineer`
 - **Workflow Automation**: Complete discussion → planning → execution workflow
 - **TTS Speech Output**: Voice feedback via macOS `say` command (with automatic platform detection)
+- **Persona System** (v0.8.0+): Script-driven persona integration with sandboxing to preserve work quality
 
 ## Team Roles
 
@@ -131,6 +132,51 @@ python ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3
 - Wander, don't search: Random browsing sparks creativity
 
 For details, see `ai_workspace/inspiration_capital/README.md`.
+
+### Persona System (v0.8.0+)
+
+A script-driven persona integration system that applies personality characteristics **without degrading work quality**.
+
+**The Problem**: Loading persona during work causes "Persona Contamination" - the model constrains itself to persona characteristics, degrading output quality. (Validated by PersonaGym, ACL 2025)
+
+**The Solution**: Persona Sandboxing - persona is only active in the Output Phase, after work is complete. The work layer remains persona-free.
+
+**Specification**: Based on [persona-spec](https://github.com/thiswind/persona-spec) - a platform-agnostic 7-layer persona definition:
+1. Identity - Basic identity (name, age, profession)
+2. Personality - Big Five (OCEAN) traits
+3. Affective - Emotional response patterns
+4. Relationship - Relationship with user
+5. Communication - Tone, honorifics, emoji usage
+6. Behavior Rules - Core principles and boundaries
+7. Examples - Few-shot learning dialogues
+
+**Installation**:
+
+1. Create or clone a persona following [persona-spec](https://github.com/thiswind/persona-spec):
+   ```bash
+   # Example: clone an existing persona
+   git clone https://github.com/yourname/your-persona.git
+   ```
+
+2. Configure the persona path in `cursor-agent-team/config/persona_config.yaml`:
+   ```yaml
+   enabled: true
+   path: "/absolute/path/to/your-persona/persona.yaml"
+   ```
+
+3. Verify configuration:
+   ```bash
+   python cursor-agent-team/_scripts/persona_output.py --check
+   ```
+
+**How It Works**:
+```
+[User Request] → [Work Layer (persona-free)] → [Output Layer (full persona)] → [User]
+```
+
+The agent completes work without persona interference, then presents results using the full 7-layer persona characteristics.
+
+For details, see [persona-spec INSTALL_GUIDE_FOR_AGENTS.md](https://github.com/thiswind/persona-spec/blob/main/INSTALL_GUIDE_FOR_AGENTS.md).
 
 ### Spec-Kit Translator (`/spec_translator`)
 
@@ -308,7 +354,7 @@ See [LICENSE](LICENSE) file for details.
 
 ## Version
 
-Current version: **v0.7.0**
+Current version: **v0.8.0**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 

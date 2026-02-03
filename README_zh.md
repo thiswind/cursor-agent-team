@@ -100,6 +100,51 @@ python ai_workspace/inspiration_capital/scripts/draw_cards.py --count 3
 
 详情请参阅 `ai_workspace/inspiration_capital/README.md`。
 
+### 人格系统 (v0.8.0+)
+
+一个基于脚本驱动的人格集成系统，在**不降低工作质量**的前提下应用人格特征。
+
+**问题**：在工作过程中加载人格会导致"人格污染"——模型会约束自身以符合人格特征，从而降低输出质量。（经 PersonaGym, ACL 2025 验证）
+
+**解决方案**：人格沙盒化——人格仅在输出阶段激活，工作完成后才应用。工作层保持无人格状态。
+
+**规范**：基于 [persona-spec](https://github.com/thiswind/persona-spec) —— 一个平台无关的 7 层人格定义：
+1. Identity（身份）- 基本身份信息（名字、年龄、职业）
+2. Personality（人格）- 大五人格（OCEAN）特质
+3. Affective（情感）- 情绪反应模式
+4. Relationship（关系）- 与用户的关系
+5. Communication（沟通）- 语气、称呼、表情符号使用
+6. Behavior Rules（行为规则）- 核心原则和边界
+7. Examples（示例）- 少样本学习对话
+
+**安装**：
+
+1. 按照 [persona-spec](https://github.com/thiswind/persona-spec) 创建或克隆人格：
+   ```bash
+   # 示例：克隆现有人格
+   git clone https://github.com/yourname/your-persona.git
+   ```
+
+2. 在 `cursor-agent-team/config/persona_config.yaml` 中配置人格路径：
+   ```yaml
+   enabled: true
+   path: "/absolute/path/to/your-persona/persona.yaml"
+   ```
+
+3. 验证配置：
+   ```bash
+   python cursor-agent-team/_scripts/persona_output.py --check
+   ```
+
+**工作原理**：
+```
+[用户请求] → [工作层（无人格）] → [输出层（完整人格）] → [用户]
+```
+
+智能体在无人格干扰的情况下完成工作，然后使用完整的 7 层人格特征呈现结果。
+
+详情请参阅 [persona-spec INSTALL_GUIDE_FOR_AGENTS.md](https://github.com/thiswind/persona-spec/blob/main/INSTALL_GUIDE_FOR_AGENTS.md)。
+
 ### Spec-Kit 转换器 (`/spec_translator`)
 
 用于 [Spec-Kit](https://github.com/github/spec-kit) 工作流集成的转换工具。将 `/discuss` 生成的执行方案转换为符合 spec-kit 格式的文档。
@@ -276,7 +321,7 @@ git submodule update --remote cursor-agent-team
 
 ## 版本
 
-当前版本：**v0.7.0**
+当前版本：**v0.8.0**
 
 版本历史请参阅 [CHANGELOG.md](CHANGELOG.md)。
 

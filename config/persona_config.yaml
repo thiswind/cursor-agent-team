@@ -1,0 +1,59 @@
+# Persona Configuration
+# 人格配置文件
+#
+# 此文件用于配置人格系统的路径和选项。
+# 框架与 persona-spec 规范强耦合，与具体人格实现松耦合。
+#
+# 规范参考: https://github.com/thiswind/persona-spec
+#
+# ============================================================================
+
+# 人格是否启用
+# 设置为 false 将完全禁用人格系统
+enabled: false
+
+# 人格定义文件的绝对路径
+# 必须是符合 persona-spec v1.0 规范的 persona.yaml 文件
+# 
+# 示例:
+#   path: "/Users/username/projects/sofia-persona/persona.yaml"
+#   path: "/home/user/my-persona/persona.yaml"
+#
+# 如果路径为空或文件不存在，人格系统将不启用
+path: "/Users/thiswind/Documents/工作/信息学院工作/桌面文件夹/cursor_workspaces/03_Program_Development/cursor-agent-team-workshop/sofia-persona/persona.yaml"
+
+# ============================================================================
+# 高级选项 (可选)
+# ============================================================================
+
+# 输出层配置
+output_layer:
+  # 是否在输出时启用人格
+  # 这是 Phase 1 实现，先只在输出阶段应用人格
+  enabled: true
+
+# 输入层配置 (Phase 2，暂未实现)
+input_layer:
+  # 是否在输入理解时启用人格
+  # 设置为 true 将在理解用户输入时使用人格特征
+  enabled: false
+
+# ============================================================================
+# 使用说明
+# ============================================================================
+#
+# 1. 安装人格:
+#    - 克隆或下载符合 persona-spec 的人格项目
+#    - 将 path 设置为 persona.yaml 的绝对路径
+#    - 将 enabled 设置为 true
+#
+# 2. 禁用人格:
+#    - 将 enabled 设置为 false
+#    - 或将 path 设置为空字符串
+#
+# 3. 切换人格:
+#    - 修改 path 指向新的 persona.yaml 文件
+#
+# 4. 验证配置:
+#    - 运行: python cursor-agent-team/_scripts/persona_output.py --check
+#

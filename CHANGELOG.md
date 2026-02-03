@@ -5,6 +5,33 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-02-03
+
+### Added
+- **Persona System**: Complete persona integration with sandboxing architecture
+  - New `config/persona_config.yaml` - Configure persona path and enable/disable
+  - New `_scripts/persona_output.py` - Script-driven persona detection and loading
+  - New `_cursor/rules/persona_output_layer.mdc` - Output layer for persona presentation (v2.0)
+  - New `_cursor/rules/persona_input_layer.mdc` - Input layer for understanding (Phase 2, not yet active)
+  - New `_cursor/rules/persona_definition.mdc` - Persona definition template
+
+### Philosophy: Persona Sandboxing
+- **The Problem**: Loading persona during work causes "Persona Contamination" - quality degrades as the model constrains itself to persona characteristics
+- **The Solution**: Persona is only active in Output Phase (after work completes)
+- **Research Backed**: Validated by PersonaGym (ACL 2025), Persona Drift studies, PromptGuard architecture
+
+### Technical Details
+- **Script-Driven**: Uses Python script instead of LLM judgment for deterministic detection
+- **Absolute Path**: Configuration uses absolute path to avoid resolution issues
+- **Full 7-Layer Persona**: Output layer loads complete persona definition (identity, personality, affective, relationship, communication, behavior_rules, examples)
+- **Framework Coupling**: Strongly coupled with [persona-spec](https://github.com/thiswind/persona-spec), loosely coupled with specific personas
+- **Phase 1 Complete**: Output layer implemented; Input layer deferred to Phase 2
+
+### Integration
+- Compatible with [persona-spec](https://github.com/thiswind/persona-spec) v1.0 specification
+- Check status: `python cursor-agent-team/_scripts/persona_output.py --check`
+- See [persona-spec INSTALL_GUIDE](https://github.com/thiswind/persona-spec/blob/main/INSTALL_GUIDE_FOR_AGENTS.md) for details
+
 ## [0.7.5] - 2026-02-03
 
 ### Fixed
@@ -414,6 +441,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.8.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.8.0
 [0.7.5]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.5
 [0.7.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.4
 [0.7.3]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.3
