@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.1] - 2026-02-03
+
+### Added
+- **History Context Handler**: New rule file to handle indirect persona contamination from chat history
+  - New `_cursor/rules/history_context_handler.mdc` (v1.0.0)
+  - Identifies `<persona_styled>` tags in conversation history
+  - Extracts technical facts while ignoring expression style
+  - Prevents work layer from being "infected" by persona styles in history
+
+### Changed
+- **Persona Output Layer**: Added XML tag wrapping for persona-styled output (v2.0.0 → v2.1.0)
+  - All persona output now wrapped in `<persona_styled>...</persona_styled>` tags
+  - Tags help subsequent turns identify persona expression boundaries
+  - Works in conjunction with History Context Handler for dual protection
+- **All Assistant Rules**: Added History Context Handler as cross-cutting concern
+  - Updated `discussion_assistant.mdc` (v2.0 → v2.1)
+  - Updated `crew_assistant.mdc` (v1.5.0 → v1.6.0)
+  - Updated `prompt_engineer_assistant.mdc` (v1.3.0 → v1.4.0)
+- **Install Script**: Added `history_context_handler.mdc` to installation
+
+### Technical Details
+- **Problem**: Even with output-only persona loading, chat history contains persona-styled output that models read in subsequent turns, causing potential "style infection"
+- **Solution A**: XML tags (`<persona_styled>`) mark persona expression boundaries
+- **Solution C**: History Context Handler tells work layer how to process tagged content
+- **Research**: Claude official recommends XML tags for structured prompts; Persona Drift studies confirm multi-turn drift within 8 turns
+
 ## [0.8.0] - 2026-02-03
 
 ### Added
@@ -441,6 +467,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.8.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.8.0
 [0.7.5]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.5
 [0.7.4]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.7.4

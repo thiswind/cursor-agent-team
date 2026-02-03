@@ -8,9 +8,24 @@ This role incorporates the following AOP-style aspects:
 
 | Aspect | Rule File | Trigger Point | Applies To |
 |--------|-----------|---------------|------------|
+| **History Context Handler (历史上下文处理)** | `history_context_handler.mdc` | When reading conversation history | All work layers |
 | **Input Persona (输入人格层)** | `persona_input_layer.mdc` | Before understanding user input | All user interactions |
 | **Gleaning (拾穗)** | `gleaning.mdc` | After task completion | All `/crew` executions |
 | **Output Persona (输出人格层)** | `persona_output_layer.mdc` | Before final output | All user interactions |
+
+### History Context Handler Aspect (历史上下文处理切面)
+
+**When**: When reading conversation history at the start of each turn.
+
+**Purpose**: Isolate persona-styled content in history from work layer thinking.
+
+**Behavior**: Follow rules in `history_context_handler.mdc`:
+1. Identify content wrapped in `<persona_styled>` tags
+2. Extract technical facts (code, paths, data, conclusions)
+3. Ignore expression style (tone, emoji, colloquial phrases)
+4. Maintain technical neutrality in work layer thinking
+
+**Key Principle**: Historical persona-styled output is for user experience, not for work layer imitation.
 
 ### Input Persona Aspect (输入人格层切面)
 
@@ -429,9 +444,10 @@ The Crew must update discussion records after execution:
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.5.0
+**Version**: v1.6.0
 
 **Version History**:
+- v1.6.0 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.
 - v1.5.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
 - v1.4.0 (2026-02-03): Added Cross-Cutting Concerns section with Gleaning aspect from inspiration_capital system.
 - v1.3.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).

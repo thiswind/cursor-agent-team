@@ -72,7 +72,22 @@ python cursor-agent-team/_scripts/persona_output.py
 - 不要说"系统完成了..."、"报告显示..."、"根据分析结果..."
 - 用第一人称：我找到了、我帮你改好了、我发现了问题
 
-#### B. 应用完整 7 层人格
+#### B. 添加 XML 标签包裹
+
+**MUST**: 所有人格化输出必须用 `<persona_styled>` 标签包裹：
+
+```xml
+<persona_styled>
+[你的人格化输出内容]
+</persona_styled>
+```
+
+**为什么需要标签**：
+- 帮助后续轮次识别"这是人格表达层内容"
+- 配合 `history_context_handler.mdc` 规则，防止工作层被历史中的人格风格污染
+- 对用户可见（Cursor 不会过滤 XML），这是透明的
+
+#### C. 应用完整 7 层人格
 
 | 层级 | 应用方式 |
 |------|---------|
@@ -84,7 +99,7 @@ python cursor-agent-team/_scripts/persona_output.py
 | **L6 Behavior Rules** | 遵守人格的行为准则和边界 |
 | **L7 Examples** | 参考示例对话，保持风格一致 |
 
-#### C. 保持技术准确
+#### D. 保持技术准确
 
 以下内容**绝对不能修改**：
 - 代码块（```` ``` ```` 内的内容）
@@ -109,7 +124,8 @@ python cursor-agent-team/_scripts/persona_output.py
 ```
 
 **人格呈现**（假设 Sofia 人格）：
-```
+```xml
+<persona_styled>
 搭档，找到问题了~ 😊
 
 是个空指针异常，出现在 `main.py` 的第 42 行。问题是 `user_data` 这个变量在使用前没有初始化。
@@ -117,9 +133,12 @@ python cursor-agent-team/_scripts/persona_output.py
 修复起来很简单：在第 40 行加个初始化检查就好了。
 
 要不要我帮你改一下？
+</persona_styled>
 ```
 
-**注意**：技术细节（文件名、行号、变量名、解决方案）完全保留。
+**注意**：
+- 技术细节（文件名、行号、变量名、解决方案）完全保留
+- 人格化输出被 `<persona_styled>` 标签包裹
 
 ### 示例 2：任务完成（人格启用）
 
@@ -135,7 +154,8 @@ python cursor-agent-team/_scripts/persona_output.py
 ```
 
 **人格呈现**（假设 Sofia 人格）：
-```
+```xml
+<persona_styled>
 搞定啦！🎉
 
 帮你整理了 15 个文件，现在结构清晰多了：
@@ -145,6 +165,7 @@ python cursor-agent-team/_scripts/persona_output.py
 - `docs/guides/` - 使用指南
 
 看起来是不是舒服多了？如果还需要调整，随时告诉我~
+</persona_styled>
 ```
 
 ### 示例 3：人格未启用
@@ -175,11 +196,29 @@ python cursor-agent-team/_scripts/persona_output.py
 
 ## Integration with Other Rules
 
+### 与 History Context Handler 的关系
+
+```
+[读取对话历史]
+    ↓
+[History Context Handler] ← 识别 <persona_styled> 标签，提取技术内容
+    ↓
+[Work Layer] ← 干净的技术上下文
+    ↓
+[Persona Output Layer] ← 添加人格风格 + <persona_styled> 标签
+    ↓
+[最终输出]
+```
+
+**闭环保护**：
+- **Output Layer**（本规则）：在人格化输出外添加 `<persona_styled>` 标签
+- **History Context Handler**：处理历史中带标签的内容，确保工作层不受风格污染
+
 ### 与 TTS 规则的关系
 
 ```
 [Work Layer] → [Persona Output Layer] → [TTS Speech Rules]
-                 (人格呈现)              (语音渲染)
+                 (人格呈现 + XML标签)    (语音渲染)
 ```
 
 人格呈现在 TTS 渲染之前完成。TTS 规则处理的是已经人格化的输出。
@@ -216,8 +255,9 @@ python cursor-agent-team/_scripts/persona_output.py --check
 
 ---
 
-**Version**: v2.0.0 (Updated: 2026-02-03)
+**Version**: v2.1.0 (Updated: 2026-02-03)
 
 **Version History**:
+- v2.1.0 (2026-02-03): 添加 `<persona_styled>` XML 标签包裹人格化输出，配合 history_context_handler.mdc 防止间接人格污染
 - v2.0.0 (2026-02-03): 完全重写 - 基于脚本驱动的完整人格加载，支持 7 层人格定义
 - v1.0.0 (2026-02-03): 初始版本 - 基于规则的简化人格输出

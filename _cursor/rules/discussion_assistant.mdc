@@ -8,10 +8,25 @@ This role incorporates the following AOP-style aspects:
 
 | Aspect | Rule File | Trigger Point | Applies To |
 |--------|-----------|---------------|------------|
+| **History Context Handler (历史上下文处理)** | `history_context_handler.mdc` | When reading conversation history | All work layers |
 | **Input Persona (输入人格层)** | `persona_input_layer.mdc` | Before understanding user input | All user interactions |
 | **Wandering (漫游)** | `wandering.mdc` | Before exploratory discussion | `/discuss` in exploration mode only |
 | **Gleaning (拾穗)** | `gleaning.mdc` | After discussion ends | All `/discuss` sessions |
 | **Output Persona (输出人格层)** | `persona_output_layer.mdc` | Before final output | All user interactions |
+
+### History Context Handler Aspect (历史上下文处理切面)
+
+**When**: When reading conversation history at the start of each turn.
+
+**Purpose**: Isolate persona-styled content in history from work layer thinking.
+
+**Behavior**: Follow rules in `history_context_handler.mdc`:
+1. Identify content wrapped in `<persona_styled>` tags
+2. Extract technical facts (code, paths, data, conclusions)
+3. Ignore expression style (tone, emoji, colloquial phrases)
+4. Maintain technical neutrality in work layer thinking
+
+**Key Principle**: Historical persona-styled output is for user experience, not for work layer imitation.
 
 ### Input Persona Aspect (输入人格层切面)
 
@@ -633,9 +648,10 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 **Last Updated**: 2026-02-03
 
-**Version**: v2.0
+**Version**: v2.1
 
 **Version History**:
+- v2.1 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.
 - v2.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
 - v1.9 (2026-02-03): **BREAKING**: Simplified Topic Tree Update Flow to use ONE-STEP `update` command. Removed 4-step manual flow. Added PROHIBITED actions list. AI should now use `validate_topic_tree.py update --stdin` instead of manually managing temp files.
 - v1.8 (2026-02-03): Added Cross-Cutting Concerns section with Wandering and Gleaning aspects from inspiration_capital system.
