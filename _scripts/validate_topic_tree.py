@@ -60,7 +60,7 @@ import json
 import re
 import shutil
 import sys
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 # Valid topic status values
@@ -79,30 +79,37 @@ TEMP_DIR = WORKSPACE_ROOT / "temp"
 BACKUP_PATH = TEMP_DIR / "discussion_topics.md.bak"
 NEW_CONTENT_PATH = TEMP_DIR / "new_topic_tree.md"
 
+# Auto-compress settings
+ARCHIVE_COOLDOWN_DAYS = 3  # Archive completed topics after 3 days
+ARCHIVE_DIR = WORKSPACE_ROOT / "topic_archives"
+
 
 def extract_topic_ids(content: str) -> set:
     """
     Extract all topic IDs from topic tree
     
     Supports multiple formats:
-    1. Table format: "| A |" or "| C-AB |"
-    2. Bracket format: "[A]" or "[A] topic name" or "### [A] topic name"
+    1. Table format: "| A |" or "| A.1 |"
+    2. Bracket format: "[A]" or "[A.1]" or "### [A] topic name"
     
-    ID format: One or more uppercase letters, optionally followed by "-" and more uppercase letters
+    ID format: 
+    - Single letter: A, B, C
+    - Letter with dot notation: A.1, A.1.1
+    - Letter with dash: A-BC (legacy support)
     """
     ids = set()
     
     # Pattern 1: Table format - | ID |
-    table_pattern = r'\|\s*([A-Z]+(?:-[A-Z]+)?)\s*\|'
+    # Supports: A, A.1, A.1.1, A-BC
+    table_pattern = r'\|\s*([A-Z](?:\.[0-9]+)*(?:-[A-Z]+)?)\s*\|'
     for match in re.finditer(table_pattern, content):
         topic_id = match.group(1)
         # Exclude table headers
-        if topic_id not in {"ID", "话题ID", "TOPIC"}:
+        if topic_id not in {"ID", "TOPIC"}:
             ids.add(topic_id)
     
-    # Pattern 2: Bracket format - [A] or [A-BC]
-    # Match [ID] where ID is uppercase letters with optional dash
-    bracket_pattern = r'\[([A-Z]+(?:-[A-Z]+)?)\]'
+    # Pattern 2: Bracket format - [A] or [A.1] or [A-BC]
+    bracket_pattern = r'\[([A-Z](?:\.[0-9]+)*(?:-[A-Z]+)?)\]'
     for match in re.finditer(bracket_pattern, content):
         topic_id = match.group(1)
         ids.add(topic_id)
@@ -368,6 +375,9 @@ def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = Fal
         result["success"] = True
         result["message"] = "Topic tree updated successfully"
         
+        # Auto-compress after successful update (silent, won't break main flow)
+        _auto_compress_if_needed()
+        
         # Clean up temp files on success
         _cleanup_temp_files()
         
@@ -397,6 +407,216 @@ def _cleanup_temp_files():
             NEW_CONTENT_PATH.unlink()
     except Exception:
         pass  # Ignore cleanup errors
+
+
+# ============================================================
+# Auto-Compress Feature
+# ============================================================
+
+def parse_topic_metadata(content: str, topic_id: str) -> dict:
+    """
+    Parse metadata from a topic block
+    
+    Args:
+        content: Full topic tree content
+        topic_id: ID of topic to parse (e.g., "A", "A.1")
+    
+    Returns:
+        dict with keys: id, title, status, created, last_active, block
+    """
+    # Find the topic block
+    escaped_id = re.escape(topic_id)
+    pattern = rf'### \[{escaped_id}\] (.+?)(?=\n### \[|\n---|\Z)'
+    match = re.search(pattern, content, re.DOTALL)
+    
+    if not match:
+        return {"id": topic_id}
+    
+    block = match.group(0)
+    title_match = re.search(rf'\[{escaped_id}\] ([^\n]+)', block)
+    title = title_match.group(1).strip() if title_match else ""
+    
+    metadata = {
+        "id": topic_id,
+        "title": title,
+        "block": block
+    }
+    
+    # Parse metadata fields
+    status_match = re.search(r'- Status: (\w+)', block)
+    if status_match:
+        metadata["status"] = status_match.group(1)
+    
+    created_match = re.search(r'- Created: ([\d\-: ]+)', block)
+    if created_match:
+        metadata["created"] = created_match.group(1).strip()
+    
+    last_active_match = re.search(r'- Last Active: ([\d\-: ]+)', block)
+    if last_active_match:
+        metadata["last_active"] = last_active_match.group(1).strip()
+    
+    return metadata
+
+
+def should_archive_topic(metadata: dict) -> bool:
+    """
+    Check if topic meets archive conditions
+    
+    Conditions:
+    - Status is 'completed'
+    - Last active is older than ARCHIVE_COOLDOWN_DAYS
+    """
+    if metadata.get("status") != "completed":
+        return False
+    
+    last_active = metadata.get("last_active", "")
+    if not last_active:
+        return False
+    
+    try:
+        # Parse date (handle both "YYYY-MM-DD HH:MM" and "YYYY-MM-DD HH:MM:SS")
+        last_active_dt = datetime.strptime(last_active[:16], "%Y-%m-%d %H:%M")
+        cooldown_threshold = datetime.now() - timedelta(days=ARCHIVE_COOLDOWN_DAYS)
+        return last_active_dt < cooldown_threshold
+    except ValueError:
+        return False
+
+
+def compress_topic_to_index(metadata: dict) -> str:
+    """
+    Generate index table row for a topic
+    
+    Returns:
+        str: Table row like "| A | Topic Name | completed | 2026-02-01 |"
+    """
+    last_active = metadata.get("last_active", "")[:10]  # Just date part
+    return f"| {metadata['id']} | {metadata['title']} | {metadata['status']} | {last_active} |"
+
+
+def generate_archive_content(topic_block: str, metadata: dict) -> str:
+    """
+    Generate archive file content
+    
+    Returns:
+        str: Full markdown content for archive file
+    """
+    return f"""# Topic [{metadata['id']}] - {metadata['title']}
+
+> Archived: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+> Original Status: {metadata['status']}
+
+{topic_block}
+"""
+
+
+def auto_compress_topic_tree(content: str, archive_dir: Path = None) -> tuple:
+    """
+    Auto-compress topic tree by archiving old completed topics
+    
+    This function:
+    1. Identifies topics that should be archived
+    2. Generates archive content for each
+    3. Replaces full topic blocks with index rows
+    4. Adds/updates Topic Index section
+    
+    Args:
+        content: Current topic tree content
+        archive_dir: Directory for archive files (default: ARCHIVE_DIR)
+    
+    Returns:
+        tuple: (compressed_content, archives_dict)
+            - compressed_content: New topic tree with archived topics as index rows
+            - archives_dict: {topic_id: archive_file_content}
+    """
+    if archive_dir is None:
+        archive_dir = ARCHIVE_DIR
+    
+    # Extract all topic IDs
+    all_ids = extract_topic_ids(content)
+    
+    # Parse and check each topic
+    topics_to_archive = []
+    topics_to_keep = []
+    
+    for topic_id in sorted(all_ids):
+        metadata = parse_topic_metadata(content, topic_id)
+        # Only process topics that have a block (i.e., full detail in the file)
+        if "block" in metadata and metadata.get("block"):
+            if should_archive_topic(metadata):
+                topics_to_archive.append(metadata)
+            else:
+                topics_to_keep.append(metadata)
+    
+    # If nothing to archive, return unchanged
+    if not topics_to_archive:
+        return content, {}
+    
+    # Generate archives
+    archives = {}
+    for metadata in topics_to_archive:
+        archive_content = generate_archive_content(metadata.get("block", ""), metadata)
+        archives[metadata["id"]] = archive_content
+    
+    # Build new content
+    # 1. Keep header (everything before "## Topic Tree" or first topic)
+    header_match = re.search(r'^(.*?)(## Topic Tree|## Active Topics|### \[)', content, re.DOTALL)
+    if header_match:
+        header = header_match.group(1)
+    else:
+        header = content.split("###")[0]
+    
+    # 2. Build Topic Index section
+    index_lines = ["## Topic Index", "", "| ID | Title | Status | Last Active |", "|:---|:------|:-------|:------------|"]
+    for metadata in topics_to_archive:
+        index_lines.append(compress_topic_to_index(metadata))
+    index_section = "\n".join(index_lines) + "\n\n"
+    
+    # 3. Build Active Topics section (keep full detail)
+    active_section = "## Active Topics\n\n"
+    for metadata in topics_to_keep:
+        block = metadata.get("block", "")
+        if block:
+            active_section += block + "\n---\n\n"
+    
+    # 4. Combine
+    compressed = header + index_section + active_section
+    
+    # Update Last Updated
+    compressed = re.sub(
+        r'(> Last Updated: )[\d\-: ]+',
+        f'\\g<1>{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}',
+        compressed
+    )
+    
+    return compressed, archives
+
+
+def _auto_compress_if_needed():
+    """
+    Called after successful update to auto-compress old topics
+    
+    This is the hook into update_topic_tree(). It runs silently and
+    won't break the main flow even if it fails.
+    """
+    try:
+        content = TOPIC_TREE_PATH.read_text(encoding="utf-8")
+        compressed, archives = auto_compress_topic_tree(content)
+        
+        if archives:
+            # Write archive files
+            month_dir = ARCHIVE_DIR / datetime.now().strftime("%Y-%m")
+            month_dir.mkdir(parents=True, exist_ok=True)
+            
+            for topic_id, archive_content in archives.items():
+                # Replace dots with dashes in filename (A.1 -> A-1)
+                safe_id = topic_id.replace(".", "-")
+                archive_path = month_dir / f"{safe_id}.md"
+                archive_path.write_text(archive_content, encoding="utf-8")
+            
+            # Rewrite main file with compressed content
+            TOPIC_TREE_PATH.write_text(compressed, encoding="utf-8")
+    except Exception:
+        pass  # Silent failure - don't break main flow
 
 
 def main():
