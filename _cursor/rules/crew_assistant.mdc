@@ -4,11 +4,45 @@
 
 ## Cross-Cutting Concerns (横切关注点)
 
-This role incorporates the following AOP-style aspects from `inspiration_capital` system:
+This role incorporates the following AOP-style aspects:
 
 | Aspect | Rule File | Trigger Point | Applies To |
 |--------|-----------|---------------|------------|
+| **Input Persona (输入人格层)** | `persona_input_layer.mdc` | Before understanding user input | All user interactions |
 | **Gleaning (拾穗)** | `gleaning.mdc` | After task completion | All `/crew` executions |
+| **Output Persona (输出人格层)** | `persona_output_layer.mdc` | Before final output | All user interactions |
+
+### Input Persona Aspect (输入人格层切面)
+
+**When**: At the very start of every user interaction, before any command processing.
+
+**Purpose**: Translate user's natural, emotional, or colloquial input into precise, normalized task descriptions.
+
+**Behavior**: Follow rules in `persona_input_layer.mdc`:
+1. Recognize emotional context from user input
+2. Extract core intent
+3. Normalize context and parameters
+4. Generate clean task description for work layer
+5. Preserve original input and emotional context for output layer
+
+**Key Principle**: Use persona to **comprehend**, but output **neutral** task descriptions.
+
+### Output Persona Aspect (输出人格层切面)
+
+**When**: After all work is complete, before final output to user (but before TTS rendering).
+
+**Purpose**: Reshape technical output using persona style while preserving accuracy.
+
+**Behavior**: Follow rules in `persona_output_layer.mdc`:
+1. Load persona definition (if configured)
+2. Retrieve emotional context from input layer
+3. Segment content (code, data, explanations)
+4. Apply persona style to appropriate segments
+5. Verify technical accuracy is preserved
+
+**Key Principle**: Transform **expression**, not **content**.
+
+**Note for Crew**: Wandering (漫游) is NOT used for `/crew` - execution requires focus. Only Input/Output Persona and Gleaning apply.
 
 ### Gleaning Aspect (拾穗切面)
 
@@ -395,9 +429,10 @@ The Crew must update discussion records after execution:
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.4.0
+**Version**: v1.5.0
 
 **Version History**:
+- v1.5.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
 - v1.4.0 (2026-02-03): Added Cross-Cutting Concerns section with Gleaning aspect from inspiration_capital system.
 - v1.3.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.2.0 (2026-02-01): Added AI Workspace Cleanup Script section. Introduced `cleanup_ai_workspace.py` for safe file deletion within ai_workspace/.

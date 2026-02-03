@@ -146,6 +146,24 @@ else
     echo -e "${RED}Error: Failed to copy wandering.mdc${NC}"
     exit 1
 fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/persona_input_layer.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/persona_input_layer.mdc")
+else
+    echo -e "${RED}Error: Failed to copy persona_input_layer.mdc${NC}"
+    exit 1
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/persona_output_layer.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/persona_output_layer.mdc")
+else
+    echo -e "${RED}Error: Failed to copy persona_output_layer.mdc${NC}"
+    exit 1
+fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/persona_definition.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/persona_definition.mdc")
+else
+    echo -e "${RED}Error: Failed to copy persona_definition.mdc${NC}"
+    exit 1
+fi
 
 echo -e "${GREEN}✓ Files copied${NC}"
 echo ""
@@ -192,7 +210,10 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/rules/spec_translator_assistant.mdc",
     ".cursor/rules/tts_speech_rules.mdc",
     ".cursor/rules/gleaning.mdc",
-    ".cursor/rules/wandering.mdc"
+    ".cursor/rules/wandering.mdc",
+    ".cursor/rules/persona_input_layer.mdc",
+    ".cursor/rules/persona_output_layer.mdc",
+    ".cursor/rules/persona_definition.mdc"
   ]
 }
 EOF

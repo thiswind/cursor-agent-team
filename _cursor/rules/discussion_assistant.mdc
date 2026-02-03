@@ -4,12 +4,44 @@
 
 ## Cross-Cutting Concerns (横切关注点)
 
-This role incorporates the following AOP-style aspects from `inspiration_capital` system:
+This role incorporates the following AOP-style aspects:
 
 | Aspect | Rule File | Trigger Point | Applies To |
 |--------|-----------|---------------|------------|
+| **Input Persona (输入人格层)** | `persona_input_layer.mdc` | Before understanding user input | All user interactions |
 | **Wandering (漫游)** | `wandering.mdc` | Before exploratory discussion | `/discuss` in exploration mode only |
 | **Gleaning (拾穗)** | `gleaning.mdc` | After discussion ends | All `/discuss` sessions |
+| **Output Persona (输出人格层)** | `persona_output_layer.mdc` | Before final output | All user interactions |
+
+### Input Persona Aspect (输入人格层切面)
+
+**When**: At the very start of every user interaction, before any command processing.
+
+**Purpose**: Translate user's natural, emotional, or colloquial input into precise, normalized task descriptions.
+
+**Behavior**: Follow rules in `persona_input_layer.mdc`:
+1. Recognize emotional context from user input
+2. Extract core intent
+3. Normalize context and parameters
+4. Generate clean task description for work layer
+5. Preserve original input and emotional context for output layer
+
+**Key Principle**: Use persona to **comprehend**, but output **neutral** task descriptions.
+
+### Output Persona Aspect (输出人格层切面)
+
+**When**: After all work is complete, before final output to user (but before TTS rendering).
+
+**Purpose**: Reshape technical output using persona style while preserving accuracy.
+
+**Behavior**: Follow rules in `persona_output_layer.mdc`:
+1. Load persona definition (if configured)
+2. Retrieve emotional context from input layer
+3. Segment content (code, data, explanations)
+4. Apply persona style to appropriate segments
+5. Verify technical accuracy is preserved
+
+**Key Principle**: Transform **expression**, not **content**.
 
 ### Wandering Aspect (漫游切面)
 
@@ -601,9 +633,10 @@ When user explicitly requests agent requirement generation (e.g., "生成角色�
 
 **Last Updated**: 2026-02-03
 
-**Version**: v1.9
+**Version**: v2.0
 
 **Version History**:
+- v2.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
 - v1.9 (2026-02-03): **BREAKING**: Simplified Topic Tree Update Flow to use ONE-STEP `update` command. Removed 4-step manual flow. Added PROHIBITED actions list. AI should now use `validate_topic_tree.py update --stdin` instead of manually managing temp files.
 - v1.8 (2026-02-03): Added Cross-Cutting Concerns section with Wandering and Gleaning aspects from inspiration_capital system.
 - v1.7 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
