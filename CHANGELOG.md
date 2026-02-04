@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.5] - 2026-02-05
+
+### Changed
+- **README Rewrite**: Restructured from scratch (PLAN-V-001)
+  - Fixed framing: multi-role (not multi-agent); zero handoff, inherent context continuity
+  - Added "Why cursor-agent-team?" — three pillars (multi-role, human-in-the-loop, empowerment)
+  - Added "Positioning & Related Concepts" — academic/industry alignment (IA, human-AI teaming, cognitive load redistribution)
+  - New structure: Why → What → Positioning → Quick Start → Roles → Workflow → Installation → Features → Architecture
+  - Removed generic boilerplate; consolidated installation; split Core vs Extended features
+
+### Technical Details
+- PATCH increment (0.10.4 → 0.10.5)
+- Source: /discuss PLAN-V-001 + /crew execution
+
 ## [0.10.4] - 2026-02-05
 
 ### Added
