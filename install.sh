@@ -171,6 +171,12 @@ else
     echo -e "${RED}Error: Failed to copy history_context_handler.mdc${NC}"
     exit 1
 fi
+if cp "$PROJECT_ROOT/$SUBMODULE_DIR/_cursor/rules/social_media_policy.mdc" "$PROJECT_ROOT/.cursor/rules/"; then
+    INSTALLED_ITEMS+=(".cursor/rules/social_media_policy.mdc")
+else
+    echo -e "${RED}Error: Failed to copy social_media_policy.mdc${NC}"
+    exit 1
+fi
 
 # Copy config files (only if not exists, to preserve user settings)
 echo "  Copying config files..."
@@ -231,6 +237,7 @@ cat > "$INSTALL_INFO_FILE" << EOF
     ".cursor/rules/persona_output_layer.mdc",
     ".cursor/rules/persona_definition.mdc",
     ".cursor/rules/history_context_handler.mdc",
+    ".cursor/rules/social_media_policy.mdc",
     "$SUBMODULE_DIR/config/persona_config.yaml"
   ]
 }

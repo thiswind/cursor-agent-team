@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.4] - 2026-02-05
+
+### Added
+- **Social Media Policy Rule**: Restored `social_media_policy.mdc` (v1.1.0) - was documented in v0.6.0 but file was never committed
+  - Reconstructed from CHANGELOG v0.6.0 and project context
+  - Prompt engineer refinement: NEVER DO, Trigger, Primary rule, Classification Rule, Quota source
+  - Added to install.sh and uninstall.sh
+
+### Technical Details
+- PATCH increment (0.10.3 → 0.10.4)
+- Source: User investigation + /prompt_engineer review + /crew direct execution
+
 ## [0.10.3] - 2026-02-05
 
 ### Added
@@ -522,6 +534,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+[0.10.4]: https://github.com/thiswind/cursor-agent-team/compare/v0.10.3...v0.10.4
 [0.10.3]: https://github.com/thiswind/cursor-agent-team/compare/v0.10.2...v0.10.3
 [0.10.2]: https://github.com/thiswind/cursor-agent-team/compare/v0.10.1...v0.10.2
 [0.9.0]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.1...v0.9.0

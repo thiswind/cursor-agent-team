@@ -116,6 +116,10 @@ if [ -f "$PROJECT_ROOT/.cursor/rules/wandering.mdc" ]; then
     rm -f "$PROJECT_ROOT/.cursor/rules/wandering.mdc"
     REMOVED_ITEMS+=(".cursor/rules/wandering.mdc")
 fi
+if [ -f "$PROJECT_ROOT/.cursor/rules/social_media_policy.mdc" ]; then
+    rm -f "$PROJECT_ROOT/.cursor/rules/social_media_policy.mdc"
+    REMOVED_ITEMS+=(".cursor/rules/social_media_policy.mdc")
+fi
 
 # Step 3: Remove installation info
 if [ -f "$INSTALL_INFO_FILE" ]; then

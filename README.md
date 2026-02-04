@@ -172,7 +172,7 @@ GNU General Public License v3.0 (GPL-3.0). See [LICENSE](LICENSE).
 
 ## Version
 
-Current version: **v0.10.0**
+Current version: **v0.10.4**
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
 
