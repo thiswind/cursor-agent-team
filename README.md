@@ -16,6 +16,14 @@ We augment human capability; we don't replace it. Three design pillars:
 
 3. **Empowerment, not replacement** — Democratizing team access: individuals get team-level capability. Cognitive load redistribution: you think strategy, we handle execution details. Frees you from the "details quagmire" for purer thinking.
 
+**Core value (formal)**: Intelligence Augmentation (IA); Democratization of expertise / Capability expansion; Cognitive load redistribution; Human-in-the-loop (HITL); Human-AI Teaming — human as conductor.
+
+**Core innovation**: Multi-role, single-conversation architecture. Zero handoff → inherent context continuity. Multi-agent systems face context loss at handoff; we avoid it by design. No AI-AI coordination; human orchestrates.
+
+**Design philosophy**: (1) Intelligence Augmentation — augment, not replace. (2) Human-in-the-loop by design; not set-and-forget. (3) Multi-role, not multi-agent — role as "mask," single conversation. (4) Human-AI teaming — human as conductor.
+
+**Design principles**: Zero handoff; Plan-and-Execute (planning-execution separation); Constrained generation / specification-driven; Exploration vs exploitation (by role); Retrieval-augmented planning (knowledge cutoff mitigation); Dedicated agent workspace (scratchpad, external memory, staged generation); Common Ground / Mental Model Alignment (persona); Persona Sandboxing.
+
 ## What it is
 
 A **multi-role collaboration framework** for Cursor IDE and Qwen Code. One LLM wears different "masks" (commands) in the same conversation. Provides:
@@ -56,8 +64,8 @@ For manual installation or Qwen Code, see [Installation](#installation).
 
 | Role | Command | Description |
 |------|---------|-------------|
-| **Discussion Partner** | `/discuss` | Analyzes problems, explores ideas, creates execution plans |
-| **Crew Member** | `/crew` | Executes plans strictly according to specifications |
+| **Discussion Partner** | `/discuss` | Exploration mode — breadth and depth, no execution. Research-first planning: automatically searches for latest academic and industry research before synthesizing plans (Retrieval-augmented planning; knowledge cutoff mitigation). |
+| **Crew Member** | `/crew` | Execution mode — strict adherence to plan as specification. Plan-and-Execute architecture; constrained generation. Exploitation mode. |
 | **Prompt Engineer** | `/prompt_engineer` | Creates and maintains new roles (commands) |
 
 ## Workflow
@@ -100,7 +108,11 @@ Update: `git submodule update --remote cursor-agent-team && ./cursor-agent-team/
 
 ### Core
 
+**Agent Workspace** — Dedicated persistent workspace for agents. Agents can write scripts, take notes, save intermediate results from searches and research. Aligns with scratchpad reasoning and external memory research; enables staged refinement for higher output quality than direct generation. See `ai_workspace/README.md`.
+
 **Persona System (v0.8.0+)** — Script-driven persona integration without degrading work quality. Based on [persona-spec](https://github.com/thiswind/persona-spec).
+
+Communication requires synchronization of mental models. Persona provides warmth and rapport that increase human affinity and trust, improving coordination efficiency between human leaders and AI teams—not for companionship, but for more effective human-machine collaboration.
 
 ```bash
 python cursor-agent-team/_scripts/persona_output.py --check
@@ -140,11 +152,13 @@ Hybrid architecture: LLM soft constraints (prompt rules) + script hard constrain
 └─────────────────────────────────────────────────┘
 ```
 
+**Architecture highlights**: Multi-role + single conversation; Plan-and-Execute; Dedicated agent workspace (context engineering, cognitive artifacts); Hybrid constraints (soft + hard); Phase markers (workflow verification); Command-as-role.
+
 See `cursor-agent-team/_scripts/README.md` for script details.
 
 ## Version
 
-Current version: **v0.10.5**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.7**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

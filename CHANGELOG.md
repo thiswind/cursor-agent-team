@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.7] - 2026-02-05
+
+### Added
+- **README Design Rationale (PLAN-Z-001)**: Comprehensive design rationale sections
+  - Core value (formal): IA, democratization of expertise, cognitive load redistribution, HITL, Human-AI Teaming
+  - Core innovation: Multi-role single-conversation, zero handoff, inherent context continuity
+  - Design philosophy: IA, HITL, multi-role not multi-agent, human as conductor
+  - Design principles: Zero handoff, Plan-and-Execute, constrained generation, retrieval-augmented planning, dedicated agent workspace, persona sandboxing
+  - Core Roles: Research-first planning rationale for /discuss; Plan-and-Execute rationale for /crew
+  - Agent Workspace: Dedicated workspace as core feature (scratchpad, external memory, staged generation)
+  - Architecture highlights: Multi-role + single conversation, Plan-and-Execute, cognitive artifacts, Phase markers, Command-as-role
+- **ai_workspace/README**: "Why This Workspace" section — design rationale with scratchpad reasoning, external memory, staged generation, cognitive artifacts
+
+### Technical Details
+- PATCH increment (0.10.6 → 0.10.7)
+- Source: /discuss PLAN-Z-001 + /crew execution
+
+## [0.10.6] - 2026-02-05
+
+### Added
+- **README Persona Rationale**: Added rationale for Persona System (topic [W])
+  - Communication = synchronization of mental models
+  - Persona provides warmth/rapport → affinity/trust → coordination efficiency
+  - Purpose: human leader + AI team collaboration, not companionship
+  - Research backing: persona_rationale_research.md
+
+### Technical Details
+- PATCH increment (0.10.5 → 0.10.6)
+- Source: /discuss persona rationale + /crew direct execution
+
 ## [0.10.5] - 2026-02-05
 
 ### Changed

@@ -2,6 +2,16 @@
 
 Private workspace for AI agents. All paths are relative to `cursor-agent-team/ai_workspace/`.
 
+## Why This Workspace
+
+This is a **dedicated agent workspace** — a core architectural principle of the framework. Agents can write scripts for experiments, take notes, and save intermediate results from searches and research. This design aligns with:
+
+- **Scratchpad reasoning** — intermediate computation improves LLM quality (Nye & Andreassen; EMNLP 2024)
+- **External memory** — persistence beyond context window (MemGPT; MemoryAgentBench)
+- **Staged generation** — iterative refinement outperforms direct output (IAD 2025)
+
+The workspace functions as **cognitive artifacts** that extend the agent's effective reasoning capacity—enabling higher-quality output than direct generation alone.
+
 ---
 
 ## Quick Reference (READ FIRST)
@@ -213,4 +223,4 @@ python cursor-agent-team/_scripts/cleanup_ai_workspace.py --dry-run --older-than
 
 ---
 
-**Last Updated**: 2026-02-02
+**Last Updated**: 2026-02-05
