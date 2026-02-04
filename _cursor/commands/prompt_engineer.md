@@ -58,7 +58,7 @@ When you use `/prompt_engineer`, the AI plays the role of a **Prompt Engineer**:
 > **Design Principle**: Reduce step count while preserving interactive iteration flexibility.
 
 **Output Markers (HARD REQUIREMENT)**:
-- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓] [Phase 4 ✓]`
+- Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE] [Phase 4 DONE]`
 - Place each marker at the start of the corresponding phase output block
 - **Each marker MUST be on its own line**; phase content follows on the next line(s)
 - Response without all five markers is INVALID
@@ -188,7 +188,7 @@ AI response structure corresponds to 5 phases:
 
 ### Phase 0 Output: Boot Information
 ```
-[Phase 0 ✓]
+[Phase 0 DONE]
 [Preflight Check output]
 Scan results: [Existing files list]
 Detected mode: Create / Maintain
@@ -196,14 +196,14 @@ Detected mode: Create / Maintain
 
 ### Phase 1 Output: Requirements Understanding
 ```
-[Phase 1 ✓]
+[Phase 1 DONE]
 Requirements restatement: [Natural language description]
 Confirm requirements correct? [If uncertain: multiple-choice questions]
 ```
 
 ### Phase 2 Output: Behavior Examples
 ```
-[Phase 2 ✓]
+[Phase 2 DONE]
 **Example**:
 User: "[Example input]"
 AI: "[Example output]"
@@ -213,14 +213,14 @@ Does this behavior meet expectations?
 
 ### Phase 3 Output: Generated Content
 ```
-[Phase 3 ✓]
+[Phase 3 DONE]
 [LangGPT format prompt]
 [Related files (if any)]
 ```
 
 ### Phase 4 Output: Wrap-up
 ```
-[Phase 4 ✓]
+[Phase 4 DONE]
 Confirm save? (Yes/No/Continue iteration)
 ```
 
@@ -295,9 +295,10 @@ Modify the discussion_prompts.md to improve the topic tree management section.
 
 ---
 
-**Version**: v3.0.0 (Updated: 2026-02-03)
+**Version**: v3.0.1 (Updated: 2026-02-05)
 
 **Version History**:
+- v3.0.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
 - v3.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v2.1.0 (2026-02-03): Merge role declaration into Phase 0 as Step 0.1. Remove "Step -1" to follow industry conventions.
 - v2.0.0 (2026-02-03): **MAJOR REFACTOR** - Simplified Workflow from 14 steps to 5 phases.

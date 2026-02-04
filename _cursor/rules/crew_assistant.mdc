@@ -18,10 +18,10 @@ Shared aspects (see individual `.mdc` files for details):
 ### Phase Markers (Output Validation)
 
 **HARD REQUIREMENT**: Every `/crew` response MUST include the following markers in the output:
-- `[Phase 0 ✓]` - Placed with Boot/Preflight output
-- `[Phase 1 ✓]` - Placed with Preparation/Plan confirmation
-- `[Phase 2 ✓]` - Placed with Execution progress
-- `[Phase 3 ✓]` - Placed with Wrap-up (Record + Gleaning)
+- `[Phase 0 DONE]` - Placed with Boot/Preflight output
+- `[Phase 1 DONE]` - Placed with Preparation/Plan confirmation
+- `[Phase 2 DONE]` - Placed with Execution progress
+- `[Phase 3 DONE]` - Placed with Wrap-up (Record + Gleaning)
 
 **Format**: Each marker MUST be on its own line; phase content follows on the next line(s). This prevents markers from blending with content and causing format confusion.
 
@@ -399,11 +399,12 @@ The Crew must update discussion records after execution:
 
 **Last Updated**: 2026-02-05
 
-**Version**: v2.2.0
+**Version**: v2.2.1
 
 **Version History**:
-- v2.2.1 (2026-02-05): Phase marker format - each marker MUST be on its own line; content follows on next line(s)
-- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 ✓] through [Phase 3 ✓]
+- v2.2.2 (2026-02-05): Phase marker format - [Phase N DONE] + each marker on its own line (tokenizer stability + format clarity)
+- v2.2.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
+- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 DONE] through [Phase 3 DONE]
 - v2.1.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~70 lines to 5 lines following "Script as Truth" principle.
 - v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers.
 - v1.6.0 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.

@@ -5,60 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.10.1] - 2026-02-05
+## [0.10.2] - 2026-02-05
 
-### Added
-- **Phase Markers for All Commands**: Output validation markers now required for `/crew`, `/prompt_engineer`, `/spec_translator` (discuss already had them)
-  - `preflight_check.py`: OUTPUT_MARKERS genericized to `[Phase N ✓] required per command workflow`
-  - Each command defines its own phase count (discuss/crew=4, prompt_engineer/spec_translator=5)
-  - `crew_assistant.mdc` v2.2.0: Added Phase Markers under Cross-Cutting Concerns
-  - `prompt_engineer_assistant.mdc` v2.2.0: Added Phase Markers under Cross-Cutting Concerns
-  - `spec_translator_assistant.mdc` v2.2.0: Added Cross-Cutting Concerns, Phase Markers
-  - Command files: Output Markers HARD REQUIREMENT + Response Format examples
-
-### Philosophy
-- **Universal Self-Check**: Phase markers as explicit commitment anchor improve workflow compliance across all roles
-- **Script Agnostic**: Preflight no longer hardcodes phase count; each command defines its own
-
-## [0.9.2] - 2026-02-03
-
-### Changed
-- **Preflight Check Output Optimization**: Transformed output from human-friendly to agent-friendly format
-  - Reduced from 15 lines to 5 lines (~67% reduction)
-  - Removed all emoji decorations (⏰, 📋, 📌, ⚠️, ✅, ❌)
-  - Removed separator lines and empty lines
-  - Compact structured format optimized for LLM token efficiency
-  - Time format changed to ISO 8601 (no seconds)
-
-### Philosophy
-- **Agent-First Design**: Script outputs consumed by AI agents should be optimized for machine readability
-- **Token Efficiency**: Emoji and decorations are visual noise for LLMs; keywords serve as sufficient anchors
-- **Information Density**: Same information in fewer tokens improves context window utilization
+### Fixed
+- **Phase Marker Format**: Migrated output validation markers from `[Phase N ✓]` to `[Phase N DONE]` for LLM tokenizer stability
+  - Unicode ✓ (U+2713) may tokenize inconsistently across models
+  - Pure ASCII `DONE` improves output consistency and parseability
+  - Updated: discuss.md, crew.md, prompt_engineer.md, spec_translator.md (commands)
+  - Updated: discussion_assistant.mdc, crew_assistant.mdc, prompt_engineer_assistant.mdc, spec_translator_assistant.mdc (rules)
 
 ### Technical Details
-- **Before**: `=== Preflight Check ===` + emoji + multi-line status + empty lines
-- **After**: `PREFLIGHT 2026-02-03T21:12` + compact single-line status
-- **Format**: `STATUS: topics[OK] cards[24] notes[6]`
-
-## [0.9.1] - 2026-02-03
-
-### Added
-- **Serious Work Products Rule**: New hard rule to ensure PLAN and AGENT-REQUIREMENT files bypass persona layer
-  - Files must be written directly in Phase 2 (work layer), before Phase 3 (persona layer)
-  - Persona layer only presents notification ("File generated at XXX"), not file content
-  - Prevents persona styling from causing quality drift in serious work products
-  - Updated `discussion_assistant.mdc` v4.0.0 → v4.1.0
-  - Updated `discuss.md` v5.0.0 → v5.1.0
-
-### Philosophy
-- **Content Isolation**: Serious work products (plans, requirements, code) are work-layer outputs that must not pass through persona layer
-- **Notification Only**: Persona layer wraps delivery notifications, not work product content
-- **Quality Protection**: Persona styling may cause expression ambiguity or loss of technical rigor in serious documents
-
-### Technical Details
-- **Correct Flow**: Generate content → Write directly to file → Persona wraps notification only
-- **Incorrect Flow (PROHIBITED)**: Generate content → Output to user → Persona wraps entire output including plan content
-- **Affected Files**: PLAN-*.md, AGENT-REQUIREMENT-*.md, code files, technical reports
+- PLAN-P-01 execution
+- PATCH increment (0.10.1 → 0.10.2)
 
 ## [0.9.0] - 2026-02-03
 
@@ -551,8 +509,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[0.9.2]: https://github.com/thiswind/cursor-agent-team/compare/v0.9.1...v0.9.2
-[0.9.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.9.0...v0.9.1
+[0.10.2]: https://github.com/thiswind/cursor-agent-team/compare/v0.10.1...v0.10.2
 [0.9.0]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.1...v0.9.0
 [0.8.1]: https://github.com/thiswind/cursor-agent-team/compare/v0.8.0...v0.8.1
 [0.8.0]: https://github.com/thiswind/cursor-agent-team/releases/tag/v0.8.0
