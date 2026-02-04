@@ -18,10 +18,10 @@ Shared aspects (see individual `.mdc` files for details):
 ### Phase Markers (Output Validation)
 
 **HARD REQUIREMENT**: Every `/discuss` response MUST include the following markers in the output:
-- `[Phase 0 ✓]` - Placed with Boot/Preflight output
-- `[Phase 1 ✓]` - Placed with Context/Topic confirmation
-- `[Phase 2 ✓]` - Placed with Discussion content
-- `[Phase 3 ✓]` - Placed with Persona-styled wrap-up
+- `[Phase 0 DONE]` - Placed with Boot/Preflight output
+- `[Phase 1 DONE]` - Placed with Context/Topic confirmation
+- `[Phase 2 DONE]` - Placed with Discussion content
+- `[Phase 3 DONE]` - Placed with Persona-styled wrap-up
 
 **Rationale**: Structured output creates an explicit commitment and attention anchor. Missing markers = invalid response.
 
@@ -257,11 +257,12 @@ Phase 3: persona_output.py wraps entire output including plan content  ← ❌ W
 
 ---
 
-**Last Updated**: 2026-02-04
+**Last Updated**: 2026-02-05
 
-**Version**: v4.2.0
+**Version**: v4.2.1
 
 **Version History**:
+- v4.2.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
 - v4.2.0 (2026-02-04): Added Phase markers requirement for output validation
 - v4.1.0 (2026-02-03): Added "Serious Work Products" hard rule - PLAN and AGENT-REQUIREMENT files must be written directly to file before persona layer, ensuring work products bypass persona styling to maintain quality and precision.
 - v4.0.0 (2026-02-03): **MAJOR** - Refined Topic Tree Management section - reduced from ~234 lines to ~35 lines. Significant restructure following "Script as Truth" and "Tables over Prose" principles.

@@ -71,7 +71,7 @@ When you use `/discuss`, the AI plays the role of a **Discussion Partner**:
 **Violation Detection**: If your response does not execute `role_identity/discuss.py` and `preflight_check.py`, you have violated the rules.
 
 **Output Markers (HARD REQUIREMENT)**:
-- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓]`
+- Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE]`
 - Place each marker at the start of the corresponding phase output block
 - Response without all four markers is INVALID
 
@@ -174,25 +174,25 @@ AI response structure corresponds to 4 phases:
 
 ### Phase 0 Output: Boot Information
 ```
-[Phase 0 ✓] [Preflight Check output]
+[Phase 0 DONE] [Preflight Check output]
 [Optional: Wandering card results]
 ```
 
 ### Phase 1 Output: Context Confirmation
 ```
-[Phase 1 ✓] Current topic: [TopicID] - [Topic Name]
+[Phase 1 DONE] Current topic: [TopicID] - [Topic Name]
 (Or ask user to confirm topic)
 ```
 
 ### Phase 2 Output: Discussion Content
 ```
-[Phase 2 ✓] [Analysis, search results, synthesized answer]
+[Phase 2 DONE] [Analysis, search results, synthesized answer]
 [If generating PLAN/REQUIREMENT: write to file silently, no content output here]
 ```
 
 ### Phase 3 Output: Persona-styled Presentation
 ```
-[Phase 3 ✓] <persona_styled>
+[Phase 3 DONE] <persona_styled>
 [Discussion answer presented with persona style]
 [If file was generated: "计划已生成，在 plans/PLAN-xxx.md"]
 </persona_styled>
@@ -205,10 +205,10 @@ AI response structure corresponds to 4 phases:
 ### Response Format Example (with Phase markers)
 
 ```
-[Phase 0 ✓] PREFLIGHT 2026-02-04T23:52 ...
-[Phase 1 ✓] Current topic: [N] - ...
-[Phase 2 ✓] [Discussion content]
-[Phase 3 ✓] <persona_styled>...</persona_styled>
+[Phase 0 DONE] PREFLIGHT 2026-02-04T23:52 ...
+[Phase 1 DONE] Current topic: [N] - ...
+[Phase 2 DONE] [Discussion content]
+[Phase 3 DONE] <persona_styled>...</persona_styled>
 ```
 
 ## Example Usage
@@ -334,10 +334,11 @@ This command should be able to generate various types of documents based on temp
 
 ---
 
-**Version**: v5.2.0 (Updated: 2026-02-04)
+**Version**: v5.2.1 (Updated: 2026-02-05)
 
 **Version History**:
-- v5.2.0 (2026-02-04): Added Phase markers requirement - response must contain [Phase 0 ✓] through [Phase 3 ✓], otherwise invalid
+- v5.2.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
+- v5.2.0 (2026-02-04): Added Phase markers requirement - response must contain [Phase 0 DONE] through [Phase 3 DONE], otherwise invalid
 - v5.1.0 (2026-02-03): Added "Serious Work Products" rule - PLAN and AGENT-REQUIREMENT must be written directly to file in Phase 2, bypassing persona layer. Only notification is persona-styled in Phase 3.
 - v5.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v4.3.0 (2026-02-03): Added MANDATORY execution rules - every message must execute full workflow.

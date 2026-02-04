@@ -63,7 +63,7 @@ When you use `/crew`, the AI plays the role of a **Crew Member**:
 > **Design Principle**: Reduce step count to make it easier for LLM to remember and execute.
 
 **Output Markers (HARD REQUIREMENT)**:
-- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓]`
+- Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE]`
 - Place each marker at the start of the corresponding phase output block
 - Response without all four markers is INVALID
 
@@ -148,26 +148,26 @@ AI response structure corresponds to 4 phases:
 
 ### Phase 0 Output: Boot Information
 ```
-[Phase 0 ✓] [Preflight Check output]
+[Phase 0 DONE] [Preflight Check output]
 ```
 
 ### Phase 1 Output: Preparation Confirmation
 ```
-[Phase 1 ✓] Plan: [PlanID] - [Plan Name]
+[Phase 1 DONE] Plan: [PlanID] - [Plan Name]
 Summary: [Plan Summary]
 Confirm execution?
 ```
 
 ### Phase 2 Output: Execution Progress
 ```
-[Phase 2 ✓] [Execute Step 1]... ✅
+[Phase 2 DONE] [Execute Step 1]... ✅
 [Execute Step 2]... ✅
 ...
 ```
 
 ### Phase 3 Output: Wrap-up
 ```
-[Phase 3 ✓] Execution completed.
+[Phase 3 DONE] Execution completed.
 [Optional: Inspiration card creation prompt]
 ```
 
@@ -235,9 +235,10 @@ Execute the plan for Topic C
 
 ---
 
-**Version**: v3.0.0 (Updated: 2026-02-03)
+**Version**: v3.0.1 (Updated: 2026-02-05)
 
 **Version History**:
+- v3.0.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
 - v3.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v2.1.0 (2026-02-03): Merge role declaration into Phase 0 as Step 0.1. Remove "Step -1" to follow industry conventions.
 - v2.0.0 (2026-02-03): **MAJOR REFACTOR** - Simplified Workflow from 11 steps to 4 phases.

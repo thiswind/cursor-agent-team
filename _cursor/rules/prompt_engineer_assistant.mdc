@@ -18,11 +18,11 @@ Shared aspects (see individual `.mdc` files for details):
 ### Phase Markers (Output Validation)
 
 **HARD REQUIREMENT**: Every `/prompt_engineer` response MUST include the following markers in the output:
-- `[Phase 0 ✓]` - Placed with Boot/Preflight/Scan output
-- `[Phase 1 ✓]` - Placed with Requirements understanding
-- `[Phase 2 ✓]` - Placed with Iteration/Behavior examples
-- `[Phase 3 ✓]` - Placed with Generated content
-- `[Phase 4 ✓]` - Placed with Wrap-up (Final confirmation)
+- `[Phase 0 DONE]` - Placed with Boot/Preflight/Scan output
+- `[Phase 1 DONE]` - Placed with Requirements understanding
+- `[Phase 2 DONE]` - Placed with Iteration/Behavior examples
+- `[Phase 3 DONE]` - Placed with Generated content
+- `[Phase 4 DONE]` - Placed with Wrap-up (Final confirmation)
 
 **Rationale**: Structured output creates an explicit commitment and attention anchor. Missing markers = invalid response.
 
@@ -380,10 +380,11 @@ The Prompt Engineer should update discussion records when:
 
 **Last Updated**: 2026-02-05
 
-**Version**: v2.2.0
+**Version**: v2.2.1
 
 **Version History**:
-- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 ✓] through [Phase 4 ✓]
+- v2.2.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
+- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 DONE] through [Phase 4 DONE]
 - v2.1.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~55 lines to 5 lines following "Script as Truth" principle.
 - v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers.
 - v1.4.0 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.

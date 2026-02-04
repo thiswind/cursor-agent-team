@@ -58,7 +58,7 @@ When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translato
 ## Workflow
 
 **Output Markers (HARD REQUIREMENT)**:
-- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓] [Phase 4 ✓]`
+- Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE] [Phase 4 DONE]`
 - Place each marker at the start of the corresponding phase output block
 - Response without all five markers is INVALID
 
@@ -150,27 +150,27 @@ When you use `/spec_translator`, the AI will follow this workflow:
 
 The AI will structure responses as:
 
-**[Phase 0 ✓]** Preflight Check (ABSOLUTE FIRST STEP - required before any work)
+**[Phase 0 DONE]** Preflight Check (ABSOLUTE FIRST STEP - required before any work)
    - Run `python cursor-agent-team/_scripts/preflight_check.py`
    - Display output (includes current time)
 
-**[Phase 1 ✓]** Plan Validation + Read (parse and validate Plan number and file)
+**[Phase 1 DONE]** Plan Validation + Read (parse and validate Plan number and file)
    - Parse Plan number
    - Validate file existence
    - Reject if invalid
    - Task type validation (reject if not software development)
 
-**[Phase 2 ✓]** Analyze + Convert (convert Plan to spec-kit format)
+**[Phase 2 DONE]** Analyze + Convert (convert Plan to spec-kit format)
    - Extract information
    - Map to spec-kit structure
    - Handle missing information
 
-**[Phase 3 ✓]** Save + Update (file generation and topic tree)
+**[Phase 3 DONE]** Save + Update (file generation and topic tree)
    - Generate file names
    - Save three documents
    - Update topic tree
 
-**[Phase 4 ✓]** Output Summary
+**[Phase 4 DONE]** Output Summary
    - File locations
    - Content overview
    - Notes (if any)
@@ -240,9 +240,10 @@ The AI will structure responses as:
 
 ---
 
-**Version**: v2.0.0 (Updated: 2026-02-03)
+**Version**: v2.0.1 (Updated: 2026-02-05)
 
 **Version History**:
+- v2.0.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
 - v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only for LLM clarity. Removed all Chinese-English mixed content.
 - v1.1.0 (2026-02-03): Added Step 0 (Preflight Check) as absolute first step in Workflow. Removed "Get Current Time" step since preflight check includes current time.
 - v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator command for converting Plan files to spec-kit documents
