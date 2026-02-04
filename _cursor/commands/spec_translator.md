@@ -57,6 +57,13 @@ When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translato
 
 ## Workflow
 
+**Output Markers (HARD REQUIREMENT)**:
+- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓] [Phase 4 ✓]`
+- Place each marker at the start of the corresponding phase output block
+- Response without all five markers is INVALID
+
+**Phase mapping**: Phase 0=Preflight, Phase 1=Parse+Read, Phase 2=Analyze+Convert, Phase 3=Save+Update, Phase 4=Output
+
 When you use `/spec_translator`, the AI will follow this workflow:
 
 ### Step 0: Preflight Check (CRITICAL - ABSOLUTE FIRST STEP)
@@ -143,30 +150,27 @@ When you use `/spec_translator`, the AI will follow this workflow:
 
 The AI will structure responses as:
 
-0. **Preflight Check** (ABSOLUTE FIRST STEP - required before any work)
+**[Phase 0 ✓]** Preflight Check (ABSOLUTE FIRST STEP - required before any work)
    - Run `python cursor-agent-team/_scripts/preflight_check.py`
    - Display output (includes current time)
 
-1. **Plan Validation** (parse and validate Plan number and file)
+**[Phase 1 ✓]** Plan Validation + Read (parse and validate Plan number and file)
    - Parse Plan number
    - Validate file existence
    - Reject if invalid
+   - Task type validation (reject if not software development)
 
-2. **Task Type Validation** (check if software development task)
-   - Analyze Plan content
-   - Reject if not software development task
-
-3. **Conversion Process** (convert Plan to spec-kit format)
+**[Phase 2 ✓]** Analyze + Convert (convert Plan to spec-kit format)
    - Extract information
    - Map to spec-kit structure
    - Handle missing information
 
-4. **File Generation** (save three documents)
+**[Phase 3 ✓]** Save + Update (file generation and topic tree)
    - Generate file names
-   - Save files
+   - Save three documents
    - Update topic tree
 
-5. **Output Summary** (display summary)
+**[Phase 4 ✓]** Output Summary
    - File locations
    - Content overview
    - Notes (if any)

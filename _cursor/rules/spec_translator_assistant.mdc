@@ -8,6 +8,25 @@ alwaysApply: false
 
 > **Purpose**: Persistent rules for the Spec-Kit Translator - these rules are always active and automatically injected.
 
+## Cross-Cutting Concerns
+
+Shared aspects (see individual `.mdc` files for details):
+- **History**: `history_context_handler.mdc` applied when reading conversation history
+- **Note**: spec_translator does NOT use Persona, Wandering, or Gleaning (automatic conversion)
+
+### Phase Markers (Output Validation)
+
+**HARD REQUIREMENT**: Every `/spec_translator` response MUST include the following markers in the output:
+- `[Phase 0 ✓]` - Placed with Preflight Check
+- `[Phase 1 ✓]` - Placed with Plan parse + read
+- `[Phase 2 ✓]` - Placed with Analyze + Convert
+- `[Phase 3 ✓]` - Placed with Save + Update topic tree
+- `[Phase 4 ✓]` - Placed with Output summary
+
+**Rationale**: Structured output creates an explicit commitment and attention anchor. Missing markers = invalid response.
+
+---
+
 ## Plan File Reading Rules
 
 ### Plan File Location
@@ -299,11 +318,13 @@ Must follow spec-kit plan template structure:
 
 ---
 
-**Last Updated**: 2026-02-03
+**Last Updated**: 2026-02-05
 
-**Version**: v2.0.0
+**Version**: v2.2.0
 
 **Version History**:
+- v2.2.0 (2026-02-05): Added Cross-Cutting Concerns section, moved Phase Markers under it for consistency with crew/prompt_engineer
+- v2.1.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 ✓] through [Phase 4 ✓]
 - v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers.
 - v1.1.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
 - v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator assistant rules

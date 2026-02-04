@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.1] - 2026-02-05
+
+### Added
+- **Phase Markers for All Commands**: Output validation markers now required for `/crew`, `/prompt_engineer`, `/spec_translator` (discuss already had them)
+  - `preflight_check.py`: OUTPUT_MARKERS genericized to `[Phase N ✓] required per command workflow`
+  - Each command defines its own phase count (discuss/crew=4, prompt_engineer/spec_translator=5)
+  - `crew_assistant.mdc` v2.2.0: Added Phase Markers under Cross-Cutting Concerns
+  - `prompt_engineer_assistant.mdc` v2.2.0: Added Phase Markers under Cross-Cutting Concerns
+  - `spec_translator_assistant.mdc` v2.2.0: Added Cross-Cutting Concerns, Phase Markers
+  - Command files: Output Markers HARD REQUIREMENT + Response Format examples
+
+### Philosophy
+- **Universal Self-Check**: Phase markers as explicit commitment anchor improve workflow compliance across all roles
+- **Script Agnostic**: Preflight no longer hardcodes phase count; each command defines its own
+
 ## [0.9.2] - 2026-02-03
 
 ### Changed

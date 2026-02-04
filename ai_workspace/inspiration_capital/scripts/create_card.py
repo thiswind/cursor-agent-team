@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Create a new scatter card (散卡片) with standardized format.
+Create a new scatter card with standardized format.
 
 Usage:
-    python create_card.py --source "Moltbook" --trigger "看到一个有趣的讨论"
+    python create_card.py --source "Moltbook" --trigger "Saw an interesting discussion"
     
 Output:
     Created: /path/to/cards/20260202_143052_001.md
@@ -46,17 +46,17 @@ def create_card(cards_dir: str, source: str, trigger: str) -> str:
     
     content = f"""# {card_id}
 
-**时间**: {date_str} {time_str}
-**来源**: {source}
-**触发**: {trigger}
+**Time**: {date_str} {time_str}
+**Source**: {source}
+**Trigger**: {trigger}
 
 ---
 
-[内容待填写]
+[Content to fill]
 
 ---
 
-**为什么有意思**: 
+**Why interesting**: 
 """
     
     with open(filepath, 'w', encoding='utf-8') as f:

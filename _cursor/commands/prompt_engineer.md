@@ -57,6 +57,11 @@ When you use `/prompt_engineer`, the AI plays the role of a **Prompt Engineer**:
 
 > **Design Principle**: Reduce step count while preserving interactive iteration flexibility.
 
+**Output Markers (HARD REQUIREMENT)**:
+- Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓] [Phase 4 ✓]`
+- Place each marker at the start of the corresponding phase output block
+- Response without all five markers is INVALID
+
 When you use `/prompt_engineer`, the AI will follow this **5-phase** workflow:
 
 ---
@@ -182,20 +187,20 @@ AI response structure corresponds to 5 phases:
 
 ### Phase 0 Output: Boot Information
 ```
-[Preflight Check output]
+[Phase 0 ✓] [Preflight Check output]
 Scan results: [Existing files list]
 Detected mode: Create / Maintain
 ```
 
 ### Phase 1 Output: Requirements Understanding
 ```
-Requirements restatement: [Natural language description]
+[Phase 1 ✓] Requirements restatement: [Natural language description]
 Confirm requirements correct? [If uncertain: multiple-choice questions]
 ```
 
 ### Phase 2 Output: Behavior Examples
 ```
-**Example**:
+[Phase 2 ✓] **Example**:
 User: "[Example input]"
 AI: "[Example output]"
 
@@ -204,13 +209,13 @@ Does this behavior meet expectations?
 
 ### Phase 3 Output: Generated Content
 ```
-[LangGPT format prompt]
+[Phase 3 ✓] [LangGPT format prompt]
 [Related files (if any)]
 ```
 
 ### Phase 4 Output: Wrap-up
 ```
-Confirm save? (Yes/No/Continue iteration)
+[Phase 4 ✓] Confirm save? (Yes/No/Continue iteration)
 ```
 
 ## Example Usage

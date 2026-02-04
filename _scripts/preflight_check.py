@@ -58,6 +58,8 @@ def run_preflight_check() -> str:
         f"STATUS: topics[{topics_status}] cards[{cards_count}] notes[{notes_count}]",
         "SCRIPTS: cleanup_ai_workspace.py | create_card.py | draw_cards.py",
         "END_CHECKLIST: persona_output.py → gleaning",
+        # Generic reminder: each command defines its own phase count (discuss=4, prompt_engineer=5, etc.)
+        "OUTPUT_MARKERS: [Phase N ✓] required per command workflow",
         "READY",
     ]
     

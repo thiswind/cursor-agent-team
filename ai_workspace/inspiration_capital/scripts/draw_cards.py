@@ -17,7 +17,7 @@ from typing import Dict, List, Any
 
 
 def parse_card(filepath: str) -> Dict[str, str]:
-    """Parse a card file and extract fields."""
+    """Parse a card file and extract fields (supports both English and Chinese)."""
     with open(filepath, 'r', encoding='utf-8') as f:
         content = f.read()
     
@@ -30,16 +30,24 @@ def parse_card(filepath: str) -> Dict[str, str]:
         'why_interesting': ''
     }
     
-    # Extract fields
-    time_match = re.search(r'\*\*时间\*\*:\s*(.+)', content)
+    # Time - try English first, then Chinese
+    time_match = re.search(r'\*\*Time\*\*:\s*(.+)', content)
+    if not time_match:
+        time_match = re.search(r'\*\*时间\*\*:\s*(.+)', content)
     if time_match:
         result['time'] = time_match.group(1).strip()
     
-    source_match = re.search(r'\*\*来源\*\*:\s*(.+)', content)
+    # Source - try English first, then Chinese
+    source_match = re.search(r'\*\*Source\*\*:\s*(.+)', content)
+    if not source_match:
+        source_match = re.search(r'\*\*来源\*\*:\s*(.+)', content)
     if source_match:
         result['source'] = source_match.group(1).strip()
     
-    trigger_match = re.search(r'\*\*触发\*\*:\s*(.+)', content)
+    # Trigger - try English first, then Chinese
+    trigger_match = re.search(r'\*\*Trigger\*\*:\s*(.+)', content)
+    if not trigger_match:
+        trigger_match = re.search(r'\*\*触发\*\*:\s*(.+)', content)
     if trigger_match:
         result['trigger'] = trigger_match.group(1).strip()
     
@@ -48,8 +56,10 @@ def parse_card(filepath: str) -> Dict[str, str]:
     if len(parts) >= 2:
         result['content'] = parts[1].strip()
     
-    # Extract why interesting
-    why_match = re.search(r'\*\*为什么有意思\*\*:\s*(.*?)(?:$|\n\n)', content, re.DOTALL)
+    # Why interesting - try English first, then Chinese
+    why_match = re.search(r'\*\*Why interesting\*\*:\s*(.*?)(?:$|\n\n)', content, re.DOTALL)
+    if not why_match:
+        why_match = re.search(r'\*\*为什么有意思\*\*:\s*(.*?)(?:$|\n\n)', content, re.DOTALL)
     if why_match:
         result['why_interesting'] = why_match.group(1).strip()
     
@@ -94,26 +104,26 @@ def draw_cards(cards_dir: str, count: int) -> Dict[str, Any]:
 def format_output(result: Dict[str, Any]) -> str:
     """Format draw result as structured text."""
     lines = [
-        '=== 随机抽取结果 ===',
-        f'抽取时间: {result["draw_time"]}',
-        f'抽取数量: {result["count"]}',
+        '=== Random Draw Results ===',
+        f'Draw time: {result["draw_time"]}',
+        f'Draw count: {result["count"]}',
         ''
     ]
     
     for i, card in enumerate(result['cards'], 1):
         lines.extend([
-            f'--- 卡片 {i}/{result["count"]} ---',
-            f'文件: {card["filename"]}',
-            f'时间: {card["time"]}',
-            f'来源: {card["source"]}',
-            f'触发: {card["trigger"]}',
-            f'内容:',
+            f'--- Card {i}/{result["count"]} ---',
+            f'File: {card["filename"]}',
+            f'Time: {card["time"]}',
+            f'Source: {card["source"]}',
+            f'Trigger: {card["trigger"]}',
+            f'Content:',
             card['content'],
-            f'为什么有意思: {card["why_interesting"]}',
+            f'Why interesting: {card["why_interesting"]}',
             ''
         ])
     
-    lines.append('=== 抽取结束 ===')
+    lines.append('=== End of Draw ===')
     return '\n'.join(lines)
 
 
