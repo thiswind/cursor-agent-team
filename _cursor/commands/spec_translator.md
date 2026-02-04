@@ -60,6 +60,7 @@ When you use `/spec_translator`, the AI plays the role of a **Spec-Kit Translato
 **Output Markers (HARD REQUIREMENT)**:
 - Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓] [Phase 4 ✓]`
 - Place each marker at the start of the corresponding phase output block
+- **Each marker MUST be on its own line**; phase content follows on the next line(s)
 - Response without all five markers is INVALID
 
 **Phase mapping**: Phase 0=Preflight, Phase 1=Parse+Read, Phase 2=Analyze+Convert, Phase 3=Save+Update, Phase 4=Output

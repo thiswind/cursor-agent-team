@@ -24,6 +24,8 @@ Shared aspects (see individual `.mdc` files for details):
 - `[Phase 3 ✓]` - Placed with Generated content
 - `[Phase 4 ✓]` - Placed with Wrap-up (Final confirmation)
 
+**Format**: Each marker MUST be on its own line; phase content follows on the next line(s). This prevents markers from blending with content and causing format confusion.
+
 **Rationale**: Structured output creates an explicit commitment and attention anchor. Missing markers = invalid response.
 
 ---
@@ -383,6 +385,7 @@ The Prompt Engineer should update discussion records when:
 **Version**: v2.2.0
 
 **Version History**:
+- v2.2.1 (2026-02-05): Phase marker format - each marker MUST be on its own line; content follows on next line(s)
 - v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 ✓] through [Phase 4 ✓]
 - v2.1.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~55 lines to 5 lines following "Script as Truth" principle.
 - v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers.

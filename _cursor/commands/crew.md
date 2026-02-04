@@ -65,6 +65,7 @@ When you use `/crew`, the AI plays the role of a **Crew Member**:
 **Output Markers (HARD REQUIREMENT)**:
 - Every response MUST contain: `[Phase 0 ✓] [Phase 1 ✓] [Phase 2 ✓] [Phase 3 ✓]`
 - Place each marker at the start of the corresponding phase output block
+- **Each marker MUST be on its own line**; phase content follows on the next line(s)
 - Response without all four markers is INVALID
 
 When you use `/crew`, the AI will follow this **4-phase** workflow:
@@ -148,26 +149,30 @@ AI response structure corresponds to 4 phases:
 
 ### Phase 0 Output: Boot Information
 ```
-[Phase 0 ✓] [Preflight Check output]
+[Phase 0 ✓]
+[Preflight Check output]
 ```
 
 ### Phase 1 Output: Preparation Confirmation
 ```
-[Phase 1 ✓] Plan: [PlanID] - [Plan Name]
+[Phase 1 ✓]
+Plan: [PlanID] - [Plan Name]
 Summary: [Plan Summary]
 Confirm execution?
 ```
 
 ### Phase 2 Output: Execution Progress
 ```
-[Phase 2 ✓] [Execute Step 1]... ✅
+[Phase 2 ✓]
+[Execute Step 1]... ✅
 [Execute Step 2]... ✅
 ...
 ```
 
 ### Phase 3 Output: Wrap-up
 ```
-[Phase 3 ✓] Execution completed.
+[Phase 3 ✓]
+Execution completed.
 [Optional: Inspiration card creation prompt]
 ```
 
