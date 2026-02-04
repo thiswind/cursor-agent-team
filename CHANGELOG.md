@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.8] - 2026-02-05
+
+### Changed
+- **README Methodology-First Framing**: Foreground methodology and philosophy over tool/framework
+  - Added positioning sentence: "A methodology for human-AI collaboration, implemented as a Cursor framework"
+  - Added "Methodology First" paragraph before Why section
+  - Added "We believe" paragraph (augment not replace, context continuity, research-first, human in loop)
+  - Added "Research-first planning" subsection — plans from training data alone is wrong; retrieval-augmented planning as methodological stance
+
+### Technical Details
+- PATCH increment (0.10.7 → 0.10.8)
+- Source: /discuss README evaluation + /crew direct execution
+
 ## [0.10.7] - 2026-02-05
 
 ### Added

@@ -4,7 +4,9 @@
 
 # Cursor AI Agent Team Framework
 
-**Intelligence augmentation for Cursor IDE** — an elite team under your command, with zero handoff and inherent context continuity.
+**A methodology for human-AI collaboration, implemented as a Cursor framework.** Intelligence augmentation — an elite team under your command, with zero handoff and inherent context continuity.
+
+cursor-agent-team is first a **methodology and a philosophy** of how humans and AI should work together—then a framework that implements it. How we think about AI shapes how we build with it.
 
 ## Why cursor-agent-team?
 
@@ -15,6 +17,8 @@ We augment human capability; we don't replace it. Three design pillars:
 2. **Human-in-the-loop by design** — You are the conductor. We explore, you decide. We execute, you confirm. "Your command, our execution" — not "set and forget."
 
 3. **Empowerment, not replacement** — Democratizing team access: individuals get team-level capability. Cognitive load redistribution: you think strategy, we handle execution details. Frees you from the "details quagmire" for purer thinking.
+
+**We believe**: AI should augment human judgment, not replace it. Context continuity matters more than agent count. Plans grounded in fresh research beat plans from training data alone. And the human must remain in the loop—as conductor, not spectator.
 
 **Core value (formal)**: Intelligence Augmentation (IA); Democratization of expertise / Capability expansion; Cognitive load redistribution; Human-in-the-loop (HITL); Human-AI Teaming — human as conductor.
 
@@ -67,6 +71,8 @@ For manual installation or Qwen Code, see [Installation](#installation).
 | **Discussion Partner** | `/discuss` | Exploration mode — breadth and depth, no execution. Research-first planning: automatically searches for latest academic and industry research before synthesizing plans (Retrieval-augmented planning; knowledge cutoff mitigation). |
 | **Crew Member** | `/crew` | Execution mode — strict adherence to plan as specification. Plan-and-Execute architecture; constrained generation. Exploitation mode. |
 | **Prompt Engineer** | `/prompt_engineer` | Creates and maintains new roles (commands) |
+
+**Research-first planning** — Plans should not come from LLM training data alone. Training data has a knowledge cutoff; plans synthesized from it can be outdated or wrong. We design `/discuss` to search for latest academic and industry research *before* synthesizing plans (retrieval-augmented planning). Fresh context, then synthesis—a methodological stance, not just a feature.
 
 ## Workflow
 
@@ -158,7 +164,7 @@ See `cursor-agent-team/_scripts/README.md` for script details.
 
 ## Version
 
-Current version: **v0.10.7**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.8**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
