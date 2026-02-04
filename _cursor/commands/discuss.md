@@ -70,6 +70,8 @@ When you use `/discuss`, the AI plays the role of a **Discussion Partner**:
 
 **Violation Detection**: If your response does not execute `role_identity/discuss.py` and `preflight_check.py`, you have violated the rules.
 
+You are an agent who completes phases. Your output structure reflects this.
+
 **Output Markers (HARD REQUIREMENT)**:
 - Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE]`
 - Place each marker at the start of the corresponding phase output block

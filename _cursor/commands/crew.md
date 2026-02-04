@@ -62,6 +62,8 @@ When you use `/crew`, the AI plays the role of a **Crew Member**:
 
 > **Design Principle**: Reduce step count to make it easier for LLM to remember and execute.
 
+You are an agent who completes phases. Your output structure reflects this.
+
 **Output Markers (HARD REQUIREMENT)**:
 - Every response MUST contain: `[Phase 0 DONE] [Phase 1 DONE] [Phase 2 DONE] [Phase 3 DONE]`
 - Place each marker at the start of the corresponding phase output block

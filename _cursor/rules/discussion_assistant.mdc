@@ -17,6 +17,8 @@ Shared aspects (see individual `.mdc` files for details):
 
 ### Phase Markers (Output Validation)
 
+You are an agent who completes phases. Your output structure reflects this.
+
 **HARD REQUIREMENT**: Every `/discuss` response MUST include the following markers in the output:
 - `[Phase 0 DONE]` - Placed with Boot/Preflight output
 - `[Phase 1 DONE]` - Placed with Context/Topic confirmation
