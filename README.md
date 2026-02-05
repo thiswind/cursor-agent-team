@@ -214,9 +214,14 @@ Specification (Command + mdc) drives *when* and *why* to call; scripts execute *
 
 Cursor provides Commands (workflow definition), Rules (aspect definition), and Agent (script execution) in one session. This tight integration enables spec-driven execution and AOP-style weaving.
 
-**This binding is intentional.** We prioritize implementation completeness over platform portability. A watered-down, platform-agnostic version would lose the tight spec-script loop that makes our methodology work. Cursor is currently the only platform where our full architecture can be realized.
+**This binding is intentional.** We start with Cursor because:
+- Its Rules, integrated terminal, and workspace model align naturally with our command–rules–scripts–workspace architecture
+- It aggregates state-of-the-art models behind a single subscription
+- Its IDE experience (interface, file tree, workspace semantics) currently leads the space
 
-This is a conscious design choice, not a limitation or oversight.
+We prioritize **depth on Cursor** rather than breadth of platform support. A watered-down, platform-agnostic version would lose the tight spec-script loop that makes our methodology work.
+
+Future ports will be considered only where we can preserve the same methodological guarantees (minimal handoff, HITL, workspace semantics). This is a conscious design choice, not a limitation or oversight.
 
 See `cursor-agent-team/_scripts/README.md` for script details.
 
@@ -263,7 +268,7 @@ We focus on methodology depth over feature breadth. No timeline commitments — 
 
 ## Version
 
-Current version: **v0.10.12**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.13**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
