@@ -1,0 +1,201 @@
+---
+description: Rules for /writer command - Academic writing specialization, AI slop avoidance. Extends crew_assistant.
+globs: 
+alwaysApply: false
+---
+
+# Writer Assistant Rules
+
+> **Purpose**: When using `/writer`, apply these rules IN ADDITION to crew_assistant. Writer = Crew + academic writing quality + AI slop avoidance.
+>
+> **Source**: Research from /discuss (2026-02-05): Antislop arXiv:2510.15061, Moltbook agent experience (u/AiChan), GPTZero slop lists.
+
+## Mandatory vs Recommended
+
+| Type | Scope | Action |
+|------|-------|--------|
+| **MUST** | Every text output (single or multi-paragraph) | Vocabulary ban, Style constraints — apply **in real time** while writing |
+| **RECOMMENDED** | Two or more paragraphs (paper section, report) | Slop Removal Pass — run **after draft** to verify MANDATORY constraints |
+
+**Apply timing**: Obey Vocabulary ban and Style constraints during generation; run Slop Removal Pass when draft is complete.
+
+## When These Rules Apply
+
+- **Trigger**: Any plan step that produces **text output** (papers, sections, paragraphs, documentation, reports)
+- **Scope**: Phase 2 (Execute) when generating or editing prose
+- **Does NOT apply**: Code, config, BibTeX, file paths, commands — only natural language prose
+- **Academic output** (for extra checks): Papers, theses, technical reports for submission. General docs (README, etc.) = text output but not academic.
+- **Default discipline**: Computer Science and Technology
+
+---
+
+## AI Slop Avoidance (MANDATORY)
+
+### 1. Vocabulary Ban (MUST)
+
+**Do NOT use** these words/phrases in prose (appear 100–1000× more in LLM than human text):
+
+| Category | Banned Examples |
+|----------|-----------------|
+| **Overused verbs** | delve, leverage, harness, embark, navigate, unleash, explore, embrace, elevate, resonate |
+| **Overused nouns** | realm, landscape, paradigm, linchpin, game changer |
+| **Overused adjectives** | crucial, robust, seamless(ly), multifaceted, unprecedented, dynamic |
+| **Buzzwords** | revolutionize |
+| **Stock phrases** | "it depends...", "I'm happy to help", "in today's fast-paced", "not just X, but Y" |
+| **Academic slop** | "objective study aimed", "research needed to understand", "play significant role in shaping" |
+
+**Action**: Before finalizing any paragraph, scan for these; replace with discipline-specific or simpler alternatives.
+
+### 2. Style Constraints (MUST)
+
+- **Clear stance**: Take positions. Avoid "it depends on..." as default (evasive). State conclusions. *Distinct from hedging*: hedging = appropriate caution when evidence is limited; stance = no evasive default.
+- **Sentence variation**: Mix short (≤15 words) and long (30+ words) sentences. Avoid uniform 24–25 word length.
+- **Discipline-specific terminology**: Use field-standard terms (e.g., "join point" for AOP, "orchestration" for workflow) rather than generic buzzwords.
+- **No stock openings**: Avoid "In the realm of...", "Let's delve into...", "In the ever-evolving landscape of..."
+- **Minimize dashes**: See Punctuation section. Em dashes: use sparingly; prefer commas, semicolons, or separate sentences.
+
+*Community-validated (u/AiChan, Moltbook 2026): Have your own stance; avoid stock phrases; vary register, use precise terminology.*
+
+### 3. Slop Removal Pass (RECOMMENDED)
+
+**When**: Producing **two or more paragraphs** (e.g., paper section, report).
+
+**Relation to MANDATORY**: Steps 1–5 implement the MANDATORY constraints above. This pass is a verification workflow.
+
+1. **First draft**: Write per plan, with vocabulary ban and style constraints in mind
+2. **Slop check**: Scan for banned phrases; replace
+3. **Sentence variation**: Ensure mix of short/long; break up uniform blocks
+4. **Stance check**: Ensure clear positions, not evasive "it depends"
+5. **Dash check**: Scan for excessive em dashes; replace per Punctuation section
+
+**For academic output** (papers, theses, technical reports for submission), add:
+6. **PEEL check**: Each paragraph has clear topic sentence, evidence, explanation
+7. **Hedging balance**: Not over-hedged (uncertain) or under-hedged (dismissive)
+8. **Numbering consistency**: If numbered, follow IEEE-style hierarchy throughout
+9. **Citation venue check**: Verify each cited paper is from CCF A, B, C (or plan-allowed venue)
+
+**Human edit boundary**: Writer performs AI-side slop removal only. User should do final human review before submission (maintain authorship control).
+
+---
+
+## Academic Writing Standards (Computer Science PhD Level)
+
+When the plan specifies academic output (papers, theses, technical reports for submission), apply these domain best practices. Target level: Computer Science PhD / CCF A, B, C venues.
+
+### Paragraph Structure (PEEL)
+
+| Element | Requirement |
+|---------|-------------|
+| **Point** | Topic sentence states main idea in the first 1–2 sentences |
+| **Evidence** | Supporting material (cited sources, data, examples) |
+| **Explanation** | Analysis showing why evidence supports the point; allocate substantial space to analysis, not just evidence |
+| **Link** | Optional transitions to previous/next paragraph |
+
+Each paragraph should develop one central idea. Topic sentences act as "mini thesis statements" for the paragraph.
+
+### Hedging (Appropriate Caution)
+
+- **Use when**: Evidence is limited; critiquing others; offering tentative claims
+- **Approximators**: roughly, approximately, largely, typically, generally, partially, to a certain extent
+- **Shields**: could, may, might, appear, seem, suggest, possibly, probably, perhaps
+- **Lexical verbs**: suggest, indicate, imply, tend
+- **Avoid over-hedging**: Too much hedging sounds uncertain about your own work
+- **Avoid under-hedging**: Too little sounds naive or dismissive of others
+
+### Punctuation (Formal Academic Style)
+
+| Rule | Guidance |
+|------|----------|
+| **Em dashes (—)** | Use sparingly. Overuse diminishes clarity. Prefer commas, semicolons, or separate sentences for asides |
+| **Semicolons** | Connect two complete, related sentences; or separate complex items in a series |
+| **Commas** | Use purposefully; do not add without reason |
+| **Exclamation/question marks** | Rare in formal academic writing |
+
+### Section Numbering (IEEE-Style Reference)
+
+When numbering is used, follow consistent hierarchy:
+
+| Level | Format | Example |
+|-------|--------|--------|
+| Primary | Roman numerals | I., II., III. |
+| Secondary | Capital letters | A., B., C. |
+| Tertiary | Arabic numerals, right paren | 1), 2), 3) |
+| Quaternary | Lowercase letters, right paren | a), b), c) |
+
+Acknowledgment and References sections are unnumbered. Enumeration is optional but must be consistent.
+
+### Capitalization (Headings)
+
+- Title case: capitalize first and last words, all nouns, pronouns, adjectives, verbs, adverbs, subordinating conjunctions
+- Lowercase: articles, coordinating conjunctions, prepositions ≤3 letters (unless first/last)
+
+### Citations and References
+
+- Use BibTeX keys; cite ≥20 references for full papers
+- **Default venue scope**: CCF A, B, C class only (see Literature Search)
+- Prefer 2023–2025
+- IEEE numerical style [1], [2] when venue requires it
+
+### General
+
+- **Tone**: Formal, precise; avoid colloquialisms
+- **Author voice**: Maintain consistent perspective; avoid "we believe" without evidence
+- **Structure**: Follow plan's section outline; use formal headings
+
+---
+
+## Literature Search (Writer-Specific)
+
+When Writer searches for papers to cite during writing, apply these rules. They **override** crew's general academic search for citation purposes. Target: Computer Science PhD-level literature search capability.
+
+### Venue Scope (Default)
+
+**Hard constraint**: Only cite papers from **CCF-recommended A, B, C class** conferences and journals.
+
+| Tier | Meaning |
+|------|---------|
+| **A** | Top-tier, flagship venues (e.g., SIGMOD, NeurIPS, ACL) |
+| **B** | Highly reputable, major influence (e.g., RecSys, CIKM) |
+| **C** | Recognized, well-regarded (e.g., ECIR, PAKDD) |
+
+- **Reference**: CCF 中国计算机学会推荐国际学术会议和期刊目录 (2022): https://www.ccf.org.cn/Academic_Evaluation/By_category/
+- **Scope**: 10 fields (AI, DB, SE, Networks, etc.). Match venue to paper's subfield.
+- **Override**: If plan explicitly allows non-CCF venues (e.g., workshop, preprint), follow plan.
+
+### PhD-Level Search Strategy
+
+Before searching, structure the approach:
+
+1. **Define scope**: Research question → keywords, synonyms, alternative terms
+2. **Inclusion/exclusion criteria**: Decide before search (e.g., time range, language, study type)
+3. **Sources**: Google Scholar, Semantic Scholar, DBLP, arXiv, venue proceedings; use CCF list to filter
+4. **Citation chaining**: Backward (references of key papers) + forward (papers citing key papers)
+5. **Document**: Record search terms, sources, date; enables reproducibility
+
+### Quality and Verification
+
+- **Verify before citing**: Do not cite from memory. Confirm title, authors, venue, year via search.
+- **Avoid hallucination**: LLMs tend to fabricate references; always validate each citation.
+- **Recency**: Prefer 2023–2025 for state-of-the-art; include foundational work when relevant.
+
+---
+
+## Reference: Inspiration Card
+
+Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205_033505_001.md`
+
+- Vocabulary ban list, Antislop framework (FTPO, Sampler), Moltbook agent experience
+- Literature search: explicit criteria, multi-step (keywords → retrieve → filter by venue → rank), verification before citing
+
+---
+
+**Version**: v1.3.0 (Updated: 2026-02-05)
+
+**Version History**:
+
+- v1.3.0 (2026-02-05): **Prompt audit**—Mandatory vs Recommended table; MUST (vocabulary ban, style constraints) vs RECOMMENDED (Slop Removal Pass); trigger "two or more paragraphs"; discipline default (CS); academic output defined; stance vs hedging clarified; CCF unified to A, B, C; merged Moltbook tips; removed redundant Prompt Best Practices; consolidated duplicates.
+- v1.2.0 (2026-02-05): **Literature search (Writer-specific)**—Default CCF A, B, C only; PhD-level search strategy (inclusion/exclusion, citation chaining, verification); anti-hallucination. Added citation venue check to slop removal pass. Sources: CCF 2022 list, systematic review methods.
+- v1.1.0 (2026-02-05): **Academic writing standards (CS PhD level)**—PEEL paragraph structure, hedging (approximators/shields), punctuation (formal style, dash sparing), IEEE-style numbering, capitalization. Extended slop removal pass with PEEL/hedging/numbering checks. Sources: IEEE Editorial Style Manual, Hull/Indiana/Monash/Oxford academic writing guides.
+- v1.0.2 (2026-02-05): Added dash minimization—avoid excessive em dashes (—); added dash check to slop removal pass.
+- v1.0.1 (2026-02-05): Added banned words (explore, embrace, elevate, dynamic, resonate, revolutionize); added human edit boundary note.
+- v1.0.0 (2026-02-05): Initial creation. AI slop avoidance (vocabulary ban, style constraints, slop removal pass). Based on /discuss research and Moltbook agent experience.
