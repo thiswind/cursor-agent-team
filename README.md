@@ -210,7 +210,7 @@ This framework is grounded in peer-reviewed research:
 
 For a detailed treatment, see our preprint:
 > cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration  
-> [arXiv link pending]
+> [Read the paper (PDF)](paper/main.pdf)
 
 ## Built with cursor-agent-team
 
