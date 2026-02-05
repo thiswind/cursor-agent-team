@@ -48,3 +48,14 @@ ehthumbs.db
 .cache/
 *.cache
 
+# Paper - only track final PDF, ignore source files and build artifacts
+paper/*.tex
+paper/*.bib
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.out
+paper/*.log
+paper/figures/
+paper/README.md
+
