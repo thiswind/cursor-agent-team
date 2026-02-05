@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.9] - 2026-02-05
+
+### Added
+- **README "Why This Architecture" section**: Integrates discussion on design uniqueness
+  - Orchestration vs Capability: Rules (passive), Skills (add-and-use), Ours (orchestration-first)
+  - Aspect-Oriented Design: Cross-cutting concerns at join points; Skills lack workflow model
+  - Spec-Script Integration: Spec drives when/why; scripts execute how; Blueprint First, Formal-LLM alignment
+  - Why Cursor: Commands + Rules + Agent enable spec-driven execution and AOP-style weaving
+
+### Technical Details
+- PATCH increment (0.10.8 → 0.10.9)
+- Source: /discuss architecture discussion + /crew direct execution
+
 ## [0.10.8] - 2026-02-05
 
 ### Changed

@@ -160,11 +160,37 @@ Hybrid architecture: LLM soft constraints (prompt rules) + script hard constrain
 
 **Architecture highlights**: Multi-role + single conversation; Plan-and-Execute; Dedicated agent workspace (context engineering, cognitive artifacts); Hybrid constraints (soft + hard); Phase markers (workflow verification); Command-as-role.
 
+## Why This Architecture
+
+We are not behind the Skills wave—we are ahead of it. Our design addresses problems that traditional rules-based and skill-based architectures cannot solve.
+
+### Orchestration vs Capability
+
+| Approach | Focus | What it solves |
+|----------|-------|----------------|
+| **Rules** | Passive constraints by scope | Code style, conventions—but cannot role-switch or orchestrate workflow |
+| **Skills** | Capability modules (add-and-use) | Extend what the agent can do—but no workflow model, no join points |
+| **Ours** | Orchestration-first, methodology-first | *How* humans and AI collaborate—workflow, role switching, spec-driven execution |
+
+We define collaboration workflow; we don't just add capabilities. Command + Rules + Scripts work together: Command defines phases (join points), Rules define aspects, Scripts provide deterministic validation.
+
+### Aspect-Oriented Design
+
+Cross-cutting concerns (Gleaning, Wandering, Persona Output, TTS) are woven into the workflow at defined join points—not embedded in core logic. Commands define Phase/Step as join points; Rules define aspects that invoke scripts at those points. Traditional Skill architectures have no workflow model or join points; they cannot achieve this weaving.
+
+### Spec-Script Integration
+
+Specification (Command + mdc) drives *when* and *why* to call; scripts execute *how* with deterministic validation. This aligns with "Blueprint First, Model Second" (workflow logic in spec, LLM for bounded tasks) and Formal-LLM (hard constraints via script validation). The spec-script loop—LLM reads spec, runs script, script validates—runs in a single conversation.
+
+### Why Cursor
+
+Cursor provides Commands (workflow definition), Rules (aspect definition), and Agent (script execution) in one session. This tight integration enables spec-driven execution and AOP-style weaving. Cursor is currently the best platform to implement our methodology.
+
 See `cursor-agent-team/_scripts/README.md` for script details.
 
 ## Version
 
-Current version: **v0.10.8**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.9**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
