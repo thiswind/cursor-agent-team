@@ -255,9 +255,15 @@ We used this framework to write its own academic paper—a form of "dogfooding" 
 
 This self-referential implementation experience validates the framework's practical utility.
 
+## Direction
+
+See [DIRECTION.md](DIRECTION.md) for potential future directions.
+
+We focus on methodology depth over feature breadth. No timeline commitments — the project evolves based on real needs.
+
 ## Version
 
-Current version: **v0.10.11**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.12**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
