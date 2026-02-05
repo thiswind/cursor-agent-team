@@ -116,7 +116,7 @@ Update: `git submodule update --remote cursor-agent-team && ./cursor-agent-team/
 
 **Agent Workspace** — Dedicated persistent workspace for agents. Agents can write scripts, take notes, save intermediate results from searches and research. Aligns with scratchpad reasoning and external memory research; enables staged refinement for higher output quality than direct generation. See `ai_workspace/README.md`.
 
-**Persona System (v0.8.0+)** — Script-driven persona integration without degrading work quality. Based on [persona-spec](https://github.com/thiswind/persona-spec).
+**Persona System (v0.8.0+)** — Script-driven persona integration with **Persona Sandboxing**: the persona expresses at the Output Layer; the Work Layer (code, analysis, reasoning) runs in a clean context. This prevents style contamination from affecting technical accuracy. Based on [persona-spec](https://github.com/thiswind/persona-spec).
 
 Communication requires synchronization of mental models. Persona provides warmth and rapport that increase human affinity and trust, improving coordination efficiency between human leaders and AI teams—not for companionship, but for more effective human-machine collaboration.
 
@@ -188,9 +188,44 @@ Cursor provides Commands (workflow definition), Rules (aspect definition), and A
 
 See `cursor-agent-team/_scripts/README.md` for script details.
 
+### Minimal Handoff in Numbers
+
+| Handoff Type | Context Cost | Effect |
+|--------------|--------------|--------|
+| State-transfer (MAS) | 50–200KB compressed state | 10–20% context retention (estimate) |
+| Prompt-swap (ours) | 1–3KB rule text | Full history preserved |
+
+We don't transfer state; we swap masks. The "Writer" knows what the "Planner" discussed because they share the same memory stream.
+
+## Research Foundation
+
+This framework is grounded in peer-reviewed research:
+
+| Concept | Foundation |
+|---------|------------|
+| Intelligence Augmentation | Licklider (1960): human-computer symbiosis |
+| Lost in the Middle | Liu et al. (2023): context degradation in long sequences |
+| Aspect-Oriented Programming | Kiczales et al. (1997): cross-cutting concerns separation |
+| Retrieval-Augmented Planning | RaDA, RPG: fresh information before synthesis |
+
+For a detailed treatment, see our preprint:
+> cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration  
+> [arXiv link pending]
+
+## Built with cursor-agent-team
+
+We used this framework to write its own academic paper—a form of "dogfooding" that subjects the methodology to its own claims.
+
+- **Five structured plans** (PLAN-AA-001 through PLAN-AA-005) executed via `/crew` and `/writer`
+- **Minimal handoff in action**: the writer role retained full context of design discussions
+- **Phase markers** prevented step-skipping; vocabulary bans were enforced via external `grep`
+- **Result**: 4,000-word preprint, 12 pages, ready for arXiv submission
+
+This self-referential implementation experience validates the framework's practical utility.
+
 ## Version
 
-Current version: **v0.10.9**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.10**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.10] - 2026-02-05
+
+### Added
+- **README "Research Foundation" section**: Academic literature anchoring (Licklider, Liu et al., Kiczales, RaDA/RPG)
+- **README "Minimal Handoff in Numbers"**: Quantitative comparison (1–3KB vs 50–200KB context cost)
+- **README "Built with cursor-agent-team"**: Dogfooding experience from writing the academic paper
+- **Persona Sandboxing explanation**: Added to Persona System feature description (Work Layer / Output Layer separation)
+
+### Technical Details
+- PATCH increment (0.10.9 → 0.10.10)
+- Source: paper/main.tex academic contributions integrated into README
+
 ## [0.10.9] - 2026-02-05
 
 ### Added
