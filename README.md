@@ -8,6 +8,19 @@
 
 cursor-agent-team is first a **methodology and a philosophy** of how humans and AI should work together—then a framework that implements it. How we think about AI shapes how we build with it.
 
+## What This Is
+
+cursor-agent-team is an **architectural reference implementation** for single-conversation, multi-role human-AI collaboration.
+
+| This IS | This is NOT |
+|---------|-------------|
+| Methodology contribution | Commercial product / SaaS |
+| Reference architecture | General-purpose framework |
+| Advanced tool for methodologically-aware individuals/small teams | Enterprise platform |
+| Single-conversation, multi-role paradigm | Multi-agent, multi-instance paradigm |
+
+We chose depth over breadth. This is a design blueprint that prioritizes implementation completeness over broad compatibility.
+
 ## Why cursor-agent-team?
 
 We augment human capability; we don't replace it. Three design pillars:
@@ -17,6 +30,8 @@ We augment human capability; we don't replace it. Three design pillars:
 2. **Human-in-the-loop by design** — You are the conductor. We explore, you decide. We execute, you confirm. "Your command, our execution" — not "set and forget."
 
 3. **Empowerment, not replacement** — Democratizing team access: individuals get team-level capability. Cognitive load redistribution: you think strategy, we handle execution details. Frees you from the "details quagmire" for purer thinking.
+
+**Target users**: Individuals and small teams with methodological awareness—those who think about *how* they work with AI, not just *what* they want AI to do. This is not a plug-and-play solution for users seeking immediate productivity gains without conceptual investment.
 
 **We believe**: AI should augment human judgment, not replace it. Context continuity matters more than agent count. Plans grounded in fresh research beat plans from training data alone. And the human must remain in the loop—as conductor, not spectator.
 
@@ -51,6 +66,19 @@ A **multi-role collaboration framework** for Cursor IDE and Qwen Code. One LLM w
 | Multi-agent frameworks | No handoff, no context loss |
 | Autonomous agents | Human-in-the-loop, not set-and-forget |
 | Generic AI assistants | Structured roles, workflow enforcement, team metaphor |
+
+### Positioning in the Landscape
+
+We occupy a specific niche: **single-conversation, multi-role, context-preserving** collaboration.
+
+| Approach | Representative | Key Difference |
+|----------|---------------|----------------|
+| Multi-Agent Handoff | Google ADK, Microsoft AutoGen | They optimize handoff; we eliminate it |
+| Role-Playing MAS | ChatCollab, SupportPlay | Multi-instance, multi-conversation; we stay single-instance |
+| Single-Model Multi-Ability | CALM | Model-level unification; we focus on workflow orchestration |
+| Cursor Ecosystem | cursor-agents, cursor-rules templates | Engineering practice; we add methodology depth |
+
+**Evaluation context**: Among single-conversation, multi-role, context-heavy approaches, cursor-agent-team is a first-tier architectural reference implementation—designed for methodological exploration, not product deployment.
 
 ## Quick Start
 
@@ -184,7 +212,11 @@ Specification (Command + mdc) drives *when* and *why* to call; scripts execute *
 
 ### Why Cursor
 
-Cursor provides Commands (workflow definition), Rules (aspect definition), and Agent (script execution) in one session. This tight integration enables spec-driven execution and AOP-style weaving. Cursor is currently the best platform to implement our methodology.
+Cursor provides Commands (workflow definition), Rules (aspect definition), and Agent (script execution) in one session. This tight integration enables spec-driven execution and AOP-style weaving.
+
+**This binding is intentional.** We prioritize implementation completeness over platform portability. A watered-down, platform-agnostic version would lose the tight spec-script loop that makes our methodology work. Cursor is currently the only platform where our full architecture can be realized.
+
+This is a conscious design choice, not a limitation or oversight.
 
 See `cursor-agent-team/_scripts/README.md` for script details.
 
@@ -225,7 +257,7 @@ This self-referential implementation experience validates the framework's practi
 
 ## Version
 
-Current version: **v0.10.10**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.10.11**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

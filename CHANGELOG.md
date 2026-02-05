@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.10.11] - 2026-02-05
+
+### Changed
+- **README "What This Is" section**: Added explicit positioning (what it is vs. is not)
+- **README "Positioning in the Landscape"**: Added comparative positioning against Google ADK, AutoGen, CALM, cursor-agents
+- **README "Why Cursor"**: Reinforced intentional design choice (depth over breadth)
+- **README target user**: Clarified "methodologically-aware individuals/small teams"
+
+### Technical Details
+- PATCH increment (0.10.10 → 0.10.11)
+- Source: External evaluation integration
+
 ## [0.10.10] - 2026-02-05
 
 ### Added
