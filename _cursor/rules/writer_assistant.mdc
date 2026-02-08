@@ -7,25 +7,20 @@ alwaysApply: false
 # Writer Assistant Rules
 
 > **Purpose**: When using `/writer`, apply these rules IN ADDITION to crew_assistant. Writer = Crew + academic writing quality + AI slop avoidance.
->
-> **Source**: Research from /discuss (2026-02-05): Antislop arXiv:2510.15061, Moltbook agent experience (u/AiChan), GPTZero slop lists.
 
-## Mandatory vs Recommended
+**Trigger**: Any plan step that produces **text output** (papers, sections, paragraphs, documentation, reports)  
+**Scope**: Phase 2 (Execute) when generating or editing prose  
+**Does NOT apply to**: Code, config, BibTeX, file paths, commands — only natural language prose  
+**Default discipline**: Computer Science and Technology
 
-| Type | Scope | Action |
-|------|-------|--------|
-| **MUST** | Every text output (single or multi-paragraph) | Vocabulary ban, Style constraints — apply **in real time** while writing |
-| **RECOMMENDED** | Two or more paragraphs (paper section, report) | Slop Removal Pass — run **after draft** to verify MANDATORY constraints |
+### Mandatory vs Recommended
 
-**Apply timing**: Obey Vocabulary ban and Style constraints during generation; run Slop Removal Pass when draft is complete.
+- **MUST** (every text output): Vocabulary ban + Style constraints — apply in real time while writing
+- **RECOMMENDED** (two or more paragraphs): Slop Removal Pass — run after draft to verify
 
-## When These Rules Apply
+### Academic Output
 
-- **Trigger**: Any plan step that produces **text output** (papers, sections, paragraphs, documentation, reports)
-- **Scope**: Phase 2 (Execute) when generating or editing prose
-- **Does NOT apply**: Code, config, BibTeX, file paths, commands — only natural language prose
-- **Academic output** (for extra checks): Papers, theses, technical reports for submission. General docs (README, etc.) = text output but not academic.
-- **Default discipline**: Computer Science and Technology
+Papers, theses, technical reports for submission trigger extra checks (PEEL, hedging, numbering, citation venue, writing guides cross-check). General docs (README, etc.) = text output but not academic.
 
 ---
 
@@ -33,16 +28,17 @@ alwaysApply: false
 
 ### 1. Vocabulary Ban (MUST)
 
-**Do NOT use** these words/phrases in prose (appear 100–1000× more in LLM than human text):
+**NEVER use** these words/phrases in prose (appear 100–1000× more in LLM than human text):
 
-| Category | Banned Examples |
-|----------|-----------------|
-| **Overused verbs** | delve, leverage, harness, embark, navigate, unleash, explore, embrace, elevate, resonate |
-| **Overused nouns** | realm, landscape, paradigm, linchpin, game changer |
-| **Overused adjectives** | crucial, robust, seamless(ly), multifaceted, unprecedented, dynamic |
-| **Buzzwords** | revolutionize |
-| **Stock phrases** | "it depends...", "I'm happy to help", "in today's fast-paced", "not just X, but Y" |
-| **Academic slop** | "objective study aimed", "research needed to understand", "play significant role in shaping" |
+- **Overused verbs**: delve, leverage, harness, embark, navigate, unleash, explore, embrace, elevate, resonate
+  - **Instead use**: use, apply, adopt, draw on, examine, investigate, address
+- **Overused nouns**: realm, landscape, paradigm, linchpin, game changer
+  - **Instead use**: domain, field, area, framework, model, factor
+- **Overused adjectives**: crucial, robust, seamless(ly), multifaceted, unprecedented, dynamic
+  - **Instead use**: important, effective, reliable, smooth, complex, varied
+- **Buzzwords**: revolutionize → **Instead use**: improve, advance, transform
+- **Stock phrases**: "it depends...", "I'm happy to help", "in today's fast-paced", "not just X, but Y"
+- **Academic slop**: "objective study aimed", "research needed to understand", "play significant role in shaping"
 
 **Action**: Before finalizing any paragraph, scan for these; replace with discipline-specific or simpler alternatives.
 
@@ -73,6 +69,10 @@ alwaysApply: false
 7. **Hedging balance**: Not over-hedged (uncertain) or under-hedged (dismissive)
 8. **Numbering consistency**: If numbered, follow IEEE-style hierarchy throughout
 9. **Citation venue check**: Verify each cited paper is from CCF A, B, C (or plan-allowed venue)
+10. **Writing guides cross-check**: IF academic output THEN verify against:
+    - `cursor-agent-team/_cursor/writing_guides/sci_writing_pitfalls.md` — format, symbols, references, structure
+    - `cursor-agent-team/_cursor/writing_guides/review_checklist.md` — submission checklist
+    - `cursor-agent-team/_cursor/writing_guides/title_guidelines.md` — title review (T1–T10)
 
 **Human edit boundary**: Writer performs AI-side slop removal only. User should do final human review before submission (maintain authorship control).
 
@@ -84,14 +84,12 @@ When the plan specifies academic output (papers, theses, technical reports for s
 
 ### Paragraph Structure (PEEL)
 
-| Element | Requirement |
-|---------|-------------|
-| **Point** | Topic sentence states main idea in the first 1–2 sentences |
-| **Evidence** | Supporting material (cited sources, data, examples) |
-| **Explanation** | Analysis showing why evidence supports the point; allocate substantial space to analysis, not just evidence |
-| **Link** | Optional transitions to previous/next paragraph |
+- **Point**: Topic sentence states main idea in the first 1–2 sentences
+- **Evidence**: Supporting material (cited sources, data, examples)
+- **Explanation**: Analysis showing why evidence supports the point; allocate substantial space
+- **Link**: Optional transitions to previous/next paragraph
 
-Each paragraph should develop one central idea. Topic sentences act as "mini thesis statements" for the paragraph.
+Each paragraph develops one central idea. Topic sentences act as mini thesis statements.
 
 ### Hedging (Appropriate Caution)
 
@@ -104,23 +102,19 @@ Each paragraph should develop one central idea. Topic sentences act as "mini the
 
 ### Punctuation (Formal Academic Style)
 
-| Rule | Guidance |
-|------|----------|
-| **Em dashes (—)** | Use sparingly. Overuse diminishes clarity. Prefer commas, semicolons, or separate sentences for asides |
-| **Semicolons** | Connect two complete, related sentences; or separate complex items in a series |
-| **Commas** | Use purposefully; do not add without reason |
-| **Exclamation/question marks** | Rare in formal academic writing |
+- **Em dashes (—)**: Use sparingly; prefer commas, semicolons, or separate sentences
+- **Semicolons**: Connect two complete related sentences; or separate complex series items
+- **Commas**: Use purposefully; do not add without reason
+- **Exclamation/question marks**: Rare in formal academic writing
 
 ### Section Numbering (IEEE-Style Reference)
 
 When numbering is used, follow consistent hierarchy:
 
-| Level | Format | Example |
-|-------|--------|--------|
-| Primary | Roman numerals | I., II., III. |
-| Secondary | Capital letters | A., B., C. |
-| Tertiary | Arabic numerals, right paren | 1), 2), 3) |
-| Quaternary | Lowercase letters, right paren | a), b), c) |
+- **Primary**: Roman numerals — I., II., III.
+- **Secondary**: Capital letters — A., B., C.
+- **Tertiary**: Arabic numerals, right paren — 1), 2), 3)
+- **Quaternary**: Lowercase letters, right paren — a), b), c)
 
 Acknowledgment and References sections are unnumbered. Enumeration is optional but must be consistent.
 
@@ -152,12 +146,9 @@ When Writer searches for papers to cite during writing, apply these rules. They 
 
 **Hard constraint**: Only cite papers from **CCF-recommended A, B, C class** conferences and journals.
 
-| Tier | Meaning |
-|------|---------|
-| **A** | Top-tier, flagship venues (e.g., SIGMOD, NeurIPS, ACL) |
-| **B** | Highly reputable, major influence (e.g., RecSys, CIKM) |
-| **C** | Recognized, well-regarded (e.g., ECIR, PAKDD) |
-
+- **A**: Top-tier, flagship venues (e.g., SIGMOD, NeurIPS, ACL)
+- **B**: Highly reputable, major influence (e.g., RecSys, CIKM)
+- **C**: Recognized, well-regarded (e.g., ECIR, PAKDD)
 - **Reference**: CCF 中国计算机学会推荐国际学术会议和期刊目录 (2022): https://www.ccf.org.cn/Academic_Evaluation/By_category/
 - **Scope**: 10 fields (AI, DB, SE, Networks, etc.). Match venue to paper's subfield.
 - **Override**: If plan explicitly allows non-CCF venues (e.g., workshop, preprint), follow plan.
@@ -189,10 +180,11 @@ Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205
 
 ---
 
-**Version**: v1.3.0 (Updated: 2026-02-05)
+**Version**: v2.0.0 (Updated: 2026-02-08)
 
 **Version History**:
 
+- v2.0.0 (2026-02-08): **Agent readability overhaul** — All tables converted to bullet/key-value; vocabulary ban with "Instead use" alternatives; Trigger/Scope promoted to top; writing_guides cross-check added to Slop Removal Pass (item 10); conciseness pass (removed redundancy). Source: PLAN-AU-001.
 - v1.3.0 (2026-02-05): **Prompt audit**—Mandatory vs Recommended table; MUST (vocabulary ban, style constraints) vs RECOMMENDED (Slop Removal Pass); trigger "two or more paragraphs"; discipline default (CS); academic output defined; stance vs hedging clarified; CCF unified to A, B, C; merged Moltbook tips; removed redundant Prompt Best Practices; consolidated duplicates.
 - v1.2.0 (2026-02-05): **Literature search (Writer-specific)**—Default CCF A, B, C only; PhD-level search strategy (inclusion/exclusion, citation chaining, verification); anti-hallucination. Added citation venue check to slop removal pass. Sources: CCF 2022 list, systematic review methods.
 - v1.1.0 (2026-02-05): **Academic writing standards (CS PhD level)**—PEEL paragraph structure, hedging (approximators/shields), punctuation (formal style, dash sparing), IEEE-style numbering, capitalization. Extended slop removal pass with PEEL/hedging/numbering checks. Sources: IEEE Editorial Style Manual, Hull/Indiana/Monash/Oxford academic writing guides.

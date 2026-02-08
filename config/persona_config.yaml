@@ -10,7 +10,7 @@
 
 # 人格是否启用
 # 设置为 false 将完全禁用人格系统
-enabled: true
+enabled: false
 
 # 人格定义文件的绝对路径
 # 必须是符合 persona-spec v1.0 规范的 persona.yaml 文件
@@ -30,7 +30,7 @@ path: "/Users/thiswind/Documents/工作/信息学院工作/桌面文件夹/curso
 output_layer:
   # 是否在输出时启用人格
   # 这是 Phase 1 实现，先只在输出阶段应用人格
-  enabled: true
+  enabled: false
 
 # 输入层配置 (Phase 2，暂未实现)
 input_layer:
