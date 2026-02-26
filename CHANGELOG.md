@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.11.0] - 2026-02-27
+
+### Added
+- **TRAE_CN adaptation**: Full platform port for ByteDance TRAE_CN IDE
+- `_trae/` directory with Agent Prompts, Skills, and project rules
+- `install_trae.sh` for one-command TRAE-side setup (rules + skills)
+- `TRAE_README.md` as dedicated TRAE installation and usage guide
+- Per-agent `INSTALL_GUIDE.md` files with pre-filled TRAE GUI form values
+- Output Type Decision Rule in `trae-prompt-engineer` (Skill vs Agent distinction)
+- Auto-generation of `INSTALL_GUIDE.md` when `trae-prompt-engineer` creates new agents
+
+### Technical Details
+- MINOR increment (0.10.14 → 0.11.0) — new platform support
+- Source: PLAN-AC-001 through PLAN-AC-004
+- Branch: merged from `trae-cn`
+
 ## [0.10.14] - 2026-02-11
 
 ### Changed

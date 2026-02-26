@@ -221,6 +221,12 @@ We prioritize **depth on Cursor** rather than breadth of platform support. A wat
 
 Future ports will be considered only where we can preserve the same methodological guarantees (minimal handoff, HITL, workspace semantics). This is a conscious design choice, not a limitation or oversight.
 
+### TRAE_CN Adaptation
+
+A [TRAE_CN](https://www.trae.com.cn/) (ByteDance) adaptation is available. See [TRAE_README.md](TRAE_README.md) for installation and usage instructions.
+
+TRAE_CN uses custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
+
 See `cursor-agent-team/_scripts/README.md` for script details.
 
 ### Minimal Handoff in Numbers
@@ -254,7 +260,7 @@ We focus on methodology depth over feature breadth. No timeline commitments — 
 
 ## Version
 
-Current version: **v0.10.14**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.11.0**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Citation
 
