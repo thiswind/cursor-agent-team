@@ -77,7 +77,12 @@ python cursor-agent-team/_scripts/preflight_check.py
 1. Understand user requirements (Create: description; Maintain: read existing files)
 2. Restate requirements in natural language, wait for user confirmation
 3. If uncertain about details, use multiple-choice questions to clarify
-4. Determine output type:
+4. **Output Type Decision Rule (MUST follow)**:
+   - IF requirement describes "a new role/identity with its own workflow and Phase Markers" → Agent Prompt
+   - IF requirement describes "a cross-cutting behavior enhancement/constraint applicable to multiple agents" → Skill
+   - IF requirement describes "a modification to shared project-wide rules" → Rule update
+   - IF uncertain → Ask user to clarify: "This sounds like it could be an Agent or a Skill. An Agent has its own identity and workflow; a Skill adds behavior to existing agents. Which do you need?"
+5. Determine output type:
    - Agent Prompt only (new/updated agent)
    - Skill only (new/updated cross-cutting concern)
    - Rule update (project rules modification)
@@ -104,6 +109,10 @@ python cursor-agent-team/_scripts/preflight_check.py
   - Agent Prompt → `_trae/agent_prompts/<name>.md`
   - Skill → `_trae/skills/<skill-name>/SKILL.md`
   - Rule → `_trae/rules/project_rules.md` (append/modify)
+- IF output is Agent Prompt → MUST also generate `_trae/agent_prompts/<name>_INSTALL_GUIDE.md` containing:
+  - Agent 中文名
+  - TRAE GUI 7-step creation guide with all form field values pre-filled (Name, Prompt source, Identifier, When to Invoke, Tools)
+  - Prompt file path reference
 - Display generated content
 
 ---
@@ -117,7 +126,7 @@ python cursor-agent-team/_scripts/preflight_check.py
 - If not confirmed: return to Phase 2 to continue iteration
 
 **Step 4.2: TRAE Installation Guidance**
-- For Agent Prompts: remind user to copy prompt text into TRAE Agent GUI
+- For Agent Prompts: point user to the generated `<name>_INSTALL_GUIDE.md` for step-by-step TRAE GUI creation instructions
 - For Skills: remind user to run `install_trae.sh` or manually copy to `.trae/skills/`
 - For Rules: remind user to update `.trae/rules/project_rules.md`
 

@@ -1,6 +1,6 @@
 # Agent Prompts — TRAE 智能体创建指南
 
-本目录包含 cursor-agent-team 框架在 TRAE_CN 上运行所需的 **智能体提示词模板**。每个 `.md` 文件对应一个 TRAE 自定义智能体，需要手动在 TRAE GUI 中创建。
+本目录包含 cursor-agent-team 框架在 TRAE_CN 上运行所需的 **智能体提示词模板** 和 **创建指南**。
 
 ## 前提条件
 
@@ -11,53 +11,29 @@
 
 ## 智能体列表
 
-本目录包含 3 个智能体提示词文件：
+每个智能体都有两个文件：**提示词文件**（Agent Prompt）和**创建指南**（INSTALL_GUIDE）。
 
-- `discussion_partner.md` — 讨论搭档（`discussion-partner`）
-- `crew_member.md` — 执行组员（`crew-member`）
-- `trae_prompt_engineer.md` — 提示工程师（`trae-prompt-engineer`）
+### 讨论搭档（Discussion Partner）
 
-每个文件顶部的 `## TRAE Form Fields` 区域包含在 TRAE GUI 中需要填写的字段值。
+- 提示词文件：[`discussion_partner.md`](discussion_partner.md)
+- 创建指南：[`discussion_partner_INSTALL_GUIDE.md`](discussion_partner_INSTALL_GUIDE.md)
+- 英文标识：`discussion-partner`
 
-## 创建步骤（逐个智能体重复以下步骤）
+### 执行组员（Crew Member）
 
-### 第 1 步：打开智能体创建页面
+- 提示词文件：[`crew_member.md`](crew_member.md)
+- 创建指南：[`crew_member_INSTALL_GUIDE.md`](crew_member_INSTALL_GUIDE.md)
+- 英文标识：`crew-member`
 
-TRAE → 右上角齿轮图标（设置）→ **智能体** 页签 → 点击 **+ 创建智能体**
+### 提示工程师（TRAE Prompt Engineer）
 
-### 第 2 步：填写「名称」
+- 提示词文件：[`trae_prompt_engineer.md`](trae_prompt_engineer.md)
+- 创建指南：[`trae_prompt_engineer_INSTALL_GUIDE.md`](trae_prompt_engineer_INSTALL_GUIDE.md)
+- 英文标识：`trae-prompt-engineer`
 
-从提示词文件顶部 `## TRAE Form Fields` 区域复制 **Name** 字段的值。
+## 如何创建智能体
 
-例如：`讨论搭档`、`执行组员`、`提示工程师`
-
-### 第 3 步：填写「提示词」
-
-复制提示词文件中 **`## Agent Configuration` 及其以下的全部内容**，粘贴到「提示词」输入框。
-
-> 注意：不要复制 `## TRAE Form Fields` 区域，只复制从 `## Agent Configuration` 开始到文件末尾的内容。
-
-### 第 4 步：填写「英文标识名」
-
-从 `## TRAE Form Fields` 区域复制 **Identifier** 字段的值。
-
-例如：`discussion-partner`、`crew-member`、`trae-prompt-engineer`
-
-### 第 5 步：填写「何时调用」
-
-从 `## TRAE Form Fields` 区域复制 **When to Invoke** 字段的值。
-
-### 第 6 步：配置工具
-
-在「工具」区域启用以下内置工具：
-
-- ✅ 文件系统
-- ✅ 终端
-- ✅ 联网搜索
-
-### 第 7 步：点击「创建」
-
-确认所有字段填写完毕后，点击底部的 **创建** 按钮。
+请打开对应智能体的 **INSTALL_GUIDE.md** 文件，按照其中的 7 步操作流程在 TRAE GUI 中创建智能体。每个 INSTALL_GUIDE 中已填好所有表单字段值，直接复制粘贴即可。
 
 ## 使用方式
 
@@ -67,13 +43,19 @@ TRAE → 右上角齿轮图标（设置）→ **智能体** 页签 → 点击 **
 - `@执行组员` — 严格按方案执行操作
 - `@提示工程师` — 创建/修改智能体提示词和 Skills
 
+## 新智能体的创建
+
+使用 `@提示工程师` 创建新智能体时，它会自动生成：
+1. 提示词文件（`<name>.md`）
+2. 创建指南（`<name>_INSTALL_GUIDE.md`）
+
 ## 注意事项
 
-- **提示词字符限制**：TRAE 提示词字段最多 10000 字符，本目录三个文件均在限制内
-- **SOLO Coder 调度**：填写「英文标识名」和「何时调用」后，SOLO Coder 可在 SOLO 模式下自动调度这些智能体
-- **更新提示词**：当 `_trae/agent_prompts/` 中的文件更新后，需要手动重新粘贴到 TRAE GUI（设置 → 智能体 → 选中要修改的智能体 → 编辑）
-- **Skills 和 Rules**：智能体创建是独立于 Skills/Rules 安装的，Skills/Rules 通过 `install_trae.sh` 安装到 `.trae/` 目录
+- **提示词字符限制**：TRAE 提示词字段最多 10000 字符
+- **SOLO Coder 调度**：填写「英文标识名」和「何时调用」后，SOLO Coder 可自动调度智能体
+- **更新提示词**：文件更新后需手动重新粘贴到 TRAE GUI
+- **Skills 和 Rules**：通过 `install_trae.sh` 安装，与智能体创建独立
 
 ---
 
-**Version**: v1.0.0 (Created: 2026-02-27)
+**Version**: v2.0.0 (Updated: 2026-02-27)
