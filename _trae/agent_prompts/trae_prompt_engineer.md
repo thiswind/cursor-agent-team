@@ -1,5 +1,14 @@
 # TRAE Prompt Engineer — TRAE Agent Prompt
 
+## TRAE Form Fields
+
+- Name: `提示工程师`
+- Identifier: `trae-prompt-engineer`
+- When to Invoke: `当需要创建或修改智能体提示词、Skills、项目规则时调用。包括：新建Agent Prompt、更新SKILL.md文件、维护project_rules.md、以及对现有提示词进行迭代优化。此智能体采用交互式工作流，通过多轮对话确认需求后生成内容。`
+- Tools: File System, Terminal, Web Search
+
+---
+
 ## Agent Configuration
 
 - Agent Name: TRAE Prompt Engineer (TRAE 提示工程师)
