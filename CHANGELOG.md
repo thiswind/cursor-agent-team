@@ -5,16 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.1] - 2026-03-21
+
+### Changed
+- Root `README.md` & `_openclaw/README.md`: OpenClaw instructions are **user-only** — single copy-paste command block, “where it lands” table, no workshop/submodule path; removed dev-mode section from `_openclaw/README.md` (PLAN-OC-003)
+
 ## [0.15.0] - 2026-03-21
 
 ### Added
 - OpenClaw adapter (`_openclaw/`): cross-platform `install.py` (template merge with anchor blocks, `extraDirs` absolute paths, non-destructive `ai_workspace` sync, `--dry-run` / `--skip-openclaw-check`, `-y` / `--ai-workspace`)
-- `_openclaw/README.md`: single entry for OpenClaw install, uninstall/migration/dev notes, FAQ
+- `_openclaw/README.md`: single entry for OpenClaw install, uninstall/migration notes, FAQ
 - `_openclaw/tests/test_install_helpers.py`: optional unit tests for install helpers
 
 ### Changed
 - OpenClaw templates and Skills: align script paths with `preflight_check.py` (no invalid `--workspace` flag), `create_card.py` / `draw_cards.py` paths, TTS documented as optional on Windows
-- Root `README.md`: OpenClaw quick start (paths A/B, bilingual blurb) linking to `_openclaw/README.md`
+- Root `README.md`: OpenClaw quick start linking to `_openclaw/README.md`
 
 ### Removed
 - `_openclaw/docs/*.md` (content consolidated into `_openclaw/README.md`; PLAN-OC-002)

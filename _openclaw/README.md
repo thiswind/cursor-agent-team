@@ -63,7 +63,7 @@ openclaw gateway restart
 ## 卸载（要点）
 
 1. 编辑 `~/.openclaw/openclaw.json`（Windows：`%USERPROFILE%\.openclaw\openclaw.json`），从 `skills.load.extraDirs` 删除指向本仓库 `_openclaw/skills` 的项。  
-2. 若曾把扩展 clone 到 `~/.openclaw/extensions/cursor-agent-team`，可删除该目录。  
+2. 若不再需要本仓库的本地副本，可删除你的 clone 目录；若曾放在 OpenClaw 扩展目录下，可一并删除该副本。  
 3. `openclaw gateway restart`  
 4. 安装备份：`~/.openclaw/openclaw.json.backup.*` 可手动恢复。
 
@@ -71,21 +71,13 @@ openclaw gateway restart
 
 ## 自 Cursor 迁移到 OpenClaw（要点）
 
-备份原项目 `ai_workspace` 后，复制到 `$OPENCLAW_WORKSPACE/ai_workspace`；路径与脚本调用以合并后的 `AGENTS.md` 为准。Bash/PowerShell 示例见历史 `MIGRATION` 文档已合并至此节思路。
+备份原项目 `ai_workspace` 后，复制到 `$OPENCLAW_WORKSPACE/ai_workspace`；脚本与路径以合并后的 `AGENTS.md` 为准。
 
 ---
 
-## 开发模式（自检清单）
+## 安装后验证（用户）
 
-- 子模块或 symlink：`~/.openclaw/extensions/cursor-agent-team` → 本仓库。  
-- `openclaw.json` 的 `extraDirs` 含本仓库 `_openclaw/skills` 绝对路径。  
-- 合并模板后频道 `/discuss` 烟测；TTS 可选，失败不视为安装失败。
-
----
-
-## 安装后验证（建议）
-
-1. `openclaw gateway restart`  
+1. `openclaw gateway restart`（若安装时尚未重启）。  
 2. 频道发送 `/discuss` 做四阶段烟测（Phase Marker 来自 `phase_marker.py`）。  
 3. 可选：`python install.py -y --ai-workspace` 初始化 workspace 数据。
 
