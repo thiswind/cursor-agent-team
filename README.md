@@ -11,6 +11,39 @@
 
 This project is both a **methodology** and a **framework** for human–AI collaboration in Cursor: it defines how your AI team should think and work together, then ships a concrete setup (prompts + files + workflows) that you can drop into your own repo.
 
+## OpenClaw（可选）
+
+若你在 **OpenClaw** 中使用本框架（单频道 / 单 Agent 等），请使用仓库内 **`_openclaw/`** 适配层。完整说明见 **`_openclaw/README.md`**。Cursor IDE 用户可忽略本节。
+
+### OpenClaw 快速开始
+
+**前置**：Python 3.8+；已安装 OpenClaw CLI（`openclaw` 在 PATH，且版本满足 `install.py` 检查）。安装脚本会**备份并修改** `~/.openclaw/openclaw.json`（写入 `skills.load.extraDirs`），请先知晓。
+
+**路径 A — 只 clone 本仓库**（公开仓库示例：`https://github.com/thiswind/cursor-agent-team.git`）：
+
+```bash
+git clone https://github.com/thiswind/cursor-agent-team.git
+cd cursor-agent-team/_openclaw
+python install.py -y
+openclaw gateway restart
+```
+
+**路径 B — 从上层 workshop clone**（子模块需初始化）：
+
+```bash
+git clone <your-workshop-url>
+cd <repo-root>
+git submodule update --init --recursive
+cd cursor-agent-team/_openclaw
+python install.py -y
+openclaw gateway restart
+```
+
+可选：同时初始化并同步频道侧 `ai_workspace`：`python install.py -y --ai-workspace`。更多参数见 `python install.py --help` 与 **`_openclaw/README.md`**。
+
+**English (short)**  
+Clone this repo, `cd cursor-agent-team/_openclaw`, run `python install.py -y`, then `openclaw gateway restart`. Details: `_openclaw/README.md`.
+
 ## Summary
 
 cursor-agent-team takes a pragmatic approach to "multi-agent" work in Cursor: instead of spawning many separate agents and passing state around, you keep a single LLM in one conversation and let multiple roles collaborate on the same shared context window. It behaves like a small-team workflow and Cursor configuration template, not yet another generic multi-agent framework.
