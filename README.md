@@ -28,19 +28,21 @@ This project is both a **methodology** and a **framework** for human–AI collab
 
 1) 确认 Python 版本 ≥ 3.8，且可在终端执行 `python`（Windows 上可为 `py -3`）。确认 `openclaw` 已在 PATH，且版本满足该仓库 `_openclaw/install.py` 内的检查；若尚未安装 OpenClaw CLI，请先按 OpenClaw 官方文档完成安装后再继续。
 
-2) 若本机尚未克隆该仓库，请执行：`git clone https://github.com/thiswind/cursor-agent-team.git`，然后进入 `cursor-agent-team/_openclaw`。若已克隆，请直接进入你本地 `cursor-agent-team` 仓库下的 `_openclaw` 目录。
+2) 定位到本仓库的 `_openclaw` 目录（该目录下必须存在 `install.py`）：若尚未克隆，请执行 `git clone https://github.com/thiswind/cursor-agent-team.git`，再进入 `cursor-agent-team/_openclaw`。若已克隆，请进入**你本机仓库根目录**下的 `_openclaw`（若你把仓库放在自定义路径或改名，文件夹未必叫 `cursor-agent-team`，以你的 clone 根为准）。
 
-3) 在该目录执行：`python install.py -y`。该命令会：备份并修改 `~/.openclaw/openclaw.json`；向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的绝对路径；按模板合并 OpenClaw workspace 内的 `AGENTS.md` / `SOUL.md`；并在**非交互模式下默认**生成并（非破坏）同步 **`ai_workspace` 到 `$OPENCLAW_WORKSPACE/ai_workspace`**（框架运行时工作区所必需）。若你明确不需要同步频道侧工作区，使用 `python install.py -y --no-ai-workspace`（不推荐）。
+3) **执行安装前**，在终端确认当前目录就是 `_openclaw`（例如 macOS/Linux：`pwd` 应以 `/_openclaw` 结尾；Windows PowerShell：`Get-Location`；并确认当前目录中有 `install.py`）。
 
-4) 执行：`openclaw gateway restart`。
+4) 在同一目录执行：`python install.py -y`；若系统仅有 Windows 启动器、无 `python` 命令，请改用：`py -3 install.py -y`。该命令会：备份并修改 `~/.openclaw/openclaw.json`；向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的绝对路径；按模板合并 OpenClaw workspace 内的 `AGENTS.md` / `SOUL.md`；并在**非交互模式下默认**生成并（非破坏）同步 **`ai_workspace` 到 `$OPENCLAW_WORKSPACE/ai_workspace`**（框架运行时工作区所必需）。若你明确不需要同步频道侧工作区，使用 `python install.py -y --no-ai-workspace` 或 `py -3 install.py -y --no-ai-workspace`（不推荐）。
 
-完成后请汇报：`_openclaw` 的绝对路径、是否已执行 `openclaw gateway restart`、以及频道侧 `ai_workspace` 是否已就绪。卸载与排错见本仓库 `_openclaw/README.md`。
+5) 执行：`openclaw gateway restart`。
+
+完成后请汇报：`_openclaw` 的绝对路径、是否已执行 `openclaw gateway restart`、以及频道侧 `ai_workspace` 是否已就绪（可检查 `$OPENCLAW_WORKSPACE/ai_workspace` 是否存在，未设置环境变量时默认常为 `~/.openclaw/workspace/ai_workspace`）。卸载与排错见本仓库 `_openclaw/README.md`。
 ```
 
 **加速**（假定 Python 与 `openclaw` CLI 已就绪）
 
 ```text
-请在本机安装 cursor-agent-team 的 OpenClaw 适配层：若尚未克隆 `https://github.com/thiswind/cursor-agent-team.git` 则先 clone，再进入 `cursor-agent-team/_openclaw`，执行 `python install.py -y`（默认同步 `ai_workspace` 到 OpenClaw workspace）与 `openclaw gateway restart`。完成后汇报 `_openclaw` 路径与是否已重启 gateway。
+请在本机安装 cursor-agent-team 的 OpenClaw 适配层：若尚未克隆 `https://github.com/thiswind/cursor-agent-team.git` 则先 clone，再进入**该仓库根目录**下的 `_openclaw`（确认目录中有 `install.py`），执行 `python install.py -y` 或 Windows 上 `py -3 install.py -y`（默认同步 `ai_workspace` 到 OpenClaw workspace），然后 `openclaw gateway restart`。完成后汇报 `_openclaw` 绝对路径与是否已重启 gateway。
 ```
 
 ### 我是 Human
@@ -52,7 +54,7 @@ python install.py -y
 openclaw gateway restart
 ```
 
-`-y` **默认**包含频道侧 `ai_workspace` 的生成与同步。仅当需要跳过该步时使用：`python install.py -y --no-ai-workspace`（不推荐）。完整参数：`python install.py --help`；卸载与排错：**`_openclaw/README.md`**。
+Windows 若仅有 `py`：将第三行改为 `py -3 install.py -y`（详见 **`_openclaw/README.md`** PowerShell 示例）。`-y` **默认**包含频道侧 `ai_workspace` 的生成与同步。仅当需要跳过该步时使用：`python install.py -y --no-ai-workspace`（不推荐）。完整参数：`python install.py --help`；卸载与排错：**`_openclaw/README.md`**。
 
 **安装结果落在哪里**
 

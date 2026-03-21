@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.4] - 2026-03-22
+
+### Changed
+- Root `README.md`: OpenClaw **「我是 Agent」** prompts — explicit `pwd` / `Get-Location`, clone path rename note, `py -3` on Windows, clearer channel-side `ai_workspace` verification hint (PLAN-OC-006 / install prompt hardening)
+
 ## [0.15.3] - 2026-03-21
 
 ### Changed
