@@ -1,24 +1,24 @@
-# OpenClaw 适配层（cursor-agent-team）
+# OpenClaw adapter (cursor-agent-team)
 
-**最后更新**: 2026-03-21  
+**Last updated**: 2026-03-22  
 
-本目录包含跨平台安装脚本、Skills、模板与说明。**完整 CLI** 以 `python install.py --help` 为准。
+This directory contains the cross-platform installer, Skills, templates, and docs. The **full CLI** is defined by `python install.py --help`.
 
 ---
 
-## 系统要求
+## Requirements
 
 - **Python** 3.8+
-- **OpenClaw CLI**：`openclaw` 在 `PATH`，版本满足 `install.py` 内检查（当前 **≥ 2026.2.6**）
-- **OS**：Windows（PowerShell）、macOS、Linux；WSL 可选
+- **OpenClaw CLI**: `openclaw` on `PATH`, version must pass checks in `install.py` (currently **≥ 2026.2.6**)
+- **OS**: Windows (PowerShell), macOS, Linux; WSL optional
 
 ---
 
-## 安装（任意平台）
+## Install (any platform)
 
-**与根 README 对齐（推荐）**：含 **「我是 Agent」**（标准 / 加速）与 **「我是 Human」** 的完整说明，见仓库根目录 [**README.md**](../README.md) 的 **「OpenClaw」** 一节。以下为 **Human** 侧命令摘要与平台示例。
+**Prefer the root README**: full **For agents** (standard / accelerated) and **For humans** copy-paste blocks are in [**README.md**](../README.md) under **OpenClaw**. Below is a **human** command summary and platform examples.
 
-在**已克隆的本仓库根目录下**进入本目录：
+From a clone of this repo, enter this directory:
 
 ```bash
 cd cursor-agent-team/_openclaw
@@ -26,11 +26,11 @@ python install.py -y
 openclaw gateway restart
 ```
 
-- **非交互**：`-y`；**默认**生成并非破坏同步 `ai_workspace` 到 OpenClaw workspace（框架运行时工作区必选）；若明确跳过，加 **`--no-ai-workspace`**。
-- **仅预览**：`python install.py --dry-run --skip-openclaw-check`
-- **安装会**：备份 `~/.openclaw/openclaw.json`，向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的**绝对路径**，并按锚点合并 `AGENTS.md` / `SOUL.md`（见 `templates/`）。
+- **Non-interactive**: `-y`; **by default** generates and non-destructively syncs `ai_workspace` into the OpenClaw workspace (required runtime workspace). To skip explicitly, add **`--no-ai-workspace`**.
+- **Dry-run only**: `python install.py --dry-run --skip-openclaw-check`
+- **Install does**: back up `~/.openclaw/openclaw.json`, append `skills.load.extraDirs` with the **absolute** path to this repo’s `_openclaw/skills`, and merge `AGENTS.md` / `SOUL.md` via anchor blocks (see `templates/`).
 
-**Windows PowerShell 示例**
+**Windows PowerShell example**
 
 ```powershell
 Set-Location path\to\cursor-agent-team\_openclaw
@@ -38,63 +38,63 @@ py -3 install.py -y
 openclaw gateway restart
 ```
 
-控制台编码问题可使用 Windows Terminal 或 `PYTHONIOENCODING=utf-8`。
+Use Windows Terminal or `PYTHONIOENCODING=utf-8` if the console encoding misbehaves.
 
-### CLI 摘要（canonical）
+### CLI summary (canonical)
 
-| 项 | 说明 |
-|----|------|
-| `--merge` / `--apply-templates` | 合并模板（默认开） |
-| `--no-merge` | 只更新 `openclaw.json`（若需） |
-| `-y` | 非交互；**默认**同步 `ai_workspace` 到 workspace（可用 `--no-ai-workspace` 跳过） |
-| `--ai-workspace` | 显式执行生成 + 同步（交互模式下也可用；与 `-y` 组合时常为冗余） |
-| `--no-ai-workspace` | 跳过 `ai_workspace` 生成与同步（不推荐，除非确知不需要频道侧工作区） |
-| `--force-ai-workspace` | 同步时覆盖 workspace 内已有种子文件（慎用） |
-| `--dry-run` | 不写入 |
-| `--skip-openclaw-check` | 跳过 openclaw 检测（测试/dry-run） |
+| Flag | Meaning |
+|------|---------|
+| `--merge` / `--apply-templates` | Merge templates (default on) |
+| `--no-merge` | Only update `openclaw.json` if needed |
+| `-y` | Non-interactive; **by default** syncs `ai_workspace` to the workspace (skip with `--no-ai-workspace`) |
+| `--ai-workspace` | Explicitly run generate + sync (also in interactive mode; redundant with `-y` in most cases) |
+| `--no-ai-workspace` | Skip `ai_workspace` generate + sync (not recommended unless you know you do not need the channel-side workspace) |
+| `--force-ai-workspace` | Overwrite existing seed files in workspace `ai_workspace` when syncing (use with care) |
+| `--dry-run` | No writes |
+| `--skip-openclaw-check` | Skip `openclaw` checks (tests / dry-run) |
 
-### 单一事实来源：两处 `ai_workspace`
+### Single source of truth: two `ai_workspace` trees
 
-- 扩展目录旁的 `cursor-agent-team/ai_workspace`：`preflight_check.py` 相对路径行为见框架说明。
-- 频道侧数据：以 **`$OPENCLAW_WORKSPACE/ai_workspace`** 为准，由 **`install.py` 同步策略** 填充，不会与扩展目录自动合并。
+- Next to the extension: `cursor-agent-team/ai_workspace` — relative-path behavior for `preflight_check.py` is documented in the main framework docs.
+- Channel-side data: **`$OPENCLAW_WORKSPACE/ai_workspace`** is authoritative for channel tools; **`install.py`** fills it via sync; it does not auto-merge with the extension copy.
 
 ### json5
 
-若 `openclaw.json` 非严格 JSON，需修复或安装可选 **`json5`**（见安装脚本报错提示）。
+If `openclaw.json` is not strict JSON, fix it or install optional **`json5`** (see installer error hints).
 
 ---
 
-## 卸载（要点）
+## Uninstall (essentials)
 
-1. 编辑 `~/.openclaw/openclaw.json`（Windows：`%USERPROFILE%\.openclaw\openclaw.json`），从 `skills.load.extraDirs` 删除指向本仓库 `_openclaw/skills` 的项。  
-2. 若不再需要本仓库的本地副本，可删除你的 clone 目录；若曾放在 OpenClaw 扩展目录下，可一并删除该副本。  
+1. Edit `~/.openclaw/openclaw.json` (Windows: `%USERPROFILE%\.openclaw\openclaw.json`) and remove the entry in `skills.load.extraDirs` that points at this repo’s `_openclaw/skills`.  
+2. If you no longer need the clone, delete it; if it lived under an OpenClaw extensions path, remove that copy too.  
 3. `openclaw gateway restart`  
-4. 安装备份：`~/.openclaw/openclaw.json.backup.*` 可手动恢复。
+4. Install backups: `~/.openclaw/openclaw.json.backup.*` can be restored manually.
 
 ---
 
-## 自 Cursor 迁移到 OpenClaw（要点）
+## Migrating from Cursor to OpenClaw (essentials)
 
-备份原项目 `ai_workspace` 后，复制到 `$OPENCLAW_WORKSPACE/ai_workspace`；脚本与路径以合并后的 `AGENTS.md` 为准。
-
----
-
-## 安装后验证（用户）
-
-1. `openclaw gateway restart`（若安装时尚未重启）。  
-2. 频道发送 `/discuss` 做四阶段烟测（Phase Marker 来自 `phase_marker.py`）。  
-3. 若安装时未同步或需补跑：`python install.py -y`（默认含 `ai_workspace`；跳过则用 `--no-ai-workspace`）。
+Back up your project’s `ai_workspace`, then copy it to `$OPENCLAW_WORKSPACE/ai_workspace`; scripts and paths follow the merged `AGENTS.md`.
 
 ---
 
-## 自动化测试（可选）
+## Post-install smoke test
 
-`cursor-agent-team/_openclaw/tests/test_install_helpers.py` — 辅助函数单元测试。
+1. `openclaw gateway restart` if you have not already.  
+2. In a channel, send `/discuss` and verify the four-phase flow (phase markers from `phase_marker.py`).  
+3. If sync was skipped or you need a re-run: `python install.py -y` (includes `ai_workspace` by default; use `--no-ai-workspace` to skip).
 
 ---
 
-## 常见问题
+## Automated tests (optional)
 
-**找不到 `openclaw`？** 安装 OpenClaw 并将 CLI 加入 PATH。  
+`cursor-agent-team/_openclaw/tests/test_install_helpers.py` — unit tests for helper functions.
 
-**私有仓库？** clone 需权限；安装逻辑不变。
+---
+
+## FAQ
+
+**Cannot find `openclaw`?** Install OpenClaw and put the CLI on `PATH`.  
+
+**Private repo?** You need clone access; install behavior is unchanged.
