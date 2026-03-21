@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.2] - 2026-03-21
+
+### Changed
+- Root `README.md` & `_openclaw/README.md`: OpenClaw install docs use a **ClawHub-style split** — **「我是 Agent」** (standard + accelerated copy-paste prompts) vs **「我是 Human」** (bash + “where it lands” table); `_openclaw/README.md` links to root README for full Agent prompts (PLAN-OC-004)
+
 ## [0.15.1] - 2026-03-21
 
 ### Changed
