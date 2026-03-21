@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.15.3] - 2026-03-21
+
+### Changed
+- Root `README.md` & `_openclaw/README.md`: **`ai_workspace` is a required runtime workspace** for the framework; OpenClaw install docs no longer frame channel-side sync as “optional”. **`-y` now defaults to generating + non-destructively syncing `ai_workspace`** to `$OPENCLAW_WORKSPACE/ai_workspace`; use **`--no-ai-workspace`** to skip (PLAN-OC-005 / user-facing README rewrite)
+- `_openclaw/install.py`: non-interactive `-y` enables `ai_workspace` sync by default (aligned with docs)
+- `_openclaw/skills/cursor-agent-team-workspace-init/SKILL.md`: preferred command matches new `-y` default
+
 ## [0.15.2] - 2026-03-21
 
 ### Changed

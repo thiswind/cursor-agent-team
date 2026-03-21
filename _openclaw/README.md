@@ -16,7 +16,7 @@
 
 ## 安装（任意平台）
 
-**与根 README 对齐（推荐）**：含 **「我是 Agent」**（标准 / 加速两段可复制自然语言提示）与 **「我是 Human」** 终端命令的完整说明，见仓库根目录 [**README.md**](../README.md) 的 **「OpenClaw（可选）」** 一节。以下为 **Human** 侧命令摘要与平台示例。
+**与根 README 对齐（推荐）**：含 **「我是 Agent」**（标准 / 加速）与 **「我是 Human」** 的完整说明，见仓库根目录 [**README.md**](../README.md) 的 **「OpenClaw」** 一节。以下为 **Human** 侧命令摘要与平台示例。
 
 在**已克隆的本仓库根目录下**进入本目录：
 
@@ -26,7 +26,7 @@ python install.py -y
 openclaw gateway restart
 ```
 
-- **非交互**：`-y`；默认**不**初始化 `ai_workspace`，需要时加 `--ai-workspace`。
+- **非交互**：`-y`；**默认**生成并非破坏同步 `ai_workspace` 到 OpenClaw workspace（框架运行时工作区必选）；若明确跳过，加 **`--no-ai-workspace`**。
 - **仅预览**：`python install.py --dry-run --skip-openclaw-check`
 - **安装会**：备份 `~/.openclaw/openclaw.json`，向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的**绝对路径**，并按锚点合并 `AGENTS.md` / `SOUL.md`（见 `templates/`）。
 
@@ -46,8 +46,10 @@ openclaw gateway restart
 |----|------|
 | `--merge` / `--apply-templates` | 合并模板（默认开） |
 | `--no-merge` | 只更新 `openclaw.json`（若需） |
-| `-y` | 非交互 |
-| `--ai-workspace` | 生成并非破坏同步 `ai_workspace` 到 OpenClaw workspace |
+| `-y` | 非交互；**默认**同步 `ai_workspace` 到 workspace（可用 `--no-ai-workspace` 跳过） |
+| `--ai-workspace` | 显式执行生成 + 同步（交互模式下也可用；与 `-y` 组合时常为冗余） |
+| `--no-ai-workspace` | 跳过 `ai_workspace` 生成与同步（不推荐，除非确知不需要频道侧工作区） |
+| `--force-ai-workspace` | 同步时覆盖 workspace 内已有种子文件（慎用） |
 | `--dry-run` | 不写入 |
 | `--skip-openclaw-check` | 跳过 openclaw 检测（测试/dry-run） |
 
@@ -81,7 +83,7 @@ openclaw gateway restart
 
 1. `openclaw gateway restart`（若安装时尚未重启）。  
 2. 频道发送 `/discuss` 做四阶段烟测（Phase Marker 来自 `phase_marker.py`）。  
-3. 可选：`python install.py -y --ai-workspace` 初始化 workspace 数据。
+3. 若安装时未同步或需补跑：`python install.py -y`（默认含 `ai_workspace`；跳过则用 `--no-ai-workspace`）。
 
 ---
 

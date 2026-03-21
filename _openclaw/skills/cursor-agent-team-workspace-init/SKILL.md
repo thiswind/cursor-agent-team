@@ -9,9 +9,9 @@ When user runs `/init_workspace`:
 
 1. **Preferred (matches install.py)**: From the `cursor-agent-team` repository root (the folder that contains `_openclaw/` and `_scripts/`), run:
    ```bash
-   python _openclaw/install.py -y --merge --ai-workspace
+   python _openclaw/install.py -y --merge
    ```
-   This runs `_scripts/generate_ai_workspace.py` (output under the repo) and **non-destructively** syncs seed files into `$OPENCLAW_WORKSPACE/ai_workspace`.
+   With `-y`, the installer **by default** runs `_scripts/generate_ai_workspace.py` (output under the repo) and **non-destructively** syncs seed files into `$OPENCLAW_WORKSPACE/ai_workspace`. Use `--no-ai-workspace` only if you must skip channel-side sync.
 
 2. **Manual**: Run `python _scripts/generate_ai_workspace.py` with cwd = extension/repo root, then copy missing seed files into `$OPENCLAW_WORKSPACE/ai_workspace` (same rules as install — do not delete user files).
 

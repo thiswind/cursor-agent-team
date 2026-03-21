@@ -11,11 +11,13 @@
 
 This project is both a **methodology** and a **framework** for human–AI collaboration in Cursor: it defines how your AI team should think and work together, then ships a concrete setup (prompts + files + workflows) that you can drop into your own repo.
 
-## OpenClaw（可选）
+## OpenClaw
 
-面向 **OpenClaw** 使用者。**本节与 [Quick Start](#quick-start)（Cursor 子模块嵌入）无关**：前者用于 OpenClaw 频道 / CLI，后者用于在 Cursor 里安装本框架。
+面向 **OpenClaw 频道 / CLI** 的使用者。**本节与 [Quick Start](#quick-start)（Cursor 子模块嵌入）无关**：前者在 OpenClaw 中启用本框架，后者在 Cursor IDE 中启用。
 
-请将下方 **「我是 Agent」** 中任选一档**整段**复制给助理执行；若你本人在终端操作，使用 **「我是 Human」**。**前提**：Python 3.8+、`openclaw` 在 PATH，且版本满足 `_openclaw/install.py` 内检查。`install.py` 会**备份并修改** `~/.openclaw/openclaw.json`。Cursor IDE 用户可忽略本节。
+**`ai_workspace`（运行时工作区）**：`/discuss`、`/crew`、话题树、灵感资本、gleaning 等依赖 **`ai_workspace` 目录契约**——在架构上**必须就绪**，不是「可有可无的附加功能」。在 OpenClaw 场景下，安装器会把扩展目录旁的 `ai_workspace` **生成并非破坏地同步**到 **`$OPENCLAW_WORKSPACE/ai_workspace`**（频道侧）。**非交互安装（`python install.py -y`）默认执行该同步**；仅当你明确不希望写入频道侧工作区时，使用 **`--no-ai-workspace`**（少见）。
+
+请将下方 **「我是 Agent」** 中任选一档**整段**复制给助理执行；若你本人在终端操作，使用 **「我是 Human」**。**前提**：Python 3.8+、`openclaw` 在 PATH，且版本满足 `_openclaw/install.py` 内检查。`install.py` 会**备份并修改** `~/.openclaw/openclaw.json`。仅使用 Cursor、不用 OpenClaw 的用户可忽略本节。
 
 ### 我是 Agent
 
@@ -28,19 +30,17 @@ This project is both a **methodology** and a **framework** for human–AI collab
 
 2) 若本机尚未克隆该仓库，请执行：`git clone https://github.com/thiswind/cursor-agent-team.git`，然后进入 `cursor-agent-team/_openclaw`。若已克隆，请直接进入你本地 `cursor-agent-team` 仓库下的 `_openclaw` 目录。
 
-3) 在该目录执行：`python install.py -y`（会备份并修改 `~/.openclaw/openclaw.json`，并向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的绝对路径，同时按模板合并 OpenClaw workspace 内的 `AGENTS.md` / `SOUL.md`）。
+3) 在该目录执行：`python install.py -y`。该命令会：备份并修改 `~/.openclaw/openclaw.json`；向 `skills.load.extraDirs` 写入本仓库 `_openclaw/skills` 的绝对路径；按模板合并 OpenClaw workspace 内的 `AGENTS.md` / `SOUL.md`；并在**非交互模式下默认**生成并（非破坏）同步 **`ai_workspace` 到 `$OPENCLAW_WORKSPACE/ai_workspace`**（框架运行时工作区所必需）。若你明确不需要同步频道侧工作区，使用 `python install.py -y --no-ai-workspace`（不推荐）。
 
 4) 执行：`openclaw gateway restart`。
 
-5) 若需要频道侧 `ai_workspace` 种子数据，将第 3 步改为：`python install.py -y --ai-workspace`。
-
-完成后请汇报：`_openclaw` 的绝对路径、是否已执行 `openclaw gateway restart`、以及是否使用了 `--ai-workspace`。卸载与排错见本仓库 `_openclaw/README.md`。
+完成后请汇报：`_openclaw` 的绝对路径、是否已执行 `openclaw gateway restart`、以及频道侧 `ai_workspace` 是否已就绪。卸载与排错见本仓库 `_openclaw/README.md`。
 ```
 
 **加速**（假定 Python 与 `openclaw` CLI 已就绪）
 
 ```text
-请在本机安装 cursor-agent-team 的 OpenClaw 适配层：若尚未克隆 `https://github.com/thiswind/cursor-agent-team.git` 则先 clone，再进入 `cursor-agent-team/_openclaw`，执行 `python install.py -y` 与 `openclaw gateway restart`。需要频道侧 `ai_workspace` 时在 install 步骤追加 `--ai-workspace`。完成后汇报 `_openclaw` 路径与是否已重启 gateway。
+请在本机安装 cursor-agent-team 的 OpenClaw 适配层：若尚未克隆 `https://github.com/thiswind/cursor-agent-team.git` 则先 clone，再进入 `cursor-agent-team/_openclaw`，执行 `python install.py -y`（默认同步 `ai_workspace` 到 OpenClaw workspace）与 `openclaw gateway restart`。完成后汇报 `_openclaw` 路径与是否已重启 gateway。
 ```
 
 ### 我是 Human
@@ -52,17 +52,17 @@ python install.py -y
 openclaw gateway restart
 ```
 
-需要频道侧 `ai_workspace` 种子数据时：`python install.py -y --ai-workspace`。完整参数：`python install.py --help`；卸载与排错：**`_openclaw/README.md`**。
+`-y` **默认**包含频道侧 `ai_workspace` 的生成与同步。仅当需要跳过该步时使用：`python install.py -y --no-ai-workspace`（不推荐）。完整参数：`python install.py --help`；卸载与排错：**`_openclaw/README.md`**。
 
 **安装结果落在哪里**
 
 | 位置 | 内容 |
 |------|------|
-| 你的 clone 目录 | 本仓库源码（含 `_openclaw/skills`） |
+| 你的 clone 目录 | 本仓库源码（含 `_openclaw/skills`；运行安装器后含生成的扩展侧 `ai_workspace` 等） |
 | `~/.openclaw/openclaw.json` | 已备份；追加 `skills.load.extraDirs` → 本仓库 `_openclaw/skills` 的绝对路径 |
-| OpenClaw workspace（默认 `~/.openclaw/workspace` 或 `OPENCLAW_WORKSPACE`） | 合并后的 `AGENTS.md`、`SOUL.md`；可选同步 `ai_workspace/` |
+| OpenClaw workspace（`$OPENCLAW_WORKSPACE`，默认常为 `~/.openclaw/workspace`） | 合并后的 `AGENTS.md`、`SOUL.md`；**`ai_workspace/`**（频道侧运行时工作区，与框架命令路径一致） |
 
-*English (Human one-liner):* `git clone` → `cd cursor-agent-team/_openclaw` → `python install.py -y` → `openclaw gateway restart`. See `_openclaw/README.md`.
+*English (Human one-liner):* `git clone` → `cd cursor-agent-team/_openclaw` → `python install.py -y` (default: sync `ai_workspace` to workspace) → `openclaw gateway restart`. See `_openclaw/README.md`.
 
 ## Summary
 

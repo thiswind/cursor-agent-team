@@ -227,14 +227,14 @@ def run_generate_ai_workspace(extension_root: Path, dry_run: bool) -> None:
 
 def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Install cursor-agent-team OpenClaw adapter (merge templates, extraDirs, optional ai_workspace)."
+        description="Install cursor-agent-team OpenClaw adapter (merge templates, extraDirs, ai_workspace sync by default with -y)."
     )
     p.set_defaults(merge=True)
     p.add_argument(
         "-y",
         "--yes",
         action="store_true",
-        help="Non-interactive: skip prompts (default: skip ai_workspace init unless --ai-workspace).",
+        help="Non-interactive: skip prompts (default: generate + sync ai_workspace to workspace; use --no-ai-workspace to skip).",
     )
     p.add_argument(
         "--merge",
@@ -267,7 +267,7 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
     p.add_argument(
         "--ai-workspace",
         action="store_true",
-        help="Run generate_ai_workspace + non-destructive sync to workspace (opt-in).",
+        help="Run generate_ai_workspace + non-destructive sync to workspace (default with -y; explicit for interactive yes).",
     )
     p.add_argument(
         "--no-ai-workspace",
@@ -405,7 +405,7 @@ def main(argv: Optional[list[str]] = None) -> None:
     elif args.ai_workspace:
         want_ai = True
     elif args.yes:
-        want_ai = False
+        want_ai = True
     else:
         try:
             r = input("Initialize ai_workspace under workspace now? [y/N] ").strip().lower()
