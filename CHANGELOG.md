@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.0] - 2026-03-22
+
+### Added
+- **Master Agent Architecture**: Single main entry (default `/discuss`) + dynamic subagent spawning for execution roles (`/crew`, `/prompt_engineer`, `/writer`)
+- Natural language intent recognition for automatic subagent invocation
+- Session reuse for same user + same role
+- `/chat` for one-shot free chat (only current message, auto-revert to `/discuss` constraint next message)
+- Config-based role management
+- OpenClaw installer renamed to `install_openclaw.py` (root directory, consistent with other platforms)
+- Add `--openclaw-workspace` parameter to support custom OpenClaw workspace path
+
 ## [0.15.5] - 2026-03-22
 
 ### Changed

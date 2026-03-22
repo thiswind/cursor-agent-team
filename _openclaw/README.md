@@ -2,14 +2,14 @@
 
 **Last updated**: 2026-03-22  
 
-This directory contains the cross-platform installer, Skills, templates, and docs. The **full CLI** is defined by `python install.py --help`.
+This directory contains the templates, Skills, and docs. The **full CLI** is defined by `python install_openclaw.py --help` at repo root.
 
 ---
 
 ## Requirements
 
 - **Python** 3.8+
-- **OpenClaw CLI**: `openclaw` on `PATH`, version must pass checks in `install.py` (currently **≥ 2026.2.6**)
+- **OpenClaw CLI**: `openclaw` on `PATH`, version must pass checks in `install_openclaw.py` (currently **≥ 2026.2.6**)
 - **OS**: Windows (PowerShell), macOS, Linux; WSL optional
 
 ---
@@ -18,12 +18,17 @@ This directory contains the cross-platform installer, Skills, templates, and doc
 
 **Prefer the root README**: full **For agents** (standard / accelerated) and **For humans** copy-paste blocks are in [**README.md**](../README.md) under **OpenClaw**. Below is a **human** command summary and platform examples.
 
-From a clone of this repo, enter this directory:
+From a clone of this repo, at repo root:
 
 ```bash
-cd cursor-agent-team/_openclaw
-python install.py -y
+python install_openclaw.py -y
 openclaw gateway restart
+```
+
+You can specify a custom OpenClaw workspace path:
+
+```bash
+python install_openclaw.py -y --openclaw-workspace /path/to/your/openclaw/workspace
 ```
 
 - **Non-interactive**: `-y`; **by default** generates and non-destructively syncs `ai_workspace` into the OpenClaw workspace (required runtime workspace). To skip explicitly, add **`--no-ai-workspace`**.

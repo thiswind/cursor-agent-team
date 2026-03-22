@@ -1,6 +1,23 @@
 # cursor-agent-team for OpenClaw
 
-## Command Routing
+## Master Agent Routing (New Architecture)
+
+**Default behavior**: All messages are processed by the Master Agent with the following rules:
+- Default: All messages are processed as `/discuss` (with strong constraints: read-only project files, write only to `ai_workspace/`)
+- If message starts with `/chat`: **only current message** is free chat (no constraints), **next message automatically reverts** to `/discuss` constraint
+- Natural language intent recognition: if message contains execution keywords (`execute`, `generate prompt`, `write`), Master Agent automatically spawns/reuses the corresponding subagent and returns the result to you
+
+**Entry Point (runs at the start of every message):**
+```python
+import sys
+import os
+ext_root = os.path.abspath("{{CURSOR_AGENT_TEAM_EXTENSION_ROOT}}")
+sys.path.insert(0, os.path.join(ext_root, "_scripts"))
+from master_agent.master_agent import handle_message
+handle_message()
+```
+
+## Command Routing (Subagent Roles)
 
 ### /discuss — Discussion Partner Mode
 When message starts with `/discuss`:

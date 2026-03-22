@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "default_model": "volcengine-plan/ark-code-latest",
+  "sub_roles": {
+    "crew": {
+      "name": "Crew Member",
+      "workspace_dir": "cursor-team/",
+      "enabled": true,
+      "keywords": ["执行", "运行", "执行方案", "执行计划", "开始执行"]
+    },
+    "prompt_engineer": {
+      "name": "Prompt Engineer",
+      "workspace_dir": "cursor-agent-team/",
+      "enabled": true,
+      "keywords": ["提示词", "prompt", "提示词工程", "生成提示词"]
+    },
+    "writer": {
+      "name": "Academic Writer",
+      "workspace_dir": "cursor-agent-team/",
+      "enabled": true,
+      "keywords": ["写作", "写文章", "写论文", "学术写作"]
+    }
+  },
+  "session_timeout_minutes": 30,
+  "reuse_session": true,
+  "isolate_workspace": false,
+  "enable_intent_recognition": true
+}

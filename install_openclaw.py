@@ -32,8 +32,8 @@ REQUIRED_OPENCLAW_SEMVER = (2026, 2, 6)
 
 
 def repo_root() -> Path:
-    """cursor-agent-team/ (parent of _openclaw/)."""
-    return Path(__file__).resolve().parent.parent
+    """cursor-agent-team/ (this file is at repo root)."""
+    return Path(__file__).resolve().parent
 
 
 def use_ascii_stdout() -> bool:
@@ -207,12 +207,18 @@ def openclaw_missing_help() -> str:
     )
 
 
-def resolve_workspace() -> Path:
+def resolve_workspace(args: Optional[argparse.Namespace] = None) -> Path:
+    # Command line argument has highest priority
+    if args and args.openclaw_workspace is not None:
+        return Path(args.openclaw_workspace).expanduser()
+    # Then environment variable
     if "OPENCLAW_WORKSPACE" in os.environ:
         return Path(os.environ["OPENCLAW_WORKSPACE"]).expanduser()
+    # Then profile-based path
     if "OPENCLAW_PROFILE" in os.environ and os.environ["OPENCLAW_PROFILE"] != "default":
         profile = os.environ["OPENCLAW_PROFILE"]
         return Path.home() / f".openclaw/workspace-{profile}"
+    # Default
     return Path.home() / ".openclaw/workspace"
 
 
@@ -284,6 +290,12 @@ def parse_args(argv: Optional[list[str]] = None) -> argparse.Namespace:
         action="store_true",
         help="Skip openclaw CLI/version checks (for --dry-run or unit tests).",
     )
+    p.add_argument(
+        "--openclaw-workspace",
+        type=str,
+        default=None,
+        help="Override OpenClaw workspace path (default: ~/.openclaw/workspace or $OPENCLAW_WORKSPACE)",
+    )
     return p.parse_args(argv)
 
 
@@ -333,7 +345,7 @@ def main(argv: Optional[list[str]] = None) -> None:
         log_info("Skipped openclaw CLI/version check (--skip-openclaw-check)", ascii_mode)
         print()
 
-    workspace = resolve_workspace()
+    workspace = resolve_workspace(args)
     log_info(f"Workspace: {workspace}", ascii_mode)
     print()
 
