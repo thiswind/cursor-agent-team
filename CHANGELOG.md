@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.14.0] - 2026-04-08
+
+### Added
+- **TRAE SOLO adaptation**: Full platform port for ByteDance TRAE SOLO IDE
+- TRAE SOLO installation instructions in README.md
+- Harness Engineering comparison section in README.md, positioning cursor-agent-team as a workflow-level harness implementation
+
+### Changed
+- Root README.md: Added TRAE SOLO installation section
+- Root README.md: Added comprehensive Harness Engineering comparison with alignment table and beyond-traditional-harness features
+
+### Removed
+- _openclaw/ directory (OpenClaw adaptation)
+- _qwen/ directory (Qwen adaptation)
+- _trae/ directory (old TRAE adaptation)
+- TRAE_README.md
+- install_qwen.py and uninstall_qwen.py
+
+### Technical Details
+- MINOR increment (0.13.0 → 0.14.0) — TRAE SOLO adaptation + README enhancements + removal of old adaptations
+- The ai_workspace is now shared between Cursor and TRAE SOLO platforms
+
 ## [0.15.5] - 2026-03-22
 
 ### Changed
