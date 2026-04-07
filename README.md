@@ -51,6 +51,18 @@ python install.py
 
 On Windows if only `py` is available, use `py -3 install.py` for the third line. Full flags: `python install.py --help`.
 
+**TRAE SOLO Installation**
+
+For [TRAE SOLO](https://docs.trae.cn/solo/what-is-trae-solo) (ByteDance):
+
+```bash
+git clone https://github.com/thiswind/cursor-agent-team.git
+cd cursor-agent-team
+python install.py --trae-solo
+```
+
+This will set up the TRAE SOLO adaptation with custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
+
 **Where things land**
 
 | Location | Contents |
@@ -132,6 +144,42 @@ We occupy a specific niche: **single-conversation, multi-role, context-preservin
 
 **Evaluation context**: Among single-conversation, multi-role, context-heavy approaches, cursor-agent-team is a first-tier architectural reference implementation—designed for methodological exploration, not product deployment.
 
+## Harness Engineering Comparison
+
+cursor-agent-team can be viewed as a lightweight harness implementation for Cursor/TRAE SOLO scenarios, with a strong focus on methodology and the combination of soft and hard constraints.
+
+### Alignment with Harness Standards
+
+| Dimension | Harness Standard Focus | cursor-agent-team Status | Evaluation |
+| :-- | :-- | :-- | :-- |
+| Human-in-the-loop | Humans steer, agents execute; strong HITL | Explicitly states "You are the conductor" and "Human-in-the-loop by design" | Fully aligned |
+| Soft constraints (LLM layer) | Roles, rules, workflow, context engineering | `/discuss` `/crew` `/prompt_engineer` three roles + detailed command specifications + mdc rule system | Fully aligned |
+| Hard constraints (script layer) | Script/tool-based structure validation and risk control | `validate_topic_tree.py`, `preflight_check.py`, `cleanup_ai_workspace.py` for key output validation | Fully aligned |
+| Workflow | Clear phases, phase artifacts, and transition conditions | Explicit discuss→plan→execute→expand process and command diagram | Fully aligned |
+| Environment / File system | Dedicated workspace, context engineering | Mandatory `ai_workspace` directory agreement + installation script auto-generation and synchronization | Fully aligned |
+| Multi-agent collaboration | Multi-agent or multi-role orchestration | Chooses "single-model multi-role", switching masks via commands for collaboration in one conversation | A harness variant |
+| Tool layer / Sandbox | File operations, script execution, safety guards | Leverages IDE / OpenClaw / TRAE script execution capabilities + own Python script layer | Generally aligned |
+| Monitoring / Logs / Metrics | Service-level long-running monitoring, statistics | No system-level metrics/monitoring, only in-IDE short-term workflow | Explicitly omitted (intentional) |
+| Task queue / Long-running | Queues, retries, rollbacks, scheduling | Explicitly states it is not an "autonomous pipeline", assumes user presence, no server-side scheduling | Out of scope |
+| Enterprise governance / Permissions | Multi-project, multi-team governance | Targets individuals and small teams, no org-level governance | Not covered |
+
+### Beyond Traditional Harness
+
+cursor-agent-team extends beyond traditional harness engineering in several key areas:
+
+1. **Multi-role single-conversation as first-class citizen**
+   - Traditional harnesses often default to "multi-agent + state transfer"; we use "one model + multiple masks" with prompt-swap instead of state handoff
+   - This minimizes context cost: traditional MAS state-transfer requires 50–200KB compressed state with 10–20% context retention, while our prompt-swap uses only 1–3KB rule text with full history preserved
+
+2. **Aspect-Oriented Design for collaboration**
+   - Uses "Aspect-Oriented Design" to describe how cross-cutting concerns (Gleaning, Persona, TTS) are woven into the workflow at defined join points
+   - This creates a more systematic approach to collaboration than traditional skill architectures, which lack workflow models or join points
+
+3. **Depth of human-AI collaboration methodology**
+   - Emphasizes Intelligence Augmentation, Human-AI teaming, and Cognitive load redistribution, drawing on research from the National Academies and cognitive load theory
+   - Targets users with methodological awareness—those who think about *how* they work with AI, not just *what* they want AI to do
+
+In summary, cursor-agent-team is a "workflow-level / IDE-level harness" rather than a "platform-level / enterprise-level harness framework"—a conscious design choice to prioritize methodological depth over general platform features.
 
 ## Who is this for?
 
