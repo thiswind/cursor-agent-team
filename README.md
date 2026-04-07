@@ -22,45 +22,40 @@ This project is both a **methodology** and a **framework** for human–AI collab
 **Standard** (environment checks + clone path)
 
 ```text
-Install the cursor-agent-team OpenClaw adapter on this machine, in order:
+Install the cursor-agent-team framework on this machine, in order:
 
-1) Ensure Python >= 3.8 and that you can run `python` in the terminal (on Windows, `py -3` may apply). Ensure `openclaw` is on PATH and its version satisfies the checks inside this repo’s `_openclaw/install.py`. If OpenClaw CLI is missing, install it from OpenClaw’s official docs first.
+1) Ensure Python >= 3.8 and that you can run `python` in the terminal (on Windows, `py -3` may apply).
 
-2) Work inside this repo’s `_openclaw` directory (`install.py` must exist there). If you have not cloned yet, run `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd cursor-agent-team/_openclaw`. If already cloned, `cd` to `<your clone root>/_openclaw` (the folder may not be named `cursor-agent-team` if you renamed or moved it).
+2) Work inside this repo’s root directory. If you have not cloned yet, run `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd cursor-agent-team`.
 
-3) Before installing, confirm the current directory is `_openclaw` (e.g. macOS/Linux: `pwd` should end with `/_openclaw`; Windows PowerShell: `Get-Location`; verify `install.py` is present).
+3) Before installing, confirm the current directory is the repo root (verify `install.py` is present).
 
-4) From that directory run `python install.py -y`, or on Windows if `python` is missing: `py -3 install.py -y`. This backs up and edits `~/.openclaw/openclaw.json`; appends `skills.load.extraDirs` with the absolute path to this repo’s `_openclaw/skills`; merges `AGENTS.md` / `SOUL.md` templates into the OpenClaw workspace; and **by default** (non-interactive) **generates and non-destructively syncs `ai_workspace` to `$OPENCLAW_WORKSPACE/ai_workspace`** (required for the framework). To skip channel-side sync: `python install.py -y --no-ai-workspace` or `py -3 install.py -y --no-ai-workspace` (not recommended).
+4) From that directory run `python install.py`, or on Windows if `python` is missing: `py -3 install.py`.
 
-5) Run: `openclaw gateway restart`.
-
-Then report: absolute path to `_openclaw`, whether `openclaw gateway restart` ran, and whether channel-side `ai_workspace` exists (e.g. check `$OPENCLAW_WORKSPACE/ai_workspace`; if unset, often `~/.openclaw/workspace/ai_workspace`). Uninstall and troubleshooting: `_openclaw/README.md` in this repo.
+Then report: absolute path to the repo root and whether the installation completed successfully.
 ```
 
-**Accelerated** (Python + `openclaw` CLI already OK)
+**Accelerated** (Python already OK)
 
 ```text
-Install the cursor-agent-team OpenClaw adapter: if not cloned, `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd` to `<clone root>/_openclaw` (verify `install.py` exists), run `python install.py -y` or on Windows `py -3 install.py -y` (syncs `ai_workspace` to the OpenClaw workspace by default), then `openclaw gateway restart`. Report the absolute `_openclaw` path and whether the gateway was restarted.
+Install the cursor-agent-team framework: if not cloned, `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd` to the repo root (verify `install.py` exists), run `python install.py` or on Windows `py -3 install.py`.
 ```
 
 ### For humans
 
 ```bash
 git clone https://github.com/thiswind/cursor-agent-team.git
-cd cursor-agent-team/_openclaw
-python install.py -y
-openclaw gateway restart
+cd cursor-agent-team
+python install.py
 ```
 
-On Windows if only `py` is available, use `py -3 install.py -y` for the third line (see PowerShell example in **`_openclaw/README.md`**). `-y` **by default** generates and syncs channel-side `ai_workspace`. To skip: `python install.py -y --no-ai-workspace` (not recommended). Full flags: `python install.py --help`. Uninstall / troubleshooting: **`_openclaw/README.md`**.
+On Windows if only `py` is available, use `py -3 install.py` for the third line. Full flags: `python install.py --help`.
 
 **Where things land**
 
 | Location | Contents |
 |----------|----------|
-| Your clone root | Repo sources (including `_openclaw/skills`; after install, generated extension-side `ai_workspace`, etc.) |
-| `~/.openclaw/openclaw.json` | Backed up; `skills.load.extraDirs` includes the absolute path to this repo’s `_openclaw/skills` |
-| OpenClaw workspace (`$OPENCLAW_WORKSPACE`, often `~/.openclaw/workspace` by default) | Merged `AGENTS.md`, `SOUL.md`; **`ai_workspace/`** (channel-side runtime workspace, aligned with command paths) |
+| Your clone root | Repo sources (including scripts and configurations; after install, generated `ai_workspace`, etc.) |
 
 ## Summary
 

@@ -67,7 +67,7 @@ def main():
     u.colored_print("✓ Directories created", "green")
     print()
 
-    # Step 2b: Generate ai_workspace from config (PLAN-AF-001; shared with install_trae/install_qwen)
+    # Step 2b: Generate ai_workspace from config (PLAN-AF-001)
     print("Step 2b: Generating ai_workspace from config...")
     ok, err = u.ensure_ai_workspace(submodule_dir)
     if ok is True:
