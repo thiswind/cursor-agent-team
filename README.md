@@ -11,13 +11,11 @@
 
 This project is both a **methodology** and a **framework** for human–AI collaboration in Cursor: it defines how your AI team should think and work together, then ships a concrete setup (prompts + files + workflows) that you can drop into your own repo.
 
-## OpenClaw
 
-For **OpenClaw** (channels / CLI). This section is **separate from [Quick Start](#quick-start)** (Cursor submodule embed): that path installs the framework inside Cursor IDE; this path enables it under OpenClaw.
 
-**`ai_workspace` (runtime workspace)** — `/discuss`, `/crew`, topic tree, inspiration capital, gleaning, etc. depend on the **`ai_workspace` directory contract**. It is **required by the architecture**, not an optional add-on. The installer **generates** the tree next to the extension and **non-destructively syncs** it to **`$OPENCLAW_WORKSPACE/ai_workspace`** (channel side). Non-interactive **`python install.py -y` does this by default**. Use **`--no-ai-workspace`** only if you explicitly want to skip writing the channel-side workspace (rare).
 
-Copy **one** of the **For agents** blocks below in full to your assistant; use **For humans** if you run commands yourself. Requires Python 3.8+, `openclaw` on `PATH`, and a version that passes `_openclaw/install.py` checks. The script **backs up and edits** `~/.openclaw/openclaw.json`. Skip this section if you only use Cursor IDE, not OpenClaw.
+
+
 
 ### For agents
 
@@ -73,7 +71,7 @@ It is meant for developers, researchers, and advanced users who want a reliable 
 
 ## What This Is
 
-- A workflow and methodology centered around a multi-role collaboration pattern, plus a concrete Cursor/Qwen implementation
+- A workflow and methodology centered around a multi-role collaboration pattern, plus a concrete Cursor implementation
 - A single-conversation, multi-role template for AI collaboration
 - A practical repo you can fork and tweak to run real projects (papers, reports, code, experiments)
 
@@ -100,7 +98,7 @@ We augment human capability; we don't replace it. Three design pillars:
 
 ## Core Model
 
-A **multi-role collaboration framework** for Cursor IDE and Qwen Code. One LLM wears different "masks" (commands) in the same conversation. Provides:
+A **multi-role collaboration framework** for Cursor IDE. One LLM wears different "masks" (commands) in the same conversation. Provides:
 
 - **Structured workflow**: discuss → plan → execute
 - **Specialized roles**: Each command has distinct responsibilities
@@ -163,7 +161,7 @@ Install cursor-agent-team from https://github.com/thiswind/cursor-agent-team.git
 
 Then type `/discuss` to start and briefly describe what you want to achieve (e.g., "help me design and write a technical report on X").
 
-For manual installation or Qwen Code, see [Installation](#installation).
+For manual installation, see [Installation](#installation).
 
 ## Core Roles
 
@@ -200,16 +198,9 @@ python cursor-agent-team/install.py
 
 Update: `git submodule update --remote cursor-agent-team && python cursor-agent-team/install.py`
 
-**Qwen Code**:
 
-```bash
-git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-python cursor-agent-team/install_qwen.py
-```
 
-Update: `git submodule update --remote cursor-agent-team && python cursor-agent-team/install_qwen.py`
-
-**Note**: The workspace at `cursor-agent-team/ai_workspace/` is shared between both platforms.
+**Note**: The workspace at `cursor-agent-team/ai_workspace/` is shared between all supported platforms (Cursor and TRAE SOLO).
 
 ## Features
 
@@ -290,11 +281,11 @@ We prioritize **depth on Cursor** rather than breadth of platform support. A wat
 
 Future ports will be considered only where we can preserve the same methodological guarantees (minimal handoff, HITL, workspace semantics). This is a conscious design choice, not a limitation or oversight.
 
-### TRAE_CN Adaptation
+### TRAE SOLO Adaptation
 
-A [TRAE_CN](https://www.trae.com.cn/) (ByteDance) adaptation is available. See [TRAE_README.md](TRAE_README.md) for installation and usage instructions.
+A [TRAE SOLO](https://docs.trae.cn/solo/what-is-trae-solo) (ByteDance) adaptation is available. See [TRAE_SOLO_README.md](TRAE_SOLO_README.md) for installation and usage instructions.
 
-TRAE_CN uses custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
+TRAE SOLO uses custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
 
 See `cursor-agent-team/_scripts/README.md` for script details.
 

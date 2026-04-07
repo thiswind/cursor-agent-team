@@ -1,9 +1,0 @@
-{
-  "skills": {
-    "load": {
-      "extraDirs": [
-        "/ABSOLUTE/PATH/TO/cursor-agent-team/_openclaw/skills"
-      ]
-    }
-  }
-}

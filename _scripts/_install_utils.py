@@ -58,6 +58,25 @@ def copy_files(file_list, src_base, dst_base):
     return success, fail
 
 
+def copy_dirs(dir_list, src_base, dst_base):
+    """Batch copy directories. file_list is [(src_rel, dst_rel), ...].
+    Returns (success_list, fail_list)."""
+    success, fail = [], []
+    for src_rel, dst_rel in dir_list:
+        src = os.path.join(src_base, src_rel)
+        dst = os.path.join(dst_base, dst_rel)
+        try:
+            if os.path.exists(dst):
+                shutil.rmtree(dst)
+            shutil.copytree(src, dst)
+            success.append(dst_rel)
+            colored_print(f"  ✓ {dst_rel}", "green")
+        except (FileNotFoundError, OSError) as e:
+            fail.append(dst_rel)
+            colored_print(f"  ✗ {dst_rel}: {e}", "red")
+    return success, fail
+
+
 def get_version(submodule_dir):
     """Get version from git tag or CHANGELOG.md."""
     version = "0.1.0"
