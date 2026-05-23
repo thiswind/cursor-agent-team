@@ -17,57 +17,31 @@ This project is both a **methodology** and a **framework** for human–AI collab
 
 
 
-### For agents
+## Install at a glance
 
-**Standard** (environment checks + clone path)
-
-```text
-Install the cursor-agent-team framework on this machine, in order:
-
-1) Ensure Python >= 3.8 and that you can run `python` in the terminal (on Windows, `py -3` may apply).
-
-2) Work inside this repo’s root directory. If you have not cloned yet, run `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd cursor-agent-team`.
-
-3) Before installing, confirm the current directory is the repo root (verify `install.py` is present).
-
-4) From that directory run `python install.py`, or on Windows if `python` is missing: `py -3 install.py`.
-
-Then report: absolute path to the repo root and whether the installation completed successfully.
-```
-
-**Accelerated** (Python already OK)
-
-```text
-Install the cursor-agent-team framework: if not cloned, `git clone https://github.com/thiswind/cursor-agent-team.git`, then `cd` to the repo root (verify `install.py` exists), run `python install.py` or on Windows `py -3 install.py`.
-```
-
-### For humans
+Install `cursor-agent-team` inside the project you want to work on, usually as a git submodule:
 
 ```bash
-git clone https://github.com/thiswind/cursor-agent-team.git
-cd cursor-agent-team
-python install.py
+git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 ```
 
-On Windows if only `py` is available, use `py -3 install.py` for the third line. Full flags: `python install.py --help`.
+Then run the installer for your platform:
 
-**TRAE SOLO Installation**
+| Platform | Install command | What gets installed |
+|----------|-----------------|---------------------|
+| Cursor | `python3 cursor-agent-team/install.py` | `.cursor/commands/` and `.cursor/rules/` |
+| Claude Code | `python3 cursor-agent-team/install_claude_code.py` | `.claude/commands/` mask commands |
+| TRAE SOLO | `python3 cursor-agent-team/install_trae_solo.py` | `.trae/skills/` and `AGENTS.md` template |
 
-For [TRAE SOLO](https://docs.trae.cn/solo/what-is-trae-solo) (ByteDance):
+On Windows, use `py -3` instead of `python3` if needed.
 
-```bash
-git clone https://github.com/thiswind/cursor-agent-team.git
-cd cursor-agent-team
-python install.py --trae-solo
+For agent-driven setup, give your coding agent this instruction:
+
+```text
+Install cursor-agent-team into this project as a git submodule at cursor-agent-team/, then run the platform installer for my environment.
 ```
 
-This will set up the TRAE SOLO adaptation with custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
-
-**Where things land**
-
-| Location | Contents |
-|----------|----------|
-| Your clone root | Repo sources (including scripts and configurations; after install, generated `ai_workspace`, etc.) |
+The core methodology, scripts, persona config, and `cursor-agent-team/ai_workspace/` are shared across supported platforms.
 
 ## Summary
 
@@ -232,18 +206,76 @@ For manual installation, see [Installation](#installation).
 
 ## Installation
 
-**Cursor IDE** — Tell Cursor Agent to install, or run manually:
+Run these commands from the root of the project where you want to use the framework.
+
+### 1. Add the framework
 
 ```bash
 git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-python cursor-agent-team/install.py
 ```
 
-Update: `git submodule update --remote cursor-agent-team && python cursor-agent-team/install.py`
+If you do not want a submodule, you can clone or copy the repo to `cursor-agent-team/`, but the installers assume that directory name.
 
+### 2. Install for your platform
 
+#### Cursor
 
-**Note**: The workspace at `cursor-agent-team/ai_workspace/` is shared between all supported platforms (Cursor and TRAE SOLO).
+```bash
+python3 cursor-agent-team/install.py
+```
+
+Installs:
+
+- `.cursor/commands/discuss.md`
+- `.cursor/commands/prompt_engineer.md`
+- `.cursor/commands/crew.md`
+- `.cursor/commands/spec_translator.md`
+- matching `.cursor/rules/*.mdc` files
+
+#### Claude Code
+
+```bash
+python3 cursor-agent-team/install_claude_code.py
+```
+
+Installs project slash commands under `.claude/commands/`:
+
+- `/discuss`
+- `/prompt_engineer`
+- `/crew`
+- `/spec_translator`
+
+The Claude Code adaptation intentionally uses slash commands as role masks in the same conversation context. It does not install isolated subagents by default, because the framework's core model is shared-context mask switching rather than multi-agent handoff.
+
+#### TRAE SOLO
+
+```bash
+python3 cursor-agent-team/install_trae_solo.py
+```
+
+Installs TRAE SOLO skills under `.trae/skills/` and copies the `AGENTS.md` template if one does not already exist.
+
+### 3. Update
+
+```bash
+git submodule update --remote cursor-agent-team
+python3 cursor-agent-team/install.py              # Cursor
+python3 cursor-agent-team/install_claude_code.py  # Claude Code
+python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
+```
+
+### 4. Uninstall installed platform files
+
+```bash
+python3 cursor-agent-team/uninstall.py --platform cursor
+python3 cursor-agent-team/uninstall.py --platform claude_code
+```
+
+TRAE SOLO files can be removed from `.trae/skills/` and `AGENTS.md` manually if needed.
+
+On Windows, use `py -3` instead of `python3` if needed.
+
+**Note**: `cursor-agent-team/ai_workspace/` is shared between supported platforms.
 
 ## Features
 

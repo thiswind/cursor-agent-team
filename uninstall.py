@@ -21,7 +21,25 @@ import _install_utils as u  # type: ignore
 
 
 SUBMODULE_NAME = "cursor-agent-team"
-INSTALL_INFO_REL = os.path.join(".cursor", ".cursor-agent-team-installed")
+PLATFORM_INSTALL_INFO = {
+    "cursor": os.path.join(".cursor", ".cursor-agent-team-installed"),
+    "claude_code": os.path.join(".claude", ".cursor-agent-team-installed"),
+}
+PLATFORM_DIRS = {
+    "cursor": [
+        (os.path.join(".cursor", "commands"), ".cursor/commands/"),
+        (os.path.join(".cursor", "rules"), ".cursor/rules/"),
+        (".cursor", ".cursor/"),
+    ],
+    "claude_code": [
+        (os.path.join(".claude", "commands"), ".claude/commands/"),
+        (".claude", ".claude/"),
+    ],
+}
+PLATFORM_LABELS = {
+    "cursor": "Cursor",
+    "claude_code": "Claude Code",
+}
 
 
 def _is_dir_empty(path: str) -> bool:
@@ -78,6 +96,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--yes", action="store_true", help="Skip confirmation prompt")
     ap.add_argument(
+        "--platform",
+        choices=sorted(PLATFORM_INSTALL_INFO),
+        default="cursor",
+        help="Platform installation to remove (default: cursor)",
+    )
+    ap.add_argument(
         "--remove-submodule",
         action="store_true",
         help="Explicitly remove the git submodule (default: keep it)",
@@ -86,11 +110,13 @@ def main() -> int:
 
     script_path = os.path.abspath(__file__)
     project_root = u.get_project_root(script_path)
+    install_info_rel = PLATFORM_INSTALL_INFO[args.platform]
+    platform_label = PLATFORM_LABELS[args.platform]
 
-    install_info_path = os.path.join(project_root, INSTALL_INFO_REL)
+    install_info_path = os.path.join(project_root, install_info_rel)
 
     print("=" * 42)
-    print("Cursor AI Agent Team Framework Uninstaller")
+    print(f"Cursor AI Agent Team Framework Uninstaller ({platform_label})")
     print("=" * 42)
     print()
 
@@ -117,7 +143,7 @@ def main() -> int:
     print(f"  Installed at: {installed_at}")
     print()
 
-    print("This will remove installed Cursor files under .cursor/.")
+    print(f"This will remove installed {platform_label} files recorded by the installer.")
     if args.remove_submodule:
         print("It will also attempt to remove the git submodule cursor-agent-team/.")
     else:
@@ -142,12 +168,11 @@ def main() -> int:
 
     # Always remove install record itself (not included in files list)
     if _remove_path(install_info_path):
-        removed.append(INSTALL_INFO_REL)
+        removed.append(install_info_rel)
 
     # Cleanup empty dirs (best-effort)
-    _try_rmdir_if_empty(os.path.join(project_root, ".cursor", "commands"), removed, ".cursor/commands/")
-    _try_rmdir_if_empty(os.path.join(project_root, ".cursor", "rules"), removed, ".cursor/rules/")
-    _try_rmdir_if_empty(os.path.join(project_root, ".cursor"), removed, ".cursor/")
+    for rel_dir, label in PLATFORM_DIRS[args.platform]:
+        _try_rmdir_if_empty(os.path.join(project_root, rel_dir), removed, label)
 
     # Optional: remove submodule explicitly
     if args.remove_submodule:
