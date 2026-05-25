@@ -1,25 +1,33 @@
-<p align="center">
-  <img src="logo.png" alt="cursor-agent-team: Multi-Role AI Team for Cursor" width="200">
-</p>
-
-# cursor-agent-team · Cursor AI Agent Team Framework for Multi-Role, Single-Conversation Collaboration
-
+# cursor-agent-team · Single-Conversation AI Team Framework
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18605311.svg)](https://doi.org/10.5281/zenodo.18605311)
 
-**cursor-agent-team** is a single-conversation, multi-role framework that turns Cursor into a stable AI **agent team** for real-world development work. It gives you an opinionated way to run multiple specialized roles (architect, engineer, reviewer, etc.) inside one Cursor chat, with minimal handoff and strong context continuity.
+`cursor-agent-team` is a single-conversation, multi-role framework for working with AI in Cursor, Claude Code, and TRAE SOLO. One LLM stays in one shared context and switches role masks such as `/discuss`, `/crew`, and `/prompt_engineer`.
 
-This project is both a **methodology** and a **framework** for human–AI collaboration in Cursor: it defines how your AI team should think and work together, then ships a concrete setup (prompts + files + workflows) that you can drop into your own repo.
+## Installation
 
+<p align="center">
+  <img src="logo.png" alt="cursor-agent-team logo" width="160">
+</p>
 
+Install `cursor-agent-team` inside the project where you want to use it. The recommended layout is a git submodule at `cursor-agent-team/`.
 
+### Let an agent install it
 
+Give your coding agent this instruction:
 
+```text
+Install cursor-agent-team into this project as a git submodule at cursor-agent-team/, then run the platform installer for my environment.
 
+Use:
+- Cursor: python3 cursor-agent-team/install.py
+- Claude Code: python3 cursor-agent-team/install_claude_code.py
+- TRAE SOLO: python3 cursor-agent-team/install_trae_solo.py
+```
 
-## Install at a glance
+### Install manually
 
-Install `cursor-agent-team` inside the project you want to work on, usually as a git submodule:
+From the root of your project:
 
 ```bash
 git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
@@ -35,227 +43,7 @@ Then run the installer for your platform:
 
 On Windows, use `py -3` instead of `python3` if needed.
 
-For agent-driven setup, give your coding agent this instruction:
-
-```text
-Install cursor-agent-team into this project as a git submodule at cursor-agent-team/, then run the platform installer for my environment.
-```
-
-The core methodology, scripts, persona config, and `cursor-agent-team/ai_workspace/` are shared across supported platforms.
-
-## Summary
-
-cursor-agent-team takes a pragmatic approach to "multi-agent" work in Cursor: instead of spawning many separate agents and passing state around, you keep a single LLM in one conversation and let multiple roles collaborate on the same shared context window. It behaves like a small-team workflow and Cursor configuration template, not yet another generic multi-agent framework.
-
-It is meant for developers, researchers, and advanced users who want a reliable "AI team" workflow inside Cursor, rather than a simple Q&A assistant.
-
-
-## What This Is
-
-- A workflow and methodology centered around a multi-role collaboration pattern, plus a concrete Cursor implementation
-- A single-conversation, multi-role template for AI collaboration
-- A practical repo you can fork and tweak to run real projects (papers, reports, code, experiments)
-
-## What This Is NOT
-
-- Not a hosted SaaS or productized platform
-- Not a "cover every use case" multi-agent framework
-- Not an autonomous pipeline where the AI runs on its own — a human is always in the loop
-- Not a plug-and-play solution for users seeking immediate productivity gains without conceptual investment
-
-## Why cursor-agent-team?
-
-We augment human capability; we don't replace it. Three design pillars:
-
-1. **Multi-role, not multi-agent** — One LLM, one conversation. `/discuss` and `/crew` share the same context. No agent handoff, no context loss. Like a meeting room where everyone has perfect memory.
-
-2. **Human-in-the-loop by design** — You are the conductor. We explore, you decide. We execute, you confirm. "Your command, our execution" — not "set and forget."
-
-3. **Empowerment, not replacement** — Democratizing team access: individuals get team-level capability. Cognitive load redistribution: you think strategy, we handle execution details. Frees you from the "details quagmire" for purer thinking.
-
-**Target users**: Individuals and small teams with methodological awareness—those who think about *how* they work with AI, not just *what* they want AI to do.
-
-**We believe**: AI should augment human judgment, not replace it. Context continuity matters more than agent count. Plans grounded in fresh research beat plans from training data alone. And the human must remain in the loop—as conductor, not spectator.
-
-## Core Model
-
-A **multi-role collaboration framework** for Cursor IDE. One LLM wears different "masks" (commands) in the same conversation. Provides:
-
-- **Structured workflow**: discuss → plan → execute
-- **Specialized roles**: Each command has distinct responsibilities
-- **Hard constraint validation**: Python scripts ensure deterministic output
-- **Extensible team**: Create new roles via `/prompt_engineer`
-
-## Positioning & Related Concepts
-
-### Concept Mapping
-
-| Concept | Our approach |
-|---------|--------------|
-| **Intelligence Augmentation (IA)** | We augment human cognitive capability rather than replace it (Licklider's man-computer symbiosis; Springer 2024) |
-| **Multi-role vs multi-agent** | Multi-agent systems use handoffs; context loss is a critical challenge. We avoid it by design: zero handoff, one conversation |
-| **Human-AI teaming** | Human as conductor; AI roles are "masks" in the same meeting (National Academies 2022) |
-| **Cognitive load redistribution** | You focus on strategy; we handle execution details (Cognitive Load Theory) |
-
-### Compared to Adjacent Approaches
-
-| vs | cursor-agent-team |
-|----|-------------------|
-| Multi-agent frameworks | No handoff, no context loss |
-| Autonomous agents | Human-in-the-loop, not set-and-forget |
-| Generic AI assistants | Structured roles, workflow enforcement, team metaphor |
-
-### Positioning in the Landscape
-
-We occupy a specific niche: **single-conversation, multi-role, context-preserving** collaboration.
-
-| Approach | Representative | Key Difference |
-|----------|---------------|----------------|
-| Multi-Agent Handoff | Google ADK, Microsoft AutoGen | They optimize handoff; we eliminate it |
-| Role-Playing MAS | ChatCollab, SupportPlay | Multi-instance, multi-conversation; we stay single-instance |
-| Single-Model Multi-Ability | CALM | Model-level unification; we focus on workflow orchestration |
-| Cursor Ecosystem | cursor-agents, cursor-rules templates | Engineering practice; we add methodology depth |
-
-**Evaluation context**: Among single-conversation, multi-role, context-heavy approaches, cursor-agent-team is a first-tier architectural reference implementation—designed for methodological exploration, not product deployment.
-
-## Harness Engineering Comparison
-
-cursor-agent-team can be viewed as a lightweight harness implementation for Cursor/TRAE SOLO scenarios, with a strong focus on methodology and the combination of soft and hard constraints.
-
-### Alignment with Harness Standards
-
-| Dimension | Harness Standard Focus | cursor-agent-team Status | Evaluation |
-| :-- | :-- | :-- | :-- |
-| Human-in-the-loop | Humans steer, agents execute; strong HITL | Explicitly states "You are the conductor" and "Human-in-the-loop by design" | Fully aligned |
-| Soft constraints (LLM layer) | Roles, rules, workflow, context engineering | `/discuss` `/crew` `/prompt_engineer` three roles + detailed command specifications + mdc rule system | Fully aligned |
-| Hard constraints (script layer) | Script/tool-based structure validation and risk control | `validate_topic_tree.py`, `preflight_check.py`, `cleanup_ai_workspace.py` for key output validation | Fully aligned |
-| Workflow | Clear phases, phase artifacts, and transition conditions | Explicit discuss→plan→execute→expand process and command diagram | Fully aligned |
-| Environment / File system | Dedicated workspace, context engineering | Mandatory `ai_workspace` directory agreement + installation script auto-generation and synchronization | Fully aligned |
-| Multi-agent collaboration | Multi-agent or multi-role orchestration | Chooses "single-model multi-role", switching masks via commands for collaboration in one conversation | A harness variant |
-| Tool layer / Sandbox | File operations, script execution, safety guards | Leverages IDE / OpenClaw / TRAE script execution capabilities + own Python script layer | Generally aligned |
-| Monitoring / Logs / Metrics | Service-level long-running monitoring, statistics | No system-level metrics/monitoring, only in-IDE short-term workflow | Explicitly omitted (intentional) |
-| Task queue / Long-running | Queues, retries, rollbacks, scheduling | Explicitly states it is not an "autonomous pipeline", assumes user presence, no server-side scheduling | Out of scope |
-| Enterprise governance / Permissions | Multi-project, multi-team governance | Targets individuals and small teams, no org-level governance | Not covered |
-
-### Beyond Traditional Harness
-
-cursor-agent-team extends beyond traditional harness engineering in several key areas:
-
-1. **Multi-role single-conversation as first-class citizen**
-   - Traditional harnesses often default to "multi-agent + state transfer"; we use "one model + multiple masks" with prompt-swap instead of state handoff
-   - This minimizes context cost: traditional MAS state-transfer requires 50–200KB compressed state with 10–20% context retention, while our prompt-swap uses only 1–3KB rule text with full history preserved
-
-2. **Aspect-Oriented Design for collaboration**
-   - Uses "Aspect-Oriented Design" to describe how cross-cutting concerns (Gleaning, Persona, TTS) are woven into the workflow at defined join points
-   - This creates a more systematic approach to collaboration than traditional skill architectures, which lack workflow models or join points
-
-3. **Depth of human-AI collaboration methodology**
-   - Emphasizes Intelligence Augmentation, Human-AI teaming, and Cognitive load redistribution, drawing on research from the National Academies and cognitive load theory
-   - Targets users with methodological awareness—those who think about *how* they work with AI, not just *what* they want AI to do
-
-In summary, cursor-agent-team is a "workflow-level / IDE-level harness" rather than a "platform-level / enterprise-level harness framework"—a conscious design choice to prioritize methodological depth over general platform features.
-
-## Who is this for?
-
-cursor-agent-team is designed for developers, researchers, and advanced Cursor users who:
-
-- Want a stable "AI team" inside a single Cursor conversation
-- Care about methodology and workflow, not just ad-hoc prompts
-- Are willing to spend a bit of time setting things up once, in exchange for a reusable workflow
-
-
-
-## Quick Start
-
-To use cursor-agent-team in Cursor:
-
-
-Tell Cursor Agent:
-
-```
-Install cursor-agent-team from https://github.com/thiswind/cursor-agent-team.git as a submodule and run the install script (python cursor-agent-team/install.py).
-```
-
-Then type `/discuss` to start and briefly describe what you want to achieve (e.g., "help me design and write a technical report on X").
-
-For manual installation, see [Installation](#installation).
-
-## Core Roles
-
-| Role | Command | Description |
-|------|---------|-------------|
-| **Discussion Partner** | `/discuss` | Exploration mode — breadth and depth, no execution. Research-first planning: automatically searches for latest academic and industry research before synthesizing plans (Retrieval-augmented planning; knowledge cutoff mitigation). |
-| **Crew Member** | `/crew` | Execution mode — strict adherence to plan as specification. Plan-and-Execute architecture; constrained generation. Exploitation mode. |
-| **Prompt Engineer** | `/prompt_engineer` | Creates and maintains new roles (commands) |
-
-**Research-first planning** — Plans should not come from LLM training data alone. Training data has a knowledge cutoff; plans synthesized from it can be outdated or wrong. We design `/discuss` to search for latest academic and industry research *before* synthesizing plans (retrieval-augmented planning). Fresh context, then synthesis—a methodological stance, not just a feature.
-
-## Workflow
-
-![Framework Banner — /crew, /discuss, /prompt_engineer](banner.png)
-
-```
-/discuss → [Explore & Plan] → /crew → [Execute] → Done
-                ↓
-         /prompt_engineer → [Create New Role] → Use New Command
-```
-
-1. **Plan**: Use `/discuss` to explore ideas and generate execution plans
-2. **Execute**: Use `/crew` to execute the plans
-3. **Expand**: Use `/prompt_engineer` to create new roles when needed
-
-## Installation
-
-Run these commands from the root of the project where you want to use the framework.
-
-### 1. Add the framework
-
-```bash
-git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
-```
-
-If you do not want a submodule, you can clone or copy the repo to `cursor-agent-team/`, but the installers assume that directory name.
-
-### 2. Install for your platform
-
-#### Cursor
-
-```bash
-python3 cursor-agent-team/install.py
-```
-
-Installs:
-
-- `.cursor/commands/discuss.md`
-- `.cursor/commands/prompt_engineer.md`
-- `.cursor/commands/crew.md`
-- `.cursor/commands/spec_translator.md`
-- matching `.cursor/rules/*.mdc` files
-
-#### Claude Code
-
-```bash
-python3 cursor-agent-team/install_claude_code.py
-```
-
-Installs project slash commands under `.claude/commands/`:
-
-- `/discuss`
-- `/prompt_engineer`
-- `/crew`
-- `/spec_translator`
-
-The Claude Code adaptation intentionally uses slash commands as role masks in the same conversation context. It does not install isolated subagents by default, because the framework's core model is shared-context mask switching rather than multi-agent handoff.
-
-#### TRAE SOLO
-
-```bash
-python3 cursor-agent-team/install_trae_solo.py
-```
-
-Installs TRAE SOLO skills under `.trae/skills/` and copies the `AGENTS.md` template if one does not already exist.
-
-### 3. Update
+### Update
 
 ```bash
 git submodule update --remote cursor-agent-team
@@ -264,7 +52,7 @@ python3 cursor-agent-team/install_claude_code.py  # Claude Code
 python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
 ```
 
-### 4. Uninstall installed platform files
+### Uninstall installed platform files
 
 ```bash
 python3 cursor-agent-team/uninstall.py --platform cursor
@@ -273,135 +61,57 @@ python3 cursor-agent-team/uninstall.py --platform claude_code
 
 TRAE SOLO files can be removed from `.trae/skills/` and `AGENTS.md` manually if needed.
 
-On Windows, use `py -3` instead of `python3` if needed.
+## What it is
 
-**Note**: `cursor-agent-team/ai_workspace/` is shared between supported platforms.
+<p align="center">
+  <img src="banner.png" alt="cursor-agent-team meeting-room workflow" width="760">
+</p>
+
+`cursor-agent-team` is not a traditional multi-agent system. It is closer to a small meeting room: the same model remains in the same conversation, and different commands make it wear different role masks.
+
+That means context is shared. You can discuss a plan with `/discuss`, then tell `/crew` "execute", and the execution role already knows what was discussed because it saw the same conversation.
+
+Core roles:
+
+| Role | Command | Purpose |
+|------|---------|---------|
+| Discussion Partner | `/discuss` | Explore ideas, clarify requirements, research, and generate plans |
+| Crew Member | `/crew` | Execute agreed plans strictly, step by step |
+| Prompt Engineer | `/prompt_engineer` | Create or maintain prompts, commands, and new role masks |
+| Spec Translator | `/spec_translator` | Convert plan files into spec-kit documents |
+
+Basic workflow:
+
+```text
+/discuss -> plan -> /crew -> execute
+          |
+          +-> /prompt_engineer -> new role mask
+```
+
+The shared workspace at `cursor-agent-team/ai_workspace/` stores plans, topic records, scratchpad notes, execution sessions, and other durable artifacts across supported platforms.
 
 ## Features
 
-- **Single conversation, multi-role**: all roles share one context; no complex state routing or orchestration layer
-- **Human-in-the-loop by design**: the workflow assumes you are present; major decisions require your confirmation
-- **Hard constraints in code, soft skills in the LLM**: topic tree validation, preflight checks, and other rules live in scripts; the LLM focuses on reasoning and generation
-- **Cursor-first experience**: commands and flows are designed around Cursor; no extra backend services required
-- **Proven in a real research project**: the cursor-agent-team paper was written using this framework inside Cursor
+- **Single conversation, multiple masks**: role switching without agent handoff or context loss.
+- **Human-in-the-loop workflow**: discussion, planning, execution, and expansion stay under user control.
+- **Script-backed constraints**: Python scripts handle preflight checks, phase markers, topic-tree validation, cleanup, and workspace generation.
+- **Shared AI workspace**: durable plans, notes, requirements, and execution records live under `cursor-agent-team/ai_workspace/`.
+- **Platform adapters**: Cursor, Claude Code, and TRAE SOLO use different host mechanisms while sharing the same methodology and scripts.
+- **Optional extensions**: persona output, inspiration cards, text-to-speech helpers, and spec-kit translation.
 
-### Agent Workspace
-
-Dedicated persistent workspace for agents. Agents can write scripts, take notes, save intermediate results from searches and research. Enables staged refinement for higher output quality than direct generation. See `ai_workspace/README.md`.
-
-### Persona System (v0.8.0+)
-
-Script-driven persona integration with **Persona Sandboxing**: the persona expresses at the Output Layer; the Work Layer (code, analysis, reasoning) runs in a clean context. Based on [persona-spec](https://github.com/thiswind/persona-spec).
-
-### Extended Features
-
-- **Inspiration Capital**: Scatter card collection for sparking creativity
-- **Text-to-Speech (macOS)**: Voice feedback via `say`
-- **Social Media**: Integration with [Moltbook](https://moltbook.com/)
-- **Spec-Kit Translator**: Converts plans to spec-kit format
-
-## Technical Architecture
-
-Hybrid architecture: LLM soft constraints (prompt rules) + script hard constraints (Python). Critical operations use deterministic scripts to validate outputs before committing.
-
-```
-┌─────────────────────────────────────────────────┐
-│                    LLM Layer                     │
-│   (Soft Constraints: Prompt rules)              │
-└────────────────────┬────────────────────────────┘
-                     │ Calls
-                     ▼
-┌─────────────────────────────────────────────────┐
-│                  Script Layer                    │
-│   (Hard Constraints: Python scripts)             │
-│   - validate_topic_tree.py  - preflight_check.py │
-│   - cleanup_ai_workspace.py                     │
-└─────────────────────────────────────────────────┘
-```
-
-**Architecture highlights**: Multi-role + single conversation; Plan-and-Execute; Dedicated agent workspace (context engineering, cognitive artifacts); Hybrid constraints (soft + hard); Phase markers (workflow verification); Command-as-role.
-
-## Why This Architecture
-
-We started from a different point than the Skills wave. Our design addresses problems that traditional rules-based and skill-based architectures cannot solve.
-
-### Orchestration vs Capability
-
-| Approach | Focus | What it solves |
-|----------|-------|----------------|
-| **Rules** | Passive constraints by scope | Code style, conventions—but cannot role-switch or orchestrate workflow |
-| **Skills** | Capability modules (add-and-use) | Extend what the agent can do—but no workflow model, no join points |
-| **Ours** | Orchestration-first, methodology-first | *How* humans and AI collaborate—workflow, role switching, spec-driven execution |
-
-We define collaboration workflow; we don't just add capabilities. Command + Rules + Scripts work together: Command defines phases (join points), Rules define aspects, Scripts provide deterministic validation.
-
-### Aspect-Oriented Design
-
-Cross-cutting concerns (Gleaning, Wandering, Persona Output, TTS) are woven into the workflow at defined join points—not embedded in core logic. Commands define Phase/Step as join points; Rules define aspects that invoke scripts at those points. Traditional Skill architectures have no workflow model or join points; they cannot achieve this weaving.
-
-### Spec-Script Integration
-
-Specification (Command + mdc) drives *when* and *why* to call; scripts execute *how* with deterministic validation. This aligns with "Blueprint First, Model Second" (workflow logic in spec, LLM for bounded tasks) and Formal-LLM (hard constraints via script validation). The spec-script loop—LLM reads spec, runs script, script validates—runs in a single conversation.
-
-### Why Cursor
-
-Cursor provides Commands (workflow definition), Rules (aspect definition), and Agent (script execution) in one session. This tight integration enables spec-driven execution and AOP-style weaving.
-
-**This binding is intentional.** We start with Cursor because:
-- Its Rules, integrated terminal, and workspace model align naturally with our command–rules–scripts–workspace architecture
-- It aggregates state-of-the-art models behind a single subscription
-- Its IDE experience (interface, file tree, workspace semantics) matches our needs
-
-We prioritize **depth on Cursor** rather than breadth of platform support. A watered-down, platform-agnostic version would lose the tight spec-script loop that makes our methodology work.
-
-Future ports will be considered only where we can preserve the same methodological guarantees (minimal handoff, HITL, workspace semantics). This is a conscious design choice, not a limitation or oversight.
-
-### TRAE SOLO Adaptation
-
-A [TRAE SOLO](https://docs.trae.cn/solo/what-is-trae-solo) (ByteDance) adaptation is available. See [TRAE_SOLO_README.md](TRAE_SOLO_README.md) for installation and usage instructions.
-
-TRAE SOLO uses custom Agents (instead of Commands), Skills (instead of mdc Rules), and a separate project rules file. The core methodology, scripts, and ai_workspace are shared across both platforms.
-
-See `cursor-agent-team/_scripts/README.md` for script details.
-
-### Minimal Handoff in Numbers
-
-| Handoff Type | Context Cost | Effect |
-|--------------|--------------|--------|
-| State-transfer (MAS) | 50–200KB compressed state | 10–20% context retention (estimate) |
-| Prompt-swap (ours) | 1–3KB rule text | Full history preserved |
-
-We don't transfer state; we swap masks. The "Writer" knows what the "Planner" discussed because they share the same memory stream.
-
-## Research Foundation
+## Paper
 
 This repository is the reference implementation of:
 
 > Hu, K. (2026). cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration. Zenodo. https://doi.org/10.5281/zenodo.18605311
 
-The paper itself was written using this framework inside Cursor as a dogfooding case study.
-
-Grounded in peer-reviewed research:
-- **Intelligence Augmentation**: Licklider (1960) — human-computer symbiosis
-- **Lost in the Middle**: Liu et al. (2023) — context degradation in long sequences
-- **Aspect-Oriented Programming**: Kiczales et al. (1997) — cross-cutting concerns separation
-- **Retrieval-Augmented Planning**: RaDA, RPG — fresh information before synthesis
-
-## Direction
-
-See [DIRECTION.md](DIRECTION.md) for potential future directions.
-
-We focus on methodology depth over feature breadth. No timeline commitments — the project evolves based on real needs.
-
-## Version
-
-Current version: **v0.14.0**. See [CHANGELOG.md](CHANGELOG.md).
+The paper explains the methodology, positioning, and design rationale in more depth.
 
 ## Citation
 
 If you use cursor-agent-team in your research, please cite:
 
-```
+```text
 Hu, K. (2026). cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration. Zenodo. https://doi.org/10.5281/zenodo.18605311
 ```
 
@@ -417,6 +127,10 @@ Or in BibTeX:
   url       = {https://doi.org/10.5281/zenodo.18605311}
 }
 ```
+
+## Version
+
+Current version: **v0.14.0**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
