@@ -1,6 +1,6 @@
 # cursor-agent-team · Single-Conversation AI Team Framework
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18605311.svg)](https://doi.org/10.5281/zenodo.18605311)
+[![DOI](doi-badge.svg)](https://doi.org/10.5281/zenodo.18605311)
 
 `cursor-agent-team` is a single-conversation, multi-role framework for working with AI in Cursor, Claude Code, and TRAE SOLO. One LLM stays in one shared context and switches role masks such as `/discuss`, `/crew`, and `/prompt_engineer`.
 
