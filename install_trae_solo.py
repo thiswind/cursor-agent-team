@@ -97,9 +97,9 @@ def main():
     u.colored_print("✓ Installation information recorded", "green")
     print()
 
-    # Step 6: Update .gitignore
-    print("Step 6: Updating .gitignore...")
-    u.update_gitignore(project_root, SUBMODULE_NAME)
+    # Step 6: Check git tracking hints
+    print("Step 6: Checking git tracking hints...")
+    u.warn_if_ignored(project_root, SUBMODULE_NAME)
     print()
 
     # Summary
@@ -131,6 +131,13 @@ def main():
     print("   - cursor-agent-team-discuss")
     print("   - cursor-agent-team-crew")
     print("   - cursor-agent-team-prompt-engineer")
+    print()
+    u.print_git_tracking_note([
+        ".gitmodules",
+        SUBMODULE_NAME,
+        ".trae/skills/",
+        "AGENTS.md",
+    ])
     print()
     print("Persona System:")
     print(f"  To enable persona, edit: {SUBMODULE_NAME}/config/persona_config.yaml")

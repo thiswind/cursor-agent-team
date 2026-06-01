@@ -2,7 +2,9 @@
 """
 TDD Tests for Topic Tree Auto-Compress Feature
 
-Run with: python -m pytest test_validate_topic_tree.py -v
+Run with:
+    python -m pytest test_validate_topic_tree.py -v
+    python test_validate_topic_tree.py
 """
 
 import pytest
@@ -241,3 +243,7 @@ class TestSubTopicIdExtraction:
         ids = extract_topic_ids(content)
         assert "D" in ids
         assert "D.1" in ids
+
+
+if __name__ == "__main__":
+    raise SystemExit(pytest.main([__file__, "-v"]))

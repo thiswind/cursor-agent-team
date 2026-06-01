@@ -145,6 +145,36 @@ def update_gitignore(project_root, pattern):
     colored_print(f"  ✓ Added '{pattern}' to .gitignore", "green")
 
 
+def warn_if_ignored(project_root, pattern):
+    """Warn if the host .gitignore hides the submodule path."""
+    gi_path = os.path.join(project_root, ".gitignore")
+    if not os.path.isfile(gi_path):
+        return
+
+    with open(gi_path, encoding="utf-8") as f:
+        lines = f.read().splitlines()
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped == pattern or stripped == f"/{pattern}":
+            colored_print(
+                f"  Warning: .gitignore contains '{stripped}'. If this is a git submodule, "
+                "commit the submodule gitlink and consider removing that ignore rule.",
+                "yellow",
+            )
+            return
+
+
+def print_git_tracking_note(paths):
+    """Print files users commonly commit after submodule installation."""
+    print("Git tracking note:")
+    print("  If installed as a submodule, commit these files in your host project:")
+    for path in paths:
+        print(f"    {path}")
+
+
 def get_project_root(script_path):
     """Derive project root from install script path (parent of parent)."""
     return str(Path(script_path).resolve().parent.parent)

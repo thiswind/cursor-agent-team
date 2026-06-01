@@ -23,12 +23,13 @@ import sys
 from pathlib import Path
 from typing import Any
 
-# Try to import yaml with friendly error message
+# PyYAML is optional unless persona output is enabled.
 try:
     import yaml
 except ImportError:
-    print("Error: PyYAML is required. Install with: pip install pyyaml", file=sys.stderr)
-    sys.exit(1)
+    yaml = None
+
+YAML_MISSING_MESSAGE = "PyYAML is not installed; persona output is disabled. Install with: pip install pyyaml"
 
 
 def get_project_root() -> Path:
@@ -44,10 +45,13 @@ def get_config_path() -> Path:
 def load_config() -> dict[str, Any]:
     """Load persona configuration"""
     config_path = get_config_path()
-    
+
+    if yaml is None:
+        return {"enabled": False, "path": "", "error": YAML_MISSING_MESSAGE}
+
     if not config_path.exists():
         return {"enabled": False, "path": "", "error": "Config file not found"}
-    
+
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f) or {}
@@ -58,11 +62,14 @@ def load_config() -> dict[str, Any]:
 
 def load_persona(persona_path: str) -> dict[str, Any] | None:
     """Load persona definition file"""
+    if yaml is None:
+        return None
+
     path = Path(persona_path)
-    
+
     if not path.exists():
         return None
-    
+
     try:
         with open(path, "r", encoding="utf-8") as f:
             persona = yaml.safe_load(f)
@@ -122,12 +129,13 @@ def get_persona_for_output() -> dict[str, Any]:
     
     # Check if enabled
     if not config.get("enabled", False):
+        config_error = config.get("error")
         return {
             "enabled": False,
             "persona": None,
             "summary": None,
-            "error": None,
-            "message": "Persona system is disabled in config"
+            "error": config_error,
+            "message": config_error or "Persona system is disabled in config"
         }
     
     # Check if output layer is enabled

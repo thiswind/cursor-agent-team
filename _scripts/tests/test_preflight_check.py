@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """
-Test suite for preflight_check.py
+Test suite for preflight_check.py.
 
-Uses TDD approach - these tests are written BEFORE the implementation.
+The preflight output is intentionally concise so role commands can read it
+without adding unnecessary context noise.
 """
 
+import os
 import subprocess
 import sys
-import os
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 
 # Get the project root directory (cursor-agent-team/)
 PROJECT_ROOT = Path(__file__).parent.parent.parent
@@ -17,7 +18,7 @@ SCRIPT_PATH = PROJECT_ROOT / "_scripts" / "preflight_check.py"
 
 
 def run_preflight_check():
-    """Helper function to run preflight_check.py and capture output."""
+    """Run preflight_check.py and capture output."""
     result = subprocess.run(
         [sys.executable, str(SCRIPT_PATH)],
         capture_output=True,
@@ -28,81 +29,76 @@ def run_preflight_check():
 
 
 class TestPreflightCheckOutput:
-    """Tests for preflight_check.py output format and content."""
+    """Tests for the concise preflight output contract."""
 
     def test_output_includes_timestamp(self):
-        """Output must include current time."""
+        """Output must include compact PREFLIGHT timestamp."""
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script failed with: {stderr}"
-        
-        # Check for time format pattern (e.g., "2026-02-02 23:20:00")
-        assert "当前时间:" in stdout or "⏰" in stdout, \
-            f"Output should include timestamp marker. Got: {stdout}"
-        
-        # Check for year pattern
+
+        assert stdout.startswith("PREFLIGHT "), \
+            f"Output should start with PREFLIGHT marker. Got: {stdout}"
+
         current_year = str(datetime.now().year)
         assert current_year in stdout, \
             f"Output should include current year {current_year}. Got: {stdout}"
 
     def test_output_includes_workspace_status(self):
-        """Output must include workspace status section."""
+        """Output must include compact workspace status."""
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script failed with: {stderr}"
-        
-        # Check for workspace status markers
-        assert "工作区状态" in stdout or "📋" in stdout, \
-            f"Output should include workspace status section. Got: {stdout}"
 
-    def test_output_includes_reminders(self):
-        """Output must include operation reminders section."""
+        assert "STATUS:" in stdout, \
+            f"Output should include STATUS line. Got: {stdout}"
+        assert "topics[" in stdout, \
+            f"Output should include topics status. Got: {stdout}"
+        assert "cards[" in stdout, \
+            f"Output should include cards count. Got: {stdout}"
+        assert "notes[" in stdout, \
+            f"Output should include notes count. Got: {stdout}"
+
+    def test_output_includes_script_reminders(self):
+        """Output must include script reminders."""
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script failed with: {stderr}"
-        
-        # Check for reminders section
-        assert "操作约定" in stdout or "📌" in stdout, \
-            f"Output should include reminders section. Got: {stdout}"
-        
-        # Check for key tool reminders
+
+        assert "SCRIPTS:" in stdout, \
+            f"Output should include SCRIPTS line. Got: {stdout}"
         assert "cleanup_ai_workspace.py" in stdout, \
             f"Output should mention cleanup script. Got: {stdout}"
         assert "create_card.py" in stdout, \
             f"Output should mention create_card script. Got: {stdout}"
+        assert "draw_cards.py" in stdout, \
+            f"Output should mention draw_cards script. Got: {stdout}"
 
-    def test_output_under_20_lines(self):
-        """Output must be concise, under 20 lines."""
+    def test_output_includes_end_checklist(self):
+        """Output must include end-of-command checklist reminder."""
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script failed with: {stderr}"
-        
+
+        assert "END_CHECKLIST:" in stdout, \
+            f"Output should include END_CHECKLIST line. Got: {stdout}"
+        assert "persona_output.py" in stdout, \
+            f"Output should mention persona output script. Got: {stdout}"
+
+    def test_output_includes_marker_contract(self):
+        """Output must remind commands about phase markers."""
+        stdout, stderr, code = run_preflight_check()
+        assert code == 0, f"Script failed with: {stderr}"
+
+        assert "OUTPUT_MARKERS:" in stdout, \
+            f"Output should include OUTPUT_MARKERS line. Got: {stdout}"
+        assert "[Phase N DONE]" in stdout, \
+            f"Output should mention phase marker format. Got: {stdout}"
+
+    def test_output_under_10_lines(self):
+        """Output must stay concise."""
+        stdout, stderr, code = run_preflight_check()
+        assert code == 0, f"Script failed with: {stderr}"
+
         lines = [line for line in stdout.strip().split('\n') if line.strip()]
-        assert len(lines) <= 20, \
-            f"Output should be under 20 lines, got {len(lines)} lines: {stdout}"
-
-    def test_checks_discussion_topics(self):
-        """Output must check for discussion_topics.md existence."""
-        stdout, stderr, code = run_preflight_check()
-        assert code == 0, f"Script failed with: {stderr}"
-        
-        # Should mention discussion_topics
-        assert "discussion_topics" in stdout, \
-            f"Output should check discussion_topics.md. Got: {stdout}"
-
-    def test_counts_scatter_cards(self):
-        """Output must count scatter cards."""
-        stdout, stderr, code = run_preflight_check()
-        assert code == 0, f"Script failed with: {stderr}"
-        
-        # Should mention cards with count
-        assert "inspiration_capital" in stdout or "cards" in stdout, \
-            f"Output should mention inspiration capital/cards. Got: {stdout}"
-
-    def test_counts_notes(self):
-        """Output must count notes."""
-        stdout, stderr, code = run_preflight_check()
-        assert code == 0, f"Script failed with: {stderr}"
-        
-        # Should mention notes
-        assert "notes" in stdout, \
-            f"Output should mention notes. Got: {stdout}"
+        assert len(lines) <= 10, \
+            f"Output should be under 10 lines, got {len(lines)} lines: {stdout}"
 
 
 class TestPreflightCheckExecution:
@@ -113,13 +109,10 @@ class TestPreflightCheckExecution:
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script should exit with code 0, got {code}. Stderr: {stderr}"
 
-    def test_output_has_header_and_footer(self):
-        """Output should have clear header and footer markers."""
+    def test_output_has_ready_footer(self):
+        """Output should end with READY."""
         stdout, stderr, code = run_preflight_check()
         assert code == 0, f"Script failed with: {stderr}"
-        
-        # Check for boundary markers
-        assert "Preflight Check" in stdout or "===" in stdout, \
-            f"Output should have clear header. Got: {stdout}"
-        assert "Ready" in stdout or "===" in stdout, \
-            f"Output should have clear footer. Got: {stdout}"
+
+        assert stdout.strip().endswith("READY"), \
+            f"Output should end with READY. Got: {stdout}"

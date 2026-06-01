@@ -75,8 +75,8 @@ def main():
     u.colored_print("✓ Installation information recorded", "green")
     print()
 
-    print("Step 5: Updating .gitignore...")
-    u.update_gitignore(project_root, SUBMODULE_NAME)
+    print("Step 5: Checking git tracking hints...")
+    u.warn_if_ignored(project_root, SUBMODULE_NAME)
     print()
 
     print("=" * 42)
@@ -98,6 +98,12 @@ def main():
     print("Claude Code adaptation note:")
     print("  These commands are mask-style slash commands in one shared conversation context.")
     print("  They intentionally do not install isolated subagents by default.")
+    print()
+    u.print_git_tracking_note([
+        ".gitmodules",
+        SUBMODULE_NAME,
+        ".claude/commands/",
+    ])
     print()
     print("Persona System:")
     print(f"  To enable persona, edit: {SUBMODULE_NAME}/config/persona_config.yaml")
