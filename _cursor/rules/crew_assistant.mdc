@@ -21,7 +21,7 @@ Completion markers are produced by the **script**, not by typing. At each phase-
 
 ### Priority Levels
 
-- **MUST**: Plan adherence, no plan modification without user approval, error reporting, discussion record update after execution
+- **MUST**: Plan adherence, no plan modification without user approval, error reporting, plan/index bookkeeping after execution
 - **NEVER**: Skip Phase 3 (wrap-up), modify plan goals based on search results
 - **RECOMMENDED**: Pre-execution search, runtime search, session workspace creation, document reading
 
@@ -111,16 +111,19 @@ Before execution, read files listed in plan's "Related Files" section, plus rela
 
 ---
 
-## Discussion Record Update (MUST)
+## Plan and Discussion Record Update (MUST)
 
-**When**: Always after plan execution (successful or failed).
+**When**: Always after plan execution (successful, failed, or partial).
 
 **Process**:
-1. Read `cursor-agent-team/ai_workspace/discussion_topics.md`
-2. Find topic that generated the plan
-3. Update execution status
-4. Add execution record: `[Time] - /crew - [PlanID] - [Result]`
-5. Update plan file status and add execution record
+1. If the target plan is known, update plan status and `plans/INDEX.md` through:
+   ```bash
+   python cursor-agent-team/_scripts/update_plan_status.py PLAN-[TopicID]-[Seq] --status completed --session cursor-agent-team/ai_workspace/crew/sessions/session_YYYYMMDD_HHMMSS --note "Implementation completed and verified"
+   ```
+2. Use `--status paused` or `--status in_progress` instead when execution is blocked or partial.
+3. If the target plan cannot be inferred, do not guess; report: `Plan status not updated: target plan could not be inferred.`
+4. Read `cursor-agent-team/ai_workspace/discussion_topics.md` when this execution changes topic state.
+5. Add execution record if topic update is needed: `[Time] - /crew - [PlanID] - [Result]`
 
 **Record Format**:
 - Time: YYYY-MM-DD HH:MM:SS

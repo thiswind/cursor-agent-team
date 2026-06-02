@@ -53,9 +53,14 @@ python cursor-agent-team/_scripts/preflight_check.py
 ### Phase 3: Wrap-up ⚠️ DO NOT SKIP
 
 **Step 3.1: Record Results**
-- Update plan status to "completed"
-- Update `discussion_topics.md` execution record
-- Format: `[Time] - /crew - [PlanID] - Execution completed (success/failed/partial)`
+- If the target plan is known, update plan/index bookkeeping with:
+  ```bash
+  python cursor-agent-team/_scripts/update_plan_status.py PLAN-[TopicID]-[Seq] --status completed --session cursor-agent-team/ai_workspace/crew/sessions/session_YYYYMMDD_HHMMSS --note "Implementation completed and verified"
+  ```
+- Use `--status paused` or `--status in_progress` instead when execution is blocked or partial.
+- If the target plan cannot be inferred, do not guess; report: `Plan status not updated: target plan could not be inferred.`
+- Update `discussion_topics.md` execution record only when this execution changes topic state.
+- Record format when topic update is needed: `[Time] - /crew - [PlanID] - Execution completed (success/failed/partial)`
 
 **Step 3.2: Gleaning Check**
 - Any useful methods/techniques discovered during execution?

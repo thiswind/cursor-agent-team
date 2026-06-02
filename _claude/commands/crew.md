@@ -16,7 +16,7 @@ Arguments: `$ARGUMENTS`
 - Do not modify plan goals or steps without user confirmation.
 - If the intended plan is ambiguous, ask before acting.
 - Search or inspect documentation when blocked, but use findings only to complete the plan, not to change the plan goal.
-- Record execution results in the plan file and topic tree after execution.
+- Record execution results after execution. When a target plan is known, use `update_plan_status.py` for plan/index bookkeeping instead of manual edits.
 
 ## Workflow
 
@@ -60,13 +60,17 @@ Arguments: `$ARGUMENTS`
 
 ### Phase 3: Wrap-up
 
-1. Update the plan status and append an execution record.
-2. Update `cursor-agent-team/ai_workspace/discussion_topics.md` through:
+1. If the target plan is known, update plan status and append an execution record through:
+   ```bash
+   python3 cursor-agent-team/_scripts/update_plan_status.py PLAN-[TopicID]-[Seq] --status completed --session cursor-agent-team/ai_workspace/crew/sessions/session_YYYYMMDD_HHMMSS --note "Implementation completed and verified"
+   ```
+   Use `--status paused` or `--status in_progress` instead when execution is blocked or partial. If the target plan cannot be inferred, do not guess; report `Plan status not updated: target plan could not be inferred.`
+2. If this execution changes the topic state, update `cursor-agent-team/ai_workspace/discussion_topics.md` through:
    ```bash
    python3 cursor-agent-team/_scripts/validate_topic_tree.py update --stdin
    ```
 3. If useful execution learning emerged, create an inspiration card; otherwise skip silently.
-4. Report concise results and any verification performed.
+4. Report concise results, verification performed, and the JSON result from `update_plan_status.py` when it ran.
 5. End with:
    ```bash
    python3 cursor-agent-team/_scripts/phase_marker.py 3 true
