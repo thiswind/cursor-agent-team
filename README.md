@@ -130,7 +130,7 @@ Or in BibTeX:
 
 ## Version
 
-Current version: **v0.14.0**. See [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.16.1**. See [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

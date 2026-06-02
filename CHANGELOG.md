@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.16.1] - 2026-06-02
+
+### Fixed
+- Added `requirements.txt` for Python third-party dependencies (`PyYAML`, `pytest`) so fresh installs can install required packages consistently.
+- Improved Claude Code install/self-check reliability: graceful persona fallback without PyYAML, aligned preflight tests, direct pytest execution, safer submodule tracking guidance, and plan status bookkeeping helper.
+
+### Technical Details
+- PATCH increment (0.16.0 → 0.16.1) — dependency declaration and Issue #1 reliability fixes.
+
 ## [0.14.0] - 2026-04-08
 
 ### Added
