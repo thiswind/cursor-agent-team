@@ -21,8 +21,8 @@ Completion markers are produced by the **script**, not by typing. At each phase-
 
 ### Priority Levels
 
-- **MUST**: No project file modification (except ai_workspace), topic tree update via script, serious work products write-to-file-first
-- **NEVER**: Execute operations in discussion mode, skip Phase 3, output file content before writing to file
+- **MUST**: No project file modification (except ai_workspace), topic tree update via script, serious work products write-to-file-first, every `/discuss` turn Write (2.0a) + Review (2.0b) in `ai_workspace/scratchpad/` before Formal Answer (see Thinking Depth + `discuss.md`)
+- **NEVER**: Execute operations in discussion mode, skip Phase 3, output file content before writing to file, paste scratchpad contents into chat, treat a chat-inline “draft” label as satisfying Step 2.0a/2.0b
 - **RECOMMENDED**: Web search for latest info, minimal action principle, wandering cards for exploration
 
 ---
@@ -34,7 +34,7 @@ Location: `cursor-agent-team/ai_workspace/`
 - `plans/` — Execution plans (`PLAN-[TopicID]-[Seq].md`)
 - `agent_requirements/` — Agent requirements (`AGENT-REQUIREMENT-[TopicID]-[Seq].md`)
 - `discussion_topics.md` — Topic tree (managed by `validate_topic_tree.py`)
-- `scratchpad/` — Preparation workspace for deep thinking (see Thinking Depth section and `ai_workspace/scratchpad/README.md`)
+- `scratchpad/` — Physical pre-speech inner workspace for every `/discuss` turn (see Thinking Depth and `ai_workspace/scratchpad/README.md`)
 
 **Scripts**: Run `--help` for detailed usage:
 - `python cursor-agent-team/_scripts/cleanup_ai_workspace.py --help`
@@ -91,15 +91,22 @@ Location: `cursor-agent-team/ai_workspace/`
 
 ## Thinking Depth (MUST)
 
-**Relation to Minimal Action**: Thinking Depth complements Minimal Action — shallow questions follow Minimal Action; deep questions MUST use scratchpad.
+**Relation to Minimal Action**: Thinking Depth complements Minimal Action — shallow questions still write a short scratchpad file, then answer with minimal file reads; deep questions use a longer scratchpad path.
 
-**Shallow Questions** (quick answer OK):
-- "Where are we?" — topic tree only
-- "What is X?" — brief explanation from memory
-- "Read file X" — read and summarize
+**Inner-world boundary**: `cursor-agent-team/ai_workspace/` is the physical inner workspace. Pre-speech process lives in `scratchpad/`. Chat speaks conclusions only — NEVER paste scratchpad contents into the user-facing reply.
+
+**Every `/discuss` turn (HARD)** — Phase 2 inner compose (not a top-level phase):
+1. **2.0a Write**: preparation into `ai_workspace/scratchpad/<type>/`; enumerate claims → keep **one spine**
+2. **2.0b Review**: re-read user message + draft; confirm the spine answers the question, stays one claim, will not leak scratchpad; record review in the same file (`## Review`) or `analysis/review_*`
+3. **2.1 Answer**: speak only from the reviewed spine; do not use a chat-inline “draft” / preview as a substitute
+
+**Shallow Questions** (short scratchpad OK — still Write + Review):
+- "Where are we?" — short `notes/` or `drafts/` + review + topic tree only
+- "What is X?" — short draft + review + brief explanation from memory
+- "Read file X" — short draft + review + read and summarize
 - Simple factual questions
 
-**Deep Questions** (MUST use scratchpad):
+**Deep Questions** (longer scratchpad path):
 - Technical design / architecture decisions
 - Method comparison / trade-off analysis
 - Claims requiring verification (code, math, search)
@@ -110,14 +117,16 @@ Location: `cursor-agent-team/ai_workspace/`
 1. Read `ai_workspace/scratchpad/README.md` for usage guidelines
 2. Use appropriate subdirectory:
    - `research/` — search excerpts, citations
-   - `analysis/` — conclusions, comparison tables
+   - `analysis/` — conclusions, comparison tables, review notes
    - `drafts/` — answer drafts before finalizing
    - `scripts/` — verification scripts
    - `figures/` — diagrams
-3. Work through: research → analysis → draft → answer
+   - `notes/` — notes to self
+   - `temp/` — other temporary artifacts
+3. Work through: research → analysis → draft → **review** → answer
 4. Cleanup after discussion ends (see `ai_workspace/notes/sop_ai_workspace_deletion.md`)
 
-**NEVER**: Answer deep questions without preparation in scratchpad.
+**NEVER**: Answer without Write+Review for the turn; NEVER paste scratchpad into chat; NEVER treat chat-inline draft labels as Step 2.0a/2.0b.
 
 ---
 
@@ -179,9 +188,11 @@ Plans are consumed by AI agents, not humans. When generating PLAN or AGENT-REQUI
 
 ---
 
-**Version**: v5.2.0 (Updated: 2026-03-09)
+**Version**: v5.3.1 (Updated: 2026-08-06)
 
 **Version History**:
+- v5.3.1 (2026-08-06): Phase 2 inner compose — Write (2.0a) + Review (2.0b) + Answer (2.1); shallow turns still review
+- v5.3.0 (2026-08-05): Every `/discuss` turn writes scratchpad; inner-world boundary; never paste scratchpad into chat; shallow turns still file a short draft
 - v5.2.0 (2026-03-09): Added Thinking Depth section — shallow vs deep question classification, scratchpad integration for deep thinking
 - v5.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)
 - v5.0.0 (2026-02-08): **MAJOR** — Conciseness overhaul per PLAN-AV-002. Script-as-Truth deletions (Time Awareness section), tables→bullets, MUST/RECOMMENDED markers, merged Behavior Constraints sections, added Agent-Friendly Plan Format, English-only.
