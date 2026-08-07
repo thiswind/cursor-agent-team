@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""uninstall.py - Uninstall Cursor AI Agent Team Framework (Cursor platform).
+"""uninstall.py - Uninstall Cursor AI Agent Team Framework.
 
 Usage:
-  python cursor-agent-team/uninstall.py [--yes] [--remove-submodule]
+  python cursor-agent-team/uninstall.py [--platform cursor|claude_code|trae_solo] [--yes] [--remove-submodule]
 """
 
 from __future__ import annotations
@@ -24,6 +24,7 @@ SUBMODULE_NAME = "cursor-agent-team"
 PLATFORM_INSTALL_INFO = {
     "cursor": os.path.join(".cursor", ".cursor-agent-team-installed"),
     "claude_code": os.path.join(".claude", ".cursor-agent-team-installed"),
+    "trae_solo": os.path.join(".trae", ".cursor-agent-team-installed"),
 }
 PLATFORM_DIRS = {
     "cursor": [
@@ -33,12 +34,18 @@ PLATFORM_DIRS = {
     ],
     "claude_code": [
         (os.path.join(".claude", "commands"), ".claude/commands/"),
+        (os.path.join(".claude", "rules"), ".claude/rules/"),
         (".claude", ".claude/"),
+    ],
+    "trae_solo": [
+        (os.path.join(".trae", "skills"), ".trae/skills/"),
+        (".trae", ".trae/"),
     ],
 }
 PLATFORM_LABELS = {
     "cursor": "Cursor",
     "claude_code": "Claude Code",
+    "trae_solo": "TRAE SOLO",
 }
 
 
@@ -162,7 +169,11 @@ def main() -> int:
     for rel in files:
         if not isinstance(rel, str) or not rel:
             continue
-        abs_path = os.path.join(project_root, rel)
+        abs_path = os.path.abspath(os.path.join(project_root, rel))
+        resolved_path = os.path.realpath(abs_path)
+        if os.path.commonpath([os.path.realpath(project_root), resolved_path]) != os.path.realpath(project_root):
+            u.colored_print(f"Warning: ignoring unsafe recorded path {rel}", "yellow")
+            continue
         if _remove_path(abs_path):
             removed.append(rel)
 

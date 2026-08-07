@@ -31,15 +31,38 @@ def ensure_dir(path):
     os.makedirs(path, exist_ok=True)
 
 
-def copy_file(src, dst):
+def copy_file(src, dst, overwrite=True):
     """Copy a single file. Returns True on success, False on failure."""
     try:
         os.makedirs(os.path.dirname(dst), exist_ok=True)
+        if not overwrite and os.path.lexists(dst):
+            return False
         shutil.copy2(src, dst)
         return True
     except (FileNotFoundError, OSError) as e:
         colored_print(f"Error copying {src} -> {dst}: {e}", "red")
         return False
+
+
+def _validate_destination(path, project_root):
+    """Reject symlinked destination components and paths outside project_root."""
+    root = os.path.abspath(project_root)
+    resolved_root = os.path.realpath(root)
+    absolute = os.path.abspath(path)
+    try:
+        if os.path.commonpath([root, absolute]) != root:
+            raise OSError(f"destination is outside project root: {path}")
+    except ValueError:
+        raise OSError(f"destination is outside project root: {path}")
+    current = root
+    relative = os.path.relpath(absolute, root)
+    if relative != ".":
+        for component in relative.split(os.sep):
+            current = os.path.join(current, component)
+            if os.path.islink(current):
+                raise OSError(f"destination contains symlink: {current}")
+    if os.path.commonpath([resolved_root, os.path.realpath(absolute)]) != resolved_root:
+        raise OSError(f"resolved destination is outside project root: {path}")
 
 
 def copy_files(file_list, src_base, dst_base):
@@ -49,6 +72,12 @@ def copy_files(file_list, src_base, dst_base):
     for src_rel, dst_rel in file_list:
         src = os.path.join(src_base, src_rel)
         dst = os.path.join(dst_base, dst_rel)
+        try:
+            _validate_destination(dst, dst_base)
+        except OSError as e:
+            colored_print(f"Error copying {src} -> {dst}: {e}", "red")
+            fail.append(dst_rel)
+            continue
         if copy_file(src, dst):
             success.append(dst_rel)
             colored_print(f"  ✓ {dst_rel}", "green")
@@ -58,18 +87,36 @@ def copy_files(file_list, src_base, dst_base):
     return success, fail
 
 
-def copy_dirs(dir_list, src_base, dst_base):
-    """Batch copy directories. file_list is [(src_rel, dst_rel), ...].
-    Returns (success_list, fail_list)."""
+def copy_dirs(dir_list, src_base, dst_base, owned_files=None):
+    """Merge-copy directories while preserving existing destination files.
+
+    Returns individual copied files so recorded-file-only uninstall does not
+    remove user-owned files added to an installed directory.
+    """
     success, fail = [], []
+    owned_files = set(owned_files or [])
     for src_rel, dst_rel in dir_list:
         src = os.path.join(src_base, src_rel)
         dst = os.path.join(dst_base, dst_rel)
         try:
-            if os.path.exists(dst):
-                shutil.rmtree(dst)
-            shutil.copytree(src, dst)
-            success.append(dst_rel)
+            if not os.path.isdir(src):
+                raise FileNotFoundError(src)
+            copied = []
+            for root, _, filenames in os.walk(src):
+                rel_root = os.path.relpath(root, src)
+                target_root = dst if rel_root == "." else os.path.join(dst, rel_root)
+                _validate_destination(target_root, dst_base)
+                os.makedirs(target_root, exist_ok=True)
+                for filename in sorted(filenames):
+                    source_file = os.path.join(root, filename)
+                    target_file = os.path.join(target_root, filename)
+                    target_rel = os.path.relpath(target_file, dst_base)
+                    _validate_destination(target_file, dst_base)
+                    if os.path.lexists(target_file) and target_rel not in owned_files:
+                        continue
+                    shutil.copy2(source_file, target_file)
+                    copied.append(os.path.relpath(target_file, dst_base))
+            success.extend(copied)
             colored_print(f"  ✓ {dst_rel}", "green")
         except (FileNotFoundError, OSError) as e:
             fail.append(dst_rel)
@@ -78,7 +125,7 @@ def copy_dirs(dir_list, src_base, dst_base):
 
 
 def get_version(submodule_dir):
-    """Get version from git tag or CHANGELOG.md."""
+    """Get version from an exact tag, then tracked release metadata."""
     version = "0.1.0"
     try:
         result = subprocess.run(
@@ -87,14 +134,15 @@ def get_version(submodule_dir):
         )
         if result.returncode == 0 and result.stdout.strip():
             return result.stdout.strip()
-        result = subprocess.run(
-            ["git", "describe", "--tags", "HEAD"],
-            cwd=submodule_dir, capture_output=True, text=True,
-        )
-        if result.returncode == 0 and result.stdout.strip():
-            return result.stdout.strip()
     except FileNotFoundError:
         pass
+
+    version_file = os.path.join(submodule_dir, "VERSION")
+    if os.path.isfile(version_file):
+        with open(version_file, encoding="utf-8") as f:
+            value = f.read().strip()
+        if value:
+            return value if value.startswith("v") else f"v{value}"
 
     changelog = os.path.join(submodule_dir, "CHANGELOG.md")
     if os.path.isfile(changelog):
@@ -108,13 +156,14 @@ def get_version(submodule_dir):
 
 
 def write_install_info(path, version, platform_name, files_list):
-    """Write JSON installation record."""
+    """Write JSON installation record for artifacts owned by this install."""
+    owned_files = list(dict.fromkeys(item for item in files_list if isinstance(item, str)))
     data = {
         "version": version,
         "installed_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "source": "cursor-agent-team",
         "platform": platform_name,
-        "files": files_list,
+        "files": owned_files,
     }
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:

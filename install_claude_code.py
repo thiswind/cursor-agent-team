@@ -21,7 +21,13 @@ COMMAND_FILES = [
     ("_claude/commands/discuss.md", ".claude/commands/discuss.md"),
     ("_claude/commands/prompt_engineer.md", ".claude/commands/prompt_engineer.md"),
     ("_claude/commands/crew.md", ".claude/commands/crew.md"),
+    ("_claude/commands/writer.md", ".claude/commands/writer.md"),
     ("_claude/commands/spec_translator.md", ".claude/commands/spec_translator.md"),
+]
+
+RULE_FILES = [
+    ("_claude/rules/crew_assistant.md", ".claude/rules/crew_assistant.md"),
+    ("_claude/rules/writer_assistant.md", ".claude/rules/writer_assistant.md"),
 ]
 
 
@@ -45,6 +51,7 @@ def main():
 
     print("Step 2: Creating directory structure...")
     u.ensure_dir(os.path.join(project_root, ".claude", "commands"))
+    u.ensure_dir(os.path.join(project_root, ".claude", "rules"))
     u.ensure_dir(os.path.join(submodule_dir, "config"))
     u.colored_print("✓ Directories created", "green")
     print()
@@ -60,12 +67,12 @@ def main():
         u.colored_print("Step 2b: Skipped (no ai_workspace_config.json)", "yellow")
     print()
 
-    print("Step 3: Copying Claude Code commands...")
-    installed, failed = u.copy_files(COMMAND_FILES, submodule_dir, project_root)
+    print("Step 3: Copying Claude Code commands and rules...")
+    installed, failed = u.copy_files(COMMAND_FILES + RULE_FILES, submodule_dir, project_root)
     if failed:
         u.colored_print(f"Error: {len(failed)} file(s) failed to copy", "red")
         sys.exit(1)
-    u.colored_print("✓ Commands copied", "green")
+    u.colored_print("✓ Commands and rules copied", "green")
     print()
 
     print("Step 4: Recording installation information...")
@@ -93,6 +100,7 @@ def main():
     print("  /discuss - Discussion partner")
     print("  /prompt_engineer - Prompt engineer")
     print("  /crew - Crew member")
+    print("  /writer - Writer (Draft -> Review -> Final)")
     print("  /spec_translator - Spec-Kit translator")
     print()
     print("Claude Code adaptation note:")
@@ -103,6 +111,7 @@ def main():
         ".gitmodules",
         SUBMODULE_NAME,
         ".claude/commands/",
+        ".claude/rules/",
     ])
     print()
     print("Persona System:")

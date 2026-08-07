@@ -8,6 +8,7 @@ Prerequisites:
     git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 """
 
+import json
 import os
 import sys
 
@@ -21,9 +22,27 @@ SKILL_FILES = [
     ("_trae_solo/skills/cursor-agent-team-discuss", ".trae/skills/cursor-agent-team-discuss"),
     ("_trae_solo/skills/cursor-agent-team-crew", ".trae/skills/cursor-agent-team-crew"),
     ("_trae_solo/skills/cursor-agent-team-prompt-engineer", ".trae/skills/cursor-agent-team-prompt-engineer"),
+    ("_trae_solo/skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
 ]
 
 AGENTS_FILE = "_trae_solo/AGENTS.md.template"
+
+
+def _load_owned_files(info_path):
+    """Load files owned by a previous valid TRAE SOLO installation."""
+    try:
+        with open(info_path, encoding="utf-8") as f:
+            info = json.load(f)
+    except (OSError, json.JSONDecodeError):
+        return []
+    if not isinstance(info, dict):
+        return []
+    if info.get("source") != "cursor-agent-team" or info.get("platform") != "trae_solo":
+        return []
+    files = info.get("files")
+    if not isinstance(files, list):
+        return []
+    return [item for item in files if isinstance(item, str) and item]
 
 
 def main():
@@ -66,7 +85,11 @@ def main():
 
     # Step 3: Copy skills
     print("Step 3: Copying skills...")
-    installed_skills, failed_skills = u.copy_dirs(SKILL_FILES, submodule_dir, project_root)
+    info_path = os.path.join(project_root, ".trae", ".cursor-agent-team-installed")
+    owned_files = _load_owned_files(info_path)
+    installed_skills, failed_skills = u.copy_dirs(
+        SKILL_FILES, submodule_dir, project_root, owned_files=owned_files
+    )
     if failed_skills:
         u.colored_print(f"Error: {len(failed_skills)} skill(s) failed to copy", "red")
         sys.exit(1)
@@ -77,10 +100,12 @@ def main():
     print("Step 4: Copying AGENTS.md template...")
     agents_src = os.path.join(submodule_dir, AGENTS_FILE)
     agents_dst = os.path.join(project_root, "AGENTS.md")
+    agents_created = False
     if os.path.exists(agents_src):
         if not os.path.exists(agents_dst):
             import shutil
             shutil.copy2(agents_src, agents_dst)
+            agents_created = True
             u.colored_print("✓ AGENTS.md template copied", "green")
         else:
             u.colored_print("✓ AGENTS.md already exists (skipped)", "yellow")
@@ -91,8 +116,7 @@ def main():
     # Step 5: Installation record
     print("Step 5: Recording installation information...")
     version = u.get_version(submodule_dir)
-    info_path = os.path.join(project_root, ".trae", ".cursor-agent-team-installed")
-    all_installed = installed_skills + [f"AGENTS.md (template)"]
+    all_installed = installed_skills + (["AGENTS.md"] if agents_created else [])
     u.write_install_info(info_path, version, "trae_solo", all_installed)
     u.colored_print("✓ Installation information recorded", "green")
     print()
@@ -125,12 +149,14 @@ def main():
     print("     • /discuss: Discussion partner")
     print("     • /crew: Crew member")
     print("     • /prompt_engineer: Prompt engineer")
+    print("     • /writer: Writer (Draft -> Review -> Final)")
     print("   - See _trae_solo/commands/ for templates")
     print()
     print("3. You can now use the skills in TRAE SOLO:")
     print("   - cursor-agent-team-discuss")
     print("   - cursor-agent-team-crew")
     print("   - cursor-agent-team-prompt-engineer")
+    print("   - cursor-agent-team-writer")
     print()
     u.print_git_tracking_note([
         ".gitmodules",

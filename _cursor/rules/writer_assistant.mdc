@@ -1,30 +1,79 @@
 ---
-description: Rules for /writer command - Academic writing specialization, AI slop avoidance. Extends crew_assistant.
-globs: 
+description: Rules for /writer command - Prose compose loop, AI slop avoidance, academic extras. Extends crew_assistant.
+globs:
 alwaysApply: false
 ---
 
 # Writer Assistant Rules
 
-> **Purpose**: When using `/writer`, apply these rules IN ADDITION to crew_assistant. Writer = Crew + academic writing quality + AI slop avoidance.
+> **Purpose**: When using `/writer`, apply these rules IN ADDITION to `crew_assistant`. Writer = Crew + **Draft → Review → Final** prose compose + AI slop avoidance (+ academic extras when tier = academic).
 
-**Trigger**: Any plan step that produces **text output** (papers, sections, paragraphs, documentation, reports)  
-**Scope**: Phase 2 (Execute) when generating or editing prose  
-**Does NOT apply to**: Code, config, BibTeX, file paths, commands — only natural language prose  
+**Trigger**: Any plan step that produces **natural-language prose** (papers, sections, paragraphs, documentation, reports)
+**Scope**: Phase 2 (Execute) when generating or editing prose
+**Does NOT apply to**: Code, config, BibTeX, file paths, commands — only natural language prose
 **Default discipline**: Computer Science and Technology
 
 ### Phase Markers (Output Validation)
 
 Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response. (Writer uses the same 4-phase workflow as Crew.)
 
+### Writing Tiers
+
+| Tier | Trigger | Checks |
+|------|---------|--------|
+| **general** | Docs, reports, proposals, non-submission prose | Vocabulary ban + style + Draft→Review→Final |
+| **academic** | Papers, theses, arXiv, submission packages | general + PEEL, hedging, numbering, citation venues, writing_guides |
+
+Declare the tier in Phase 1. When uncertain between general and academic, prefer **academic** if the plan mentions submission/preprint/venue; otherwise **general**.
+
 ### Mandatory vs Recommended
 
-- **MUST** (every text output): Vocabulary ban + Style constraints — apply in real time while writing
-- **RECOMMENDED** (two or more paragraphs): Slop Removal Pass — run after draft to verify
+- **MUST** (every prose output): Vocabulary ban + Style constraints — apply while drafting
+- **MUST** (every prose output of one or more paragraphs): Draft → Review → Final compose loop (Steps 2.0a / 2.0b / 2.1)
+- **MUST** (academic tier): Academic checklist items during Review
+- **RECOMMENDED**: Citation verification always before citing; human final review before submission
 
-### Academic Output
+---
 
-Papers, theses, technical reports for submission trigger extra checks (PEEL, hedging, numbering, citation venue, writing guides cross-check). General docs (README, etc.) = text output but not academic.
+## Prose Compose Loop (HARD)
+
+Aligned with `/discuss` inner-world design. Physical inner workspace: `cursor-agent-team/ai_workspace/`. Pre-final prose lives in `scratchpad/`; do not paste process notes into the deliverable.
+
+### Step 2.0a — Draft
+
+1. Create/update a file under `ai_workspace/scratchpad/drafts/` (preferred) or `analysis/` for outlines.
+2. Write the prose draft there with vocabulary ban + style constraints in mind.
+3. Do **not** treat a chat-inline “draft” label as this step.
+4. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
+
+### Step 2.0b — Review
+
+Re-read the plan goal + draft. Append `## Review` to the same file, or write `analysis/review_*`.
+
+**General checklist (all prose)**:
+1. **Slop check**: Scan for banned phrases; replace
+2. **Sentence variation**: Mix short/long; break uniform blocks
+3. **Stance check**: Clear positions; not evasive “it depends”
+4. **Dash check**: Excessive em dashes → commas / semicolons / separate sentences
+5. **Deliverable fit**: Does the draft satisfy the plan step? Will chat/deliverable leak scratchpad process?
+
+**Academic checklist (academic tier only) — add**:
+6. **PEEL check**: Topic sentence, evidence, explanation per paragraph
+7. **Hedging balance**: Not over-/under-hedged
+8. **Numbering consistency**: IEEE-style hierarchy if numbered
+9. **Citation venue check**: CCF A, B, C (or plan-allowed) only
+10. **Writing guides cross-check**:
+    - `cursor-agent-team/_cursor/writing_guides/sci_writing_pitfalls.md`
+    - `cursor-agent-team/_cursor/writing_guides/review_checklist.md`
+    - `cursor-agent-team/_cursor/writing_guides/title_guidelines.md` (titles)
+
+If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
+
+### Step 2.1 — Final prose
+
+Write the reviewed prose to the plan's target file (write-first for serious products). Notify path in chat; do not dump scratchpad process.
+
+**Human edit boundary**: Writer performs AI-side draft/review only. User should do final human review before submission (maintain authorship control).
 
 ---
 
@@ -44,47 +93,21 @@ Papers, theses, technical reports for submission trigger extra checks (PEEL, hed
 - **Stock phrases**: "it depends...", "I'm happy to help", "in today's fast-paced", "not just X, but Y"
 - **Academic slop**: "objective study aimed", "research needed to understand", "play significant role in shaping"
 
-**Action**: Before finalizing any paragraph, scan for these; replace with discipline-specific or simpler alternatives.
+**Action**: During Draft and again in Review, scan for these; replace with discipline-specific or simpler alternatives.
 
 ### 2. Style Constraints (MUST)
 
 - **Clear stance**: Take positions. Avoid "it depends on..." as default (evasive). State conclusions. *Distinct from hedging*: hedging = appropriate caution when evidence is limited; stance = no evasive default.
 - **Sentence variation**: Mix short (≤15 words) and long (30+ words) sentences. Avoid uniform 24–25 word length.
-- **Discipline-specific terminology**: Use field-standard terms (e.g., "join point" for AOP, "orchestration" for workflow) rather than generic buzzwords.
+- **Discipline-specific terminology**: Use field-standard terms rather than generic buzzwords.
 - **No stock openings**: Avoid "In the realm of...", "Let's delve into...", "In the ever-evolving landscape of..."
-- **Minimize dashes**: See Punctuation section. Em dashes: use sparingly; prefer commas, semicolons, or separate sentences.
-
-*Community-validated (u/AiChan, Moltbook 2026): Have your own stance; avoid stock phrases; vary register, use precise terminology.*
-
-### 3. Slop Removal Pass (RECOMMENDED)
-
-**When**: Producing **two or more paragraphs** (e.g., paper section, report).
-
-**Relation to MANDATORY**: Steps 1–5 implement the MANDATORY constraints above. This pass is a verification workflow.
-
-1. **First draft**: Write per plan, with vocabulary ban and style constraints in mind
-2. **Slop check**: Scan for banned phrases; replace
-3. **Sentence variation**: Ensure mix of short/long; break up uniform blocks
-4. **Stance check**: Ensure clear positions, not evasive "it depends"
-5. **Dash check**: Scan for excessive em dashes; replace per Punctuation section
-
-**For academic output** (papers, theses, technical reports for submission), add:
-6. **PEEL check**: Each paragraph has clear topic sentence, evidence, explanation
-7. **Hedging balance**: Not over-hedged (uncertain) or under-hedged (dismissive)
-8. **Numbering consistency**: If numbered, follow IEEE-style hierarchy throughout
-9. **Citation venue check**: Verify each cited paper is from CCF A, B, C (or plan-allowed venue)
-10. **Writing guides cross-check**: IF academic output THEN verify against:
-    - `cursor-agent-team/_cursor/writing_guides/sci_writing_pitfalls.md` — format, symbols, references, structure
-    - `cursor-agent-team/_cursor/writing_guides/review_checklist.md` — submission checklist
-    - `cursor-agent-team/_cursor/writing_guides/title_guidelines.md` — title review (T1–T10)
-
-**Human edit boundary**: Writer performs AI-side slop removal only. User should do final human review before submission (maintain authorship control).
+- **Minimize dashes**: Em dashes sparingly; prefer commas, semicolons, or separate sentences.
 
 ---
 
 ## Academic Writing Standards (Computer Science PhD Level)
 
-When the plan specifies academic output (papers, theses, technical reports for submission), apply these domain best practices. Target level: Computer Science PhD / CCF A, B, C venues.
+When tier = **academic**, apply these domain practices. Target: Computer Science PhD / CCF A, B, C venues.
 
 ### Paragraph Structure (PEEL)
 
@@ -144,7 +167,7 @@ Acknowledgment and References sections are unnumbered. Enumeration is optional b
 
 ## Literature Search (Writer-Specific)
 
-When Writer searches for papers to cite during writing, apply these rules. They **override** crew's general academic search for citation purposes. Target: Computer Science PhD-level literature search capability.
+When Writer searches for papers to cite during writing, apply these rules. They **override** crew's general academic search for citation purposes.
 
 ### Venue Scope (Default)
 
@@ -159,8 +182,6 @@ When Writer searches for papers to cite during writing, apply these rules. They 
 
 ### PhD-Level Search Strategy
 
-Before searching, structure the approach:
-
 1. **Define scope**: Research question → keywords, synonyms, alternative terms
 2. **Inclusion/exclusion criteria**: Decide before search (e.g., time range, language, study type)
 3. **Sources**: Google Scholar, Semantic Scholar, DBLP, arXiv, venue proceedings; use CCF list to filter
@@ -170,7 +191,7 @@ Before searching, structure the approach:
 ### Quality and Verification
 
 - **Verify before citing**: Do not cite from memory. Confirm title, authors, venue, year via search.
-- **Avoid hallucination**: LLMs tend to fabricate references; always validate each citation.
+- **Avoid hallucination**: Always validate each citation.
 - **Recency**: Prefer 2023–2025 for state-of-the-art; include foundational work when relevant.
 
 ---
@@ -179,14 +200,15 @@ Before searching, structure the approach:
 
 Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205_033505_001.md`
 
-- Vocabulary ban list, Antislop framework (FTPO, Sampler), Moltbook agent experience
-- Literature search: explicit criteria, multi-step (keywords → retrieve → filter by venue → rank), verification before citing
+- Vocabulary ban list, Antislop framework, Moltbook agent experience
+- Literature search: explicit criteria, multi-step, verification before citing
 
 ---
 
-**Version**: v2.1.0 (Updated: 2026-02-28)
+**Version**: v3.0.0 (Updated: 2026-08-06)
 
 **Version History**:
+- v3.0.0 (2026-08-06): **MAJOR** — Prose compose loop HARD (Draft→Review→Final); general vs academic tiers; Slop Removal repositioned as Review checklist; aligned with discuss inner-world scratchpad
 - v2.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review; added Phase Markers subsection (PLAN-BU-001 Stage 2)
 - v2.0.0 (2026-02-08): **Agent readability overhaul** — All tables converted to bullet/key-value; vocabulary ban with "Instead use" alternatives; Trigger/Scope promoted to top; writing_guides cross-check added to Slop Removal Pass (item 10); conciseness pass (removed redundancy). Source: PLAN-AU-001.
 - v1.3.0 (2026-02-05): **Prompt audit**—Mandatory vs Recommended table; MUST (vocabulary ban, style constraints) vs RECOMMENDED (Slop Removal Pass); trigger "two or more paragraphs"; discipline default (CS); academic output defined; stance vs hedging clarified; CCF unified to A, B, C; merged Moltbook tips; removed redundant Prompt Best Practices; consolidated duplicates.

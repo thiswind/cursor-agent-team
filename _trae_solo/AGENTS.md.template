@@ -7,6 +7,7 @@ This is the Cursor Agent Team framework. For full documentation, see the `cursor
 - **Discussion Partner**: Exploration mode - breadth and depth, no execution
 - **Crew Member**: Execution mode - strict adherence to plan as specification
 - **Prompt Engineer**: Creates and maintains new roles
+- **Writer**: Executes prose plans with Draft -> Review -> Final quality control
 
 ## Workflow
 1. **Plan**: Use discussion partner to explore ideas and generate execution plans

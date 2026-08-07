@@ -21,6 +21,7 @@ COMMAND_FILES = [
     ("_cursor/commands/discuss.md", ".cursor/commands/discuss.md"),
     ("_cursor/commands/prompt_engineer.md", ".cursor/commands/prompt_engineer.md"),
     ("_cursor/commands/crew.md", ".cursor/commands/crew.md"),
+    ("_cursor/commands/writer.md", ".cursor/commands/writer.md"),
     ("_cursor/commands/spec_translator.md", ".cursor/commands/spec_translator.md"),
 ]
 
@@ -28,6 +29,7 @@ RULE_FILES = [
     ("_cursor/rules/discussion_assistant.mdc", ".cursor/rules/discussion_assistant.mdc"),
     ("_cursor/rules/prompt_engineer_assistant.mdc", ".cursor/rules/prompt_engineer_assistant.mdc"),
     ("_cursor/rules/crew_assistant.mdc", ".cursor/rules/crew_assistant.mdc"),
+    ("_cursor/rules/writer_assistant.mdc", ".cursor/rules/writer_assistant.mdc"),
     ("_cursor/rules/spec_translator_assistant.mdc", ".cursor/rules/spec_translator_assistant.mdc"),
     ("_cursor/rules/tts_speech_rules.mdc", ".cursor/rules/tts_speech_rules.mdc"),
     ("_cursor/rules/gleaning.mdc", ".cursor/rules/gleaning.mdc"),
@@ -117,6 +119,7 @@ def main():
     print("  /discuss - Discussion partner")
     print("  /prompt_engineer - Prompt engineer")
     print("  /crew - Crew member")
+    print("  /writer - Writer (Draft -> Review -> Final)")
     print("  /spec_translator - Spec-Kit translator")
     print()
     u.print_git_tracking_note([

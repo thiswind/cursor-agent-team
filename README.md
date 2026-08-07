@@ -11,6 +11,7 @@
 ```
 /discuss  →  plan agreed  →  /crew execute  →  done
                  ↑
+           /writer  →  prose compose loop
            /prompt_engineer  →  new role mask
 ```
 
@@ -51,6 +52,7 @@ That means context is always shared. `/crew` already knows what `/discuss` plann
 |------|---------|-------|
 | Discussion Partner | `/discuss` | Explore ideas, clarify requirements, research, generate plans |
 | Crew Member | `/crew` | Execute agreed plans strictly, step by step |
+| Writer | `/writer` | Execute prose plans with Draft -> Review -> Final quality control |
 | Prompt Engineer | `/prompt_engineer` | Create or maintain prompts, commands, new role masks |
 | Spec Translator | `/spec_translator` | Convert plan files into spec-kit documents |
 
@@ -90,8 +92,8 @@ git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-ag
 | Platform | Install command | What gets installed |
 |----------|-----------------|---------------------|
 | Cursor | `python3 cursor-agent-team/install.py` | `.cursor/commands/` and `.cursor/rules/` |
-| Claude Code | `python3 cursor-agent-team/install_claude_code.py` | `.claude/commands/` mask commands |
-| TRAE SOLO | `python3 cursor-agent-team/install_trae_solo.py` | `.trae/skills/` and `AGENTS.md` template |
+| Claude Code | `python3 cursor-agent-team/install_claude_code.py` | `.claude/commands/` mask commands and `.claude/rules/` Writer rules |
+| TRAE SOLO | `python3 cursor-agent-team/install_trae_solo.py` | `.trae/skills/` including Writer and an `AGENTS.md` template only when absent |
 
 On Windows, use `py -3` instead of `python3`.
 
@@ -109,9 +111,16 @@ python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
 ```bash
 python3 cursor-agent-team/uninstall.py --platform cursor
 python3 cursor-agent-team/uninstall.py --platform claude_code
+python3 cursor-agent-team/uninstall.py --platform trae_solo
 ```
 
-TRAE SOLO: remove `.trae/skills/` contents and `AGENTS.md` manually.
+TRAE SOLO uninstall is recorded-file-only and safe for user-owned `AGENTS.md`:
+
+```bash
+python3 cursor-agent-team/uninstall.py --platform trae_solo
+```
+
+The submodule remains unless `--remove-submodule` is explicitly passed. Empty adapter directories are removed only when empty.
 
 ---
 
@@ -150,7 +159,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.16.1** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.17.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

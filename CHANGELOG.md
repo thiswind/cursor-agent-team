@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.17.0] - 2026-08-08
+
+### Added
+- Added `/writer` command parity for Cursor and Claude Code, including the Draft -> Review -> Final prose compose loop.
+- Added the TRAE SOLO Writer skill and command configuration template.
+- Added writer installation records and cross-platform recorded-file-only uninstall support, including safe TRAE SOLO cleanup.
+- Added Cursor and Claude Code Writer rule installation, plus non-destructive TRAE SOLO skill merges.
+
+### Changed
+- Updated role, install, update, uninstall, and version documentation for Writer across all supported platforms.
+- Version target advanced from 0.16.1 to 0.17.0.
+
 ## [0.16.1] - 2026-06-02
 
 ### Fixed
