@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.18.0] - 2026-08-14
+
+### Added
+- Added installable TRAE slash commands (`discuss`, `crew`, `prompt_engineer`, `writer`) under `_trae_solo/commands/`, aligned with the TRAE `.trae/commands/` project-command format (`name`/`description` frontmatter plus instructions).
+- `install_trae_solo.py` now copies slash commands into `.trae/commands/` and records them in the installation manifest, replacing the previous manual command-creation guidance.
+
+### Changed
+- TRAE SOLO `discuss` command and skill now include the Inner World + Semantic Convergence Draft requirement (scratchpad write + review before a formal answer), matching the Cursor and Claude Code `discuss` behavior.
+- Version target advanced from 0.17.0 to 0.18.0.
+
 ## [0.17.0] - 2026-08-08
 
 ### Added

@@ -25,6 +25,13 @@ SKILL_FILES = [
     ("_trae_solo/skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
 ]
 
+COMMAND_FILES = [
+    ("_trae_solo/commands/discuss.md", ".trae/commands/discuss.md"),
+    ("_trae_solo/commands/crew.md", ".trae/commands/crew.md"),
+    ("_trae_solo/commands/prompt_engineer.md", ".trae/commands/prompt_engineer.md"),
+    ("_trae_solo/commands/writer.md", ".trae/commands/writer.md"),
+]
+
 AGENTS_FILE = "_trae_solo/AGENTS.md.template"
 
 
@@ -67,6 +74,7 @@ def main():
     # Step 2: Create directories
     print("Step 2: Creating directory structure...")
     u.ensure_dir(os.path.join(project_root, ".trae", "skills"))
+    u.ensure_dir(os.path.join(project_root, ".trae", "commands"))
     u.ensure_dir(os.path.join(submodule_dir, "config"))
     u.colored_print("✓ Directories created", "green")
     print()
@@ -96,6 +104,17 @@ def main():
     u.colored_print("✓ Skills copied", "green")
     print()
 
+    # Step 3b: Copy slash commands
+    print("Step 3b: Copying slash commands...")
+    installed_commands, failed_commands = u.copy_files(
+        COMMAND_FILES, submodule_dir, project_root
+    )
+    if failed_commands:
+        u.colored_print(f"Error: {len(failed_commands)} command(s) failed to copy", "red")
+        sys.exit(1)
+    u.colored_print("✓ Commands copied", "green")
+    print()
+
     # Step 4: Copy AGENTS.md template
     print("Step 4: Copying AGENTS.md template...")
     agents_src = os.path.join(submodule_dir, AGENTS_FILE)
@@ -116,7 +135,7 @@ def main():
     # Step 5: Installation record
     print("Step 5: Recording installation information...")
     version = u.get_version(submodule_dir)
-    all_installed = installed_skills + (["AGENTS.md"] if agents_created else [])
+    all_installed = installed_skills + installed_commands + (["AGENTS.md"] if agents_created else [])
     u.write_install_info(info_path, version, "trae_solo", all_installed)
     u.colored_print("✓ Installation information recorded", "green")
     print()
@@ -143,14 +162,11 @@ def main():
     print("   - Go to Settings > Rules")
     print("   - Enable 'Include AGENTS.md in context'")
     print()
-    print("2. Create Slash Commands (recommended):")
-    print("   - Go to Settings > Commands")
-    print("   - Create these commands:")
+    print("2. Slash commands installed to .trae/commands/:")
     print("     • /discuss: Discussion partner")
     print("     • /crew: Crew member")
     print("     • /prompt_engineer: Prompt engineer")
     print("     • /writer: Writer (Draft -> Review -> Final)")
-    print("   - See _trae_solo/commands/ for templates")
     print()
     print("3. You can now use the skills in TRAE SOLO:")
     print("   - cursor-agent-team-discuss")
@@ -162,6 +178,7 @@ def main():
         ".gitmodules",
         SUBMODULE_NAME,
         ".trae/skills/",
+        ".trae/commands/",
         "AGENTS.md",
     ])
     print()

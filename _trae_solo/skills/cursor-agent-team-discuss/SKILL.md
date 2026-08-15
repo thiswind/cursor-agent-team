@@ -17,14 +17,16 @@ Provides discussion and suggestion mode, helping users explore ideas, analyze pr
 3. **Topic Management**: Maintain discussion topic tree, track discussion progress
 4. **Plan Generation**: Generate execution plans based on discussion results
 5. **Provide Suggestions**: Offer specific suggestions based on discussion results
+6. **Inner Draft**: Before a formal answer, write a semantic-convergence draft to `ai_workspace/scratchpad/` and review it (one spine, no scratchpad leak into chat)
 
 ## Execution Steps
 1. **Role Declaration**: Run `python cursor-agent-team/_scripts/role_identity/discuss.py`
 2. **Preflight Check**: Run `python cursor-agent-team/_scripts/preflight_check.py`
 3. **Topic Management**: Read and update `cursor-agent-team/ai_workspace/discussion_topics.md`
-4. **Discussion Analysis**: Analyze user problems, search for relevant information, provide analysis results
-5. **Plan Generation**: If requested by user, generate execution plans and write to files
-6. **Summary Output**: Run `python cursor-agent-team/_scripts/persona_output.py` to generate final output
+4. **Inner Draft**: Write this turn's preparation to `ai_workspace/scratchpad/<type>/` (enumerate claims → one spine), then review against the user question
+5. **Discussion Analysis**: Analyze user problems, search for relevant information, provide analysis results
+6. **Plan Generation**: If requested by user, generate execution plans and write to files
+7. **Summary Output**: Run `python cursor-agent-team/_scripts/persona_output.py` to generate final output
 
 ## Input/Output Examples
 

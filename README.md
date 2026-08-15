@@ -159,7 +159,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.17.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.18.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
