@@ -74,13 +74,15 @@ class WriterReleaseTests(unittest.TestCase):
             project.mkdir()
             outside.mkdir()
             (project / ".git").mkdir()
+            source = project / "cursor-agent-team"
+            shutil.copytree(ROOT, source, ignore=shutil.ignore_patterns(".git", "ai_workspace", "__pycache__", ".pytest_cache"))
             (outside / "victim.txt").write_text("keep")
             (project / ".cursor").mkdir()
             (project / ".cursor" / "link").symlink_to(outside, target_is_directory=True)
             record = project / ".cursor" / ".cursor-agent-team-installed"
             record.write_text(json.dumps({"files": [".cursor/link/victim.txt"]}))
             subprocess.run(
-                [sys.executable, str(ROOT / "uninstall.py"), "--platform", "cursor", "--yes"],
+                [sys.executable, str(source / "uninstall.py"), "--platform", "cursor", "--yes"],
                 cwd=project, check=True, capture_output=True, text=True,
             )
             self.assertTrue((outside / "victim.txt").exists())
