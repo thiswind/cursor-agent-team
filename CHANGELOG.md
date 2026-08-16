@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-08-16
+
 ### Added
 - **Closed-loop response verification**: new `_scripts/verify_response.py` machine-checks that a response contains all phase markers (presence, uniqueness, order, no `NOT DONE` leftovers, no out-of-range markers); `phase_marker.py` now exposes `build_marker()` so generation and validation share one format source.
 - Every generated command embeds a mandatory **Response Self-Verification** step: save the response to `ai_workspace/scratchpad/temp/response_last.md` and run `verify_response.py` before sending — the HARD REQUIREMENT is now machine-checkable, not just human-reviewed.
@@ -17,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unified command semantics across platforms (merged best-of Cursor + Claude bodies, e.g. crew plan-inference rules, writer compose loop, discuss inner draft).
 - TRAE skill directory renamed `cursor-agent-team-prompt-engineer` → `cursor-agent-team-prompt_engineer` (consistent with command name); `install_trae_solo.py` manifest updated.
 - Removed obsolete `_trae_solo/commands/*-config.md` manual setup guides (superseded by installable commands).
+
+### Fixed
+- Uninstall symlink test now runs in an isolated temp copy of the repo, so it can never delete real workspace files.
 
 ## [0.18.0] - 2026-08-14
 
