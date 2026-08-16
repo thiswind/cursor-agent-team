@@ -21,7 +21,7 @@ SUBMODULE_NAME = "cursor-agent-team"
 SKILL_FILES = [
     ("_trae_solo/skills/cursor-agent-team-discuss", ".trae/skills/cursor-agent-team-discuss"),
     ("_trae_solo/skills/cursor-agent-team-crew", ".trae/skills/cursor-agent-team-crew"),
-    ("_trae_solo/skills/cursor-agent-team-prompt-engineer", ".trae/skills/cursor-agent-team-prompt-engineer"),
+    ("_trae_solo/skills/cursor-agent-team-prompt_engineer", ".trae/skills/cursor-agent-team-prompt_engineer"),
     ("_trae_solo/skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
 ]
 

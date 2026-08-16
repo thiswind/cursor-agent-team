@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- **Closed-loop response verification**: new `_scripts/verify_response.py` machine-checks that a response contains all phase markers (presence, uniqueness, order, no `NOT DONE` leftovers, no out-of-range markers); `phase_marker.py` now exposes `build_marker()` so generation and validation share one format source.
+- Every generated command embeds a mandatory **Response Self-Verification** step: save the response to `ai_workspace/scratchpad/temp/response_last.md` and run `verify_response.py` before sending — the HARD REQUIREMENT is now machine-checkable, not just human-reviewed.
+- **Single-source command generation**: `commands.yaml` is now the sole source of truth for all role commands; `_scripts/build_commands.py` generates the Cursor, Claude Code, and TRAE SOLO command files plus TRAE skills (18 artifacts), with `--check` drift detection for CI.
+
+### Changed
+- `_cursor/commands/`, `_claude/commands/`, and `_trae_solo/` artifacts are now generated files with a "do not edit" header; edit `commands.yaml` and regenerate instead.
+- Unified command semantics across platforms (merged best-of Cursor + Claude bodies, e.g. crew plan-inference rules, writer compose loop, discuss inner draft).
+- TRAE skill directory renamed `cursor-agent-team-prompt-engineer` → `cursor-agent-team-prompt_engineer` (consistent with command name); `install_trae_solo.py` manifest updated.
+- Removed obsolete `_trae_solo/commands/*-config.md` manual setup guides (superseded by installable commands).
+
 ## [0.18.0] - 2026-08-14
 
 ### Added

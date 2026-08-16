@@ -64,8 +64,28 @@ That means context is always shared. `/crew` already knows what `/discuss` plann
 - **Human-in-the-loop** — discussion, planning, execution, and expansion stay under user control
 - **Shared AI workspace** — durable plans, notes, requirements, and execution records in `cursor-agent-team/ai_workspace/`
 - **Script-backed constraints** — Python scripts handle preflight checks, phase markers, topic-tree validation, and workspace generation
+- **Closed-loop verification** — `verify_response.py` machine-checks that every response carries all phase markers before it is sent
 - **Platform adapters** — Cursor, Claude Code, and TRAE SOLO share the same methodology and scripts
 - **Optional extensions** — persona output, inspiration cards, TTS helpers, spec-kit translation
+
+---
+
+## Maintaining commands (single source)
+
+All role commands are generated from one source of truth — never hand-edit
+`_cursor/commands/`, `_claude/commands/`, or `_trae_solo/` artifacts:
+
+```bash
+# 1. Edit semantics in commands.yaml (roles, phases, constraints, history)
+# 2. Regenerate all platform artifacts
+python3 _scripts/build_commands.py
+# 3. Verify no drift (use in CI)
+python3 _scripts/build_commands.py --check
+```
+
+The generated commands embed two hard contracts: the **phase marker**
+requirement (`phase_marker.py`) and the **response self-verification** step
+(`verify_response.py`), so every platform gets them for free.
 
 ---
 

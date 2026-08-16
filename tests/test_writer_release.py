@@ -18,12 +18,16 @@ class WriterReleaseTests(unittest.TestCase):
         self.assertTrue((ROOT / "_claude/rules/writer_assistant.md").is_file())
         self.assertTrue((ROOT / "VERSION").is_file())
         self.assertTrue((ROOT / "_trae_solo/skills/cursor-agent-team-writer/SKILL.md").is_file())
-        self.assertTrue((ROOT / "_trae_solo/commands/writer-config.md").is_file())
+        self.assertTrue((ROOT / "_trae_solo/commands/writer.md").is_file())
+        self.assertTrue((ROOT / "commands.yaml").is_file())
         cursor = (ROOT / "_cursor/commands/writer.md").read_text()
         claude = (ROOT / "_claude/commands/writer.md").read_text()
-        for term in ("Draft", "Review", "Final", "scratchpad", "Phase 2"):
+        trae = (ROOT / "_trae_solo/commands/writer.md").read_text()
+        for term in ("Draft", "Review", "Final", "scratchpad", "Phase 2",
+                     "verify_response.py", "Generated from commands.yaml"):
             self.assertIn(term, cursor)
             self.assertIn(term, claude)
+            self.assertIn(term, trae)
 
     def test_untagged_version_uses_authoritative_metadata(self):
         import sys

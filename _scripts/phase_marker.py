@@ -23,6 +23,15 @@ def parse_done(s: str) -> Optional[bool]:
     return None
 
 
+def build_marker(phase: int, done: bool = True) -> str:
+    """Return the canonical marker line for a phase.
+
+    Single source of truth for the marker format; verify_response.py imports
+    this so generation and validation can never drift apart.
+    """
+    return f"[Phase {phase} {'DONE' if done else 'NOT DONE'}]"
+
+
 def main() -> int:
     if len(sys.argv) == 1 or (len(sys.argv) == 2 and sys.argv[1] in ("-h", "--help")):
         print(
@@ -57,10 +66,10 @@ def main() -> int:
         return 1
 
     if done:
-        print(f"[Phase {phase} DONE]")
+        print(build_marker(phase, True))
         return 0
     else:
-        print(f"[Phase {phase} NOT DONE]")
+        print(build_marker(phase, False))
         return 1
 
 
