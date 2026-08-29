@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.0] - 2026-08-29
+
+### Changed
+- **README re-imagined around the frontier-agent era**: the agent-first path (AGENTS-GUIDE self-assembly, SUBAGENT-DISPATCH fan-out, ai_workspace externalized cognition) now leads the document as the primary scenario; human slash commands move to a compact secondary section. New hero banner and a redrawn architecture diagram (dual entry paths, shared-context meeting room, supervised sub-agent fan-out with verify-and-merge loop).
+- New visual assets: `banner.jpg` (generated, replaces `banner.png` at the top) and `architecture.png` (Excalidraw-style architecture diagram). Previous banner retained as `banner_old2.png`.
+
 ## [0.20.2] - 2026-08-29
 
 ### Fixed

@@ -1,27 +1,99 @@
-# cursor-agent-team · Single-Conversation AI Team Framework
+<p align="center">
+  <img src="logo.png" alt="cursor-agent-team logo" width="140">
+</p>
 
-[![DOI](doi-badge.svg)](https://doi.org/10.5281/zenodo.18605311)
+<h1 align="center">cursor-agent-team</h1>
 
-> **Frontier-model agents**: read [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) first — self-assemble personas, scripts, and ai_workspace without slash commands.
+<p align="center">
+  <b>The multi-role AI team your agent runs itself.</b><br>
+  One model · one conversation · six role masks · zero cold handoffs.
+</p>
+
+<p align="center">
+  <img src="banner.jpg" alt="cursor-agent-team — one agent, six masks, verified results" width="760">
+</p>
+
+<p align="center">
+  <a href="https://doi.org/10.5281/zenodo.18605311"><img src="doi-badge.svg" alt="DOI"></a>
+  &nbsp; <b>Cursor</b> · <b>Claude Code</b> · <b>TRAE SOLO</b>
+</p>
 
 ---
 
-**The problem with multi-agent systems:** every time one agent hands off to another, the receiving agent starts cold — it only knows what you explicitly passed. Context bleeds. Plans drift. You end up re-explaining yourself.
+## A new era: agents that self-assemble
 
-**cursor-agent-team takes a different approach:** one model, one shared conversation, multiple role masks. Switch from planning to execution to prompt engineering without ever losing context — because everyone in the "meeting room" was there for the whole conversation.
+cursor-agent-team (CAT) began as a set of slash commands that let one AI assistant wear
+different role masks inside a single conversation. With **v0.21.0** the center of gravity
+shifts: **the primary user is no longer the human typing commands — it is the frontier
+agent itself.**
 
-```
-/discuss  →  plan agreed  →  /crew execute  →  done
-                 ↑               └→ /workflow  →  fan out read-only sub-agents  →  verify  →  merge
-           /writer  →  prose compose loop
-           /prompt_engineer  →  new role mask
-```
+Modern frontier models enter a project cold, read the docs, and self-constrain. For them
+CAT is not a command palette but an **operating discipline**: where the masks live, when to
+adopt which one, how to dispatch sub-agents, and which machine-checked contracts to honor
+— all readable directly from two files, no harness injection required.
 
-> Supported platforms: **Cursor** · **Claude Code** · **TRAE SOLO**
+> Humans are still first-class citizens: every slash command remains fully supported.
+> But if your assistant is a frontier model, you may never need to type one again.
 
 ---
 
-## Quick Start (3 steps)
+## For frontier agents (primary path)
+
+Drop CAT into your project and point your agent at the entry document:
+
+```text
+Read cursor-agent-team/AGENTS-GUIDE.md and adopt the role mask that fits this request.
+Use cursor-agent-team/ai_workspace/ for all workspace writes.
+```
+
+That single instruction unlocks the full architecture:
+
+| Capability | Entry point | What the agent gains |
+|------------|-------------|---------------------|
+| **Self-assembled masks** | [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) | Picks any of the six personas cold — no slash commands, no injection; includes a "which mask when" decision list |
+| **Sub-agent dispatch** | [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md) | Fans out mid-tier sub-agents with `[Role]/[Context]/[Task]/[Output Contract]` prompts, mask-based constraints, trust-but-verify acceptance |
+| **Cross-platform parallelism** | `/workflow` executor | Read-only recon fan-out via platform-native background agents (Claude `run_in_background` / Cursor background tasks / TRAE task runner); structured summaries only |
+| **Externalized cognition** | `ai_workspace/` | Durable topic tree, plans, notes, scratchpad — working memory beyond the context window |
+| **Machine-checked contracts** | `_scripts/` | Phase markers, `verify_response.py` self-verification, topic-tree validator — discipline that survives session boundaries |
+
+Both agent-facing documents are officially supported usage paths since v0.20.0.
+
+---
+
+## Architecture
+
+<p align="center">
+  <img src="architecture.png" alt="cursor-agent-team architecture — dual entry paths, shared-context meeting room, supervised sub-agent fan-out" width="780">
+</p>
+
+**Two ways in, one meeting room.** A frontier agent (primary, blue) and a human operator
+(secondary, gray dashed) reach the same place: one model in one shared conversation wearing
+role masks. When a plan calls for parallel work, the meeting room fans out read-only
+sub-agents, verifies their structured returns, and merges only the summaries — the
+shared-context core never fragments. Everything lands in `ai_workspace/`, guarded by
+machine-checked contracts that are always in effect.
+
+---
+
+## For humans (secondary path)
+
+All slash commands remain fully supported across Cursor, Claude Code, and TRAE SOLO:
+
+| Role | Command | Purpose |
+|------|---------|-------|
+| Discussion Partner | `/discuss` | Explore ideas, clarify requirements, generate plans |
+| Crew Member | `/crew` | Execute agreed plans strictly, step by step |
+| Workflow Executor | `/workflow` (alias `/ultra`) | Supervised parallel execution via cross-platform sub-agents |
+| Writer | `/writer` | Prose with Draft → Review → Final quality control |
+| Prompt Engineer | `/prompt_engineer` | Create or maintain prompts, commands, new masks |
+| Spec Translator | `/spec_translator` | Convert plans into spec-kit documents |
+
+Because every mask lives in the same conversation, `/crew` already knows what `/discuss`
+planned — no context handoff, no re-explaining.
+
+---
+
+## Quick start
 
 ```bash
 # 1. Add as submodule inside your project
@@ -32,70 +104,58 @@ python3 cursor-agent-team/install.py              # Cursor
 python3 cursor-agent-team/install_claude_code.py  # Claude Code
 python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
 
-# 3. In your AI chat, type /discuss and start
+# 3a. Point your frontier agent at AGENTS-GUIDE.md   ← recommended
+# 3b. Or type /discuss and start                     ← classic
 ```
 
-Or let your agent do it:
+Or just tell your agent:
 
 ```text
 Install cursor-agent-team into this project as a git submodule at cursor-agent-team/,
-then run the platform installer for my environment.
+run the installer for my platform, then read cursor-agent-team/AGENTS-GUIDE.md.
 ```
 
 ---
 
-## How it works
+## Why one conversation beats agent swarms
 
-`cursor-agent-team` is not a traditional multi-agent system. Think of it as a small meeting room: the same model stays in the same conversation, and slash commands make it wear different role masks.
+Every time one agent hands off to another, the receiving agent starts cold — it only knows
+what you explicitly passed. Context bleeds, plans drift, you re-explain yourself.
 
-That means context is always shared. `/crew` already knows what `/discuss` planned — because it was in the same conversation.
-
-When a plan calls for parallel work, `/workflow` extends the meeting room with supervised breakout sessions: it fans out read-only sub-tasks to platform-native background agents wearing CAT masks, verifies their structured returns, and merges only the summaries back into the main conversation — the shared-context core stays intact.
-
-And when your assistant is itself a frontier model, it doesn't need slash commands at all: read [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) to self-assemble any mask, or [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md) to dispatch masked sub-agents — both officially supported since v0.20.0.
-
-| Role | Command | Purpose |
-|------|---------|-------|
-| Discussion Partner | `/discuss` | Explore ideas, clarify requirements, research, generate plans |
-| Crew Member | `/crew` | Execute agreed plans strictly, step by step |
-| Workflow Executor | `/workflow` (alias `/ultra`) | Supervised parallel execution of `Executor: workflow` plans via cross-platform sub-agents (read-only recon by default; write-heavy work routes to `/crew`) |
-| Writer | `/writer` | Execute prose plans with Draft -> Review -> Final quality control |
-| Prompt Engineer | `/prompt_engineer` | Create or maintain prompts, commands, new role masks |
-| Spec Translator | `/spec_translator` | Convert plan files into spec-kit documents |
+CAT keeps one model in one shared conversation and switches role masks instead. Switching
+from planning to execution to prompt engineering loses nothing, because everyone in the
+"meeting room" was there for the whole discussion. Parallelism is added only where it is
+safe: supervised, read-only sub-agents that return structured summaries for verification.
 
 ---
 
 ## Features
 
-- **Single conversation, multiple masks** — role switching without agent handoff or context loss
-- **Frontier-agent self-assembly (v0.20.0)** — [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md): advanced agents enter a project cold, pick a role mask themselves, and follow it without slash commands or harness injection — an officially supported path
-- **Supervised sub-agent dispatch** — [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md): an orchestrator dispatches mid-tier sub-agents with [Role]/[Context]/[Task]/[Output Contract] prompts, mask-based constraint, and trust-but-verify acceptance
-- **Cross-platform parallel execution** — `/workflow` fans out read-only sub-tasks to native background agents (Claude `run_in_background` / Cursor background tasks / TRAE task runner; serial downgrade on old IDEs); only structured summaries return to the main session
-- **Human-in-the-loop** — discussion, planning, execution, and expansion stay under user control
-- **Shared AI workspace** — durable plans, notes, requirements, and execution records in `cursor-agent-team/ai_workspace/`
-- **Script-backed constraints** — Python scripts handle preflight checks, phase markers, topic-tree validation, and workspace generation
-- **Closed-loop verification** — `verify_response.py` machine-checks that every response carries all phase markers before it is sent
-- **Platform adapters** — Cursor, Claude Code, and TRAE SOLO share the same methodology and scripts
+- **Frontier-agent self-assembly** — `AGENTS-GUIDE.md`: advanced agents enter cold, pick a role mask themselves, and follow it without slash commands (officially supported since v0.20.0)
+- **Supervised sub-agent dispatch** — `SUBAGENT-DISPATCH.md`: orchestrator-grade fan-out with trust-but-verify acceptance
+- **Cross-platform parallel execution** — `/workflow` fans out read-only sub-tasks to native background agents; serial downgrade on older IDEs
+- **Single conversation, multiple masks** — role switching without handoff or context loss
+- **Shared AI workspace** — durable plans, notes, topic tree, scratchpad in `cursor-agent-team/ai_workspace/`
+- **Script-backed constraints** — Python scripts for preflight, phase markers, topic-tree validation, workspace generation
+- **Closed-loop verification** — `verify_response.py` machine-checks every response carries its phase markers
+- **Single-source commands** — all role commands generated from `commands.yaml`; `--check` gates drift in CI
+- **Human-in-the-loop** — discussion, planning, execution stay under user control
+- **Platform adapters** — Cursor, Claude Code, TRAE SOLO share one methodology
 - **Optional extensions** — persona output, inspiration cards, TTS helpers, spec-kit translation
 
 ---
 
 ## Maintaining commands (single source)
 
-All role commands are generated from one source of truth — never hand-edit
-`_cursor/commands/`, `_claude/commands/`, or `_trae_solo/` artifacts:
+Never hand-edit `_cursor/commands/`, `_claude/commands/`, or `_trae_solo/` artifacts:
 
 ```bash
-# 1. Edit semantics in commands.yaml (roles, phases, constraints, history)
-# 2. Regenerate all platform artifacts
-python3 _scripts/build_commands.py
-# 3. Verify no drift (use in CI)
-python3 _scripts/build_commands.py --check
+python3 _scripts/build_commands.py         # regenerate all platform artifacts
+python3 _scripts/build_commands.py --check # verify no drift (use in CI)
 ```
 
-The generated commands embed two hard contracts: the **phase marker**
-requirement (`phase_marker.py`) and the **response self-verification** step
-(`verify_response.py`), so every platform gets them for free.
+Generated commands embed the phase-marker and response self-verification contracts, so
+every platform gets them for free.
 
 ---
 
@@ -113,56 +173,24 @@ Use:
 - TRAE SOLO: python3 cursor-agent-team/install_trae_solo.py
 ```
 
-### Manual install
+### Manual install / update / uninstall
 
 ```bash
 git submodule add -f https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
+python3 cursor-agent-team/install.py              # or install_claude_code.py / install_trae_solo.py
+
+git submodule update --remote cursor-agent-team   # update, then re-run installer
+python3 cursor-agent-team/uninstall.py --platform cursor   # or claude_code / trae_solo
 ```
 
-| Platform | Install command | What gets installed |
-|----------|-----------------|---------------------|
-| Cursor | `python3 cursor-agent-team/install.py` | `.cursor/commands/` and `.cursor/rules/` |
-| Claude Code | `python3 cursor-agent-team/install_claude_code.py` | `.claude/commands/` mask commands and `.claude/rules/` Writer rules |
-| TRAE SOLO | `python3 cursor-agent-team/install_trae_solo.py` | `.trae/skills/` including Writer and an `AGENTS.md` template only when absent |
+| Platform | Installer | What gets installed |
+|----------|-----------|---------------------|
+| Cursor | `install.py` | `.cursor/commands/` and `.cursor/rules/` |
+| Claude Code | `install_claude_code.py` | `.claude/commands/` mask commands and `.claude/rules/` Writer rules |
+| TRAE SOLO | `install_trae_solo.py` | `.trae/skills/` including Writer and an `AGENTS.md` template only when absent |
 
-On Windows, use `py -3` instead of `python3`.
-
-### Update
-
-```bash
-git submodule update --remote cursor-agent-team
-python3 cursor-agent-team/install.py              # Cursor
-python3 cursor-agent-team/install_claude_code.py  # Claude Code
-python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
-```
-
-### Uninstall
-
-```bash
-python3 cursor-agent-team/uninstall.py --platform cursor
-python3 cursor-agent-team/uninstall.py --platform claude_code
-python3 cursor-agent-team/uninstall.py --platform trae_solo
-```
-
-TRAE SOLO uninstall is recorded-file-only and safe for user-owned `AGENTS.md`:
-
-```bash
-python3 cursor-agent-team/uninstall.py --platform trae_solo
-```
-
-The submodule remains unless `--remove-submodule` is explicitly passed. Empty adapter directories are removed only when empty.
-
----
-
-## Visual overview
-
-<p align="center">
-  <img src="logo.png" alt="cursor-agent-team logo" width="160">
-</p>
-
-<p align="center">
-  <img src="banner.png" alt="cursor-agent-team meeting-room workflow" width="760">
-</p>
+On Windows, use `py -3` instead of `python3`. Uninstall is recorded-file-only and safe for
+user-owned files; the submodule remains unless `--remove-submodule` is passed.
 
 ---
 
@@ -189,7 +217,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.20.2** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.21.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
