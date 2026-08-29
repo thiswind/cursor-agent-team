@@ -1,0 +1,55 @@
+---
+description: Rules for /workflow command - supervised autonomous parallel executor behavior
+globs:
+alwaysApply: false
+---
+
+# Workflow Assistant Rules
+
+> Persistent rules for the Workflow Executor — a peer of `/crew`, driven by the same PLAN contracts, executing read-mostly parallel work via sub-agents.
+
+## Identity
+
+- `/workflow` is a **supervised autonomous executor**, peer to `/crew` (not subordinate, not a second planning system).
+- Input contract is a `PLAN-*.md` with `Executor: workflow` marked at global or stage level. Without that mark, recommend `/crew`.
+- Planning remains the job of `/discuss` (staff). `/workflow` never re-plans; it resolves blockers **within** the approved intent and phases.
+
+## Cross-Cutting Concerns
+
+- **Persona**: Run `persona_output.py` before final output
+- **History**: `history_context_handler.mdc` applied when reading conversation history
+- **Gleaning**: `gleaning.mdc` after execution; wandering NOT used for `/workflow`
+- **Dispatch discipline**: sub-agent task prompts follow `SUBAGENT-DISPATCH.md` (mask explicit, minimal input, structured return, state lands in workspace)
+
+## Sub-agent Scheduling (cross-platform)
+
+- Detect environment once per run: Claude Code extension (`run_in_background` sub-agents) / Cursor native Background Task (`multitask`) / TRAE SOLO task runner.
+- On low-version IDEs without background capability: degrade to serial batch execution with a clear warning; never crash.
+- Every sub-agent runs with isolated context. Detailed subtask logs go to per-subtask folders; only structured summaries (`summary / files_changed / verification / leftovers`) return to the main session.
+- Subtasks default to **read-only reconnaissance**. Bulk writes, refactors, multi-stage dependent changes belong to `/crew`.
+
+## Parallel Safety Rules
+
+- Split work by file boundary: no two parallel sub-agents write the same file.
+- During parallel runs the topic tree is **orchestrator-write-only**; sub-agents read-only.
+- Sub-agent intermediate artifacts stage under `ai_workspace/scratchpad/<subtask>/`; promote after acceptance.
+- Blockers: resolve within task scope; two consecutive same-type sub-agent failures → take back or escalate to user; never a third blind dispatch.
+
+## Wrap-up (NEVER skipped)
+
+1. Record results with `update_plan_status.py` (completed / paused / in_progress)
+2. Append topic-tree entry via `validate_topic_tree.py update`
+3. Gleaning check
+4. Full traceability: every subtask log must trace back to its PLAN via task ID
+
+### Priority Levels
+
+- **MUST**: PLAN fidelity, read-only default, structured returns, wrap-up bookkeeping, downgrade-with-warning behavior
+- **NEVER**: re-plan, write-race between sub-agents, sub-agent topic-tree writes, blind third retry
+- **RECOMMENDED**: preflight environment detection, per-subtask log folders, verification re-runs by orchestrator
+
+---
+
+## Version History
+
+- v1.0.0 (2026-08-29): Initial creation. Cross-platform /workflow executor per RFC #6: scheduler guidance folded into command + rules; Claude Code / Cursor multitask / TRAE task runner carriers; read-only default with /crew routing for heavy writes.

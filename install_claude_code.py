@@ -23,6 +23,7 @@ COMMAND_FILES = [
     ("_claude/commands/crew.md", ".claude/commands/crew.md"),
     ("_claude/commands/writer.md", ".claude/commands/writer.md"),
     ("_claude/commands/spec_translator.md", ".claude/commands/spec_translator.md"),
+    ("_claude/commands/workflow.md", ".claude/commands/workflow.md"),
 ]
 
 RULE_FILES = [

@@ -23,6 +23,7 @@ SKILL_FILES = [
     ("_trae_solo/skills/cursor-agent-team-crew", ".trae/skills/cursor-agent-team-crew"),
     ("_trae_solo/skills/cursor-agent-team-prompt_engineer", ".trae/skills/cursor-agent-team-prompt_engineer"),
     ("_trae_solo/skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
+    ("_trae_solo/skills/cursor-agent-team-workflow", ".trae/skills/cursor-agent-team-workflow"),
 ]
 
 COMMAND_FILES = [
@@ -30,6 +31,7 @@ COMMAND_FILES = [
     ("_trae_solo/commands/crew.md", ".trae/commands/crew.md"),
     ("_trae_solo/commands/prompt_engineer.md", ".trae/commands/prompt_engineer.md"),
     ("_trae_solo/commands/writer.md", ".trae/commands/writer.md"),
+    ("_trae_solo/commands/workflow.md", ".trae/commands/workflow.md"),
 ]
 
 AGENTS_FILE = "_trae_solo/AGENTS.md.template"

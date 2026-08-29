@@ -18,10 +18,10 @@ class TestSourceIntegrity(unittest.TestCase):
         with open(bc.SOURCE_PATH, "r", encoding="utf-8") as f:
             cls.commands = yaml.safe_load(f)["commands"]
 
-    def test_five_commands_defined(self):
+    def test_six_commands_defined(self):
         self.assertEqual(
             set(self.commands.keys()),
-            {"discuss", "crew", "prompt_engineer", "spec_translator", "writer"},
+            {"discuss", "crew", "prompt_engineer", "spec_translator", "writer", "workflow"},
         )
 
     def test_phase_lists_consistent_with_declared_phases(self):
@@ -66,12 +66,16 @@ class TestGeneration(unittest.TestCase):
         cls.tmp.cleanup()
 
     def test_expected_artifact_matrix(self):
-        # 5 cursor + 5 claude + 4 trae commands + 4 trae skills = 18
-        self.assertEqual(len(self.targets), 18)
+        # 6 cursor + 6 claude + 5 trae commands + 5 trae skills = 22
+        self.assertEqual(len(self.targets), 22)
         self.assertIn("_cursor/commands/spec_translator.md", self.targets)
         self.assertIn("_claude/commands/spec_translator.md", self.targets)
         self.assertNotIn("_trae_solo/commands/spec_translator.md", self.targets)
         self.assertNotIn("_trae_solo/skills/cursor-agent-team-spec-translator/SKILL.md", self.targets)
+        self.assertIn("_cursor/commands/workflow.md", self.targets)
+        self.assertIn("_claude/commands/workflow.md", self.targets)
+        self.assertIn("_trae_solo/commands/workflow.md", self.targets)
+        self.assertIn("_trae_solo/skills/cursor-agent-team-workflow/SKILL.md", self.targets)
 
     def test_all_artifacts_carry_generated_header(self):
         for rel, content in self.targets.items():

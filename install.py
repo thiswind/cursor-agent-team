@@ -23,6 +23,7 @@ COMMAND_FILES = [
     ("_cursor/commands/crew.md", ".cursor/commands/crew.md"),
     ("_cursor/commands/writer.md", ".cursor/commands/writer.md"),
     ("_cursor/commands/spec_translator.md", ".cursor/commands/spec_translator.md"),
+    ("_cursor/commands/workflow.md", ".cursor/commands/workflow.md"),
 ]
 
 RULE_FILES = [
@@ -31,6 +32,7 @@ RULE_FILES = [
     ("_cursor/rules/crew_assistant.mdc", ".cursor/rules/crew_assistant.mdc"),
     ("_cursor/rules/writer_assistant.mdc", ".cursor/rules/writer_assistant.mdc"),
     ("_cursor/rules/spec_translator_assistant.mdc", ".cursor/rules/spec_translator_assistant.mdc"),
+    ("_cursor/rules/workflow_assistant.mdc", ".cursor/rules/workflow_assistant.mdc"),
     ("_cursor/rules/tts_speech_rules.mdc", ".cursor/rules/tts_speech_rules.mdc"),
     ("_cursor/rules/gleaning.mdc", ".cursor/rules/gleaning.mdc"),
     ("_cursor/rules/wandering.mdc", ".cursor/rules/wandering.mdc"),

@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-08-29
+
+### Added
+- **`/workflow` command (alias `/ultra`)** — a sixth role mask for supervised autonomous parallel execution via cross-platform sub-agents (resolves #6's command layer): plan-driven (requires an `Executor: workflow` mark in the PLAN), read-only subtasks by default with write-heavy work routed to `/crew`, behavior layer delegated to the new `SUBAGENT-DISPATCH.md`. Ships on all three platforms (Cursor / Claude Code / TRAE SOLO) with cross-platform scheduler guidance (Claude `run_in_background`, Cursor background tasks, TRAE task runner; serial downgrade for old IDEs).
+- **`AGENTS-GUIDE.md`** (resolves #7): frontier-model onboarding guide with four sections — persona mask map (when to adopt which of the 6 commands), scripts reference, `ai_workspace/` usage and write discipline, and the session-handoff pattern (`HANDOFF.md` + topic tree) for agents that cannot use slash commands.
+- **`SUBAGENT-DISPATCH.md`** (resolves #8): sub-agent dispatch contract — [Role]/[Context]/[Task]/[Output Contract] template, mask-selection table, trust-but-verify acceptance discipline with a two-strikes rule, and parallel-conflict rules (file-boundary splitting, orchestrator-only topic tree, scratchpad staging). Validated by a real 3-agent parallel dispatch experiment (3/3 first-return compliance).
+- `_scripts/role_identity/workflow.py` role-identity script and `_cursor/rules/workflow_assistant.mdc` behavior rules for the new mask.
+- `install.py` manifest now ships the `/workflow` command and `workflow_assistant.mdc` rule to user workspaces.
+
+### Changed
+- `build_commands.py` now generates **22 artifacts** (was 18): 6 Cursor + 6 Claude + 5 TRAE commands + 5 TRAE skills; `--check` drift gate and test expectations updated accordingly.
+
 ## [0.19.0] - 2026-08-16
 
 ### Added

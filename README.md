@@ -2,6 +2,8 @@
 
 [![DOI](doi-badge.svg)](https://doi.org/10.5281/zenodo.18605311)
 
+> **Frontier-model agents**: read [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) first — self-assemble personas, scripts, and ai_workspace without slash commands.
+
 ---
 
 **The problem with multi-agent systems:** every time one agent hands off to another, the receiving agent starts cold — it only knows what you explicitly passed. Context bleeds. Plans drift. You end up re-explaining yourself.
@@ -179,7 +181,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.18.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.20.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 
