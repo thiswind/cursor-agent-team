@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.2] - 2026-08-29
+
+### Fixed
+- README "Current version" footer caught up with the 0.20.1 release (was still v0.20.0). Found by the PLAN-WF-002 real-machine /workflow recon (subtask A, docs mapping).
+
 ## [0.20.1] - 2026-08-29
 
 ### Fixed
