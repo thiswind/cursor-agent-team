@@ -12,7 +12,7 @@
 
 ```
 /discuss  →  plan agreed  →  /crew execute  →  done
-                 ↑
+                 ↑               └→ /workflow  →  fan out read-only sub-agents  →  verify  →  merge
            /writer  →  prose compose loop
            /prompt_engineer  →  new role mask
 ```
@@ -50,10 +50,15 @@ then run the platform installer for my environment.
 
 That means context is always shared. `/crew` already knows what `/discuss` planned — because it was in the same conversation.
 
+When a plan calls for parallel work, `/workflow` extends the meeting room with supervised breakout sessions: it fans out read-only sub-tasks to platform-native background agents wearing CAT masks, verifies their structured returns, and merges only the summaries back into the main conversation — the shared-context core stays intact.
+
+And when your assistant is itself a frontier model, it doesn't need slash commands at all: read [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) to self-assemble any mask, or [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md) to dispatch masked sub-agents — both officially supported since v0.20.0.
+
 | Role | Command | Purpose |
 |------|---------|-------|
 | Discussion Partner | `/discuss` | Explore ideas, clarify requirements, research, generate plans |
 | Crew Member | `/crew` | Execute agreed plans strictly, step by step |
+| Workflow Executor | `/workflow` (alias `/ultra`) | Supervised parallel execution of `Executor: workflow` plans via cross-platform sub-agents (read-only recon by default; write-heavy work routes to `/crew`) |
 | Writer | `/writer` | Execute prose plans with Draft -> Review -> Final quality control |
 | Prompt Engineer | `/prompt_engineer` | Create or maintain prompts, commands, new role masks |
 | Spec Translator | `/spec_translator` | Convert plan files into spec-kit documents |
@@ -63,6 +68,9 @@ That means context is always shared. `/crew` already knows what `/discuss` plann
 ## Features
 
 - **Single conversation, multiple masks** — role switching without agent handoff or context loss
+- **Frontier-agent self-assembly (v0.20.0)** — [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md): advanced agents enter a project cold, pick a role mask themselves, and follow it without slash commands or harness injection — an officially supported path
+- **Supervised sub-agent dispatch** — [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md): an orchestrator dispatches mid-tier sub-agents with [Role]/[Context]/[Task]/[Output Contract] prompts, mask-based constraint, and trust-but-verify acceptance
+- **Cross-platform parallel execution** — `/workflow` fans out read-only sub-tasks to native background agents (Claude `run_in_background` / Cursor background tasks / TRAE task runner; serial downgrade on old IDEs); only structured summaries return to the main session
 - **Human-in-the-loop** — discussion, planning, execution, and expansion stay under user control
 - **Shared AI workspace** — durable plans, notes, requirements, and execution records in `cursor-agent-team/ai_workspace/`
 - **Script-backed constraints** — Python scripts handle preflight checks, phase markers, topic-tree validation, and workspace generation

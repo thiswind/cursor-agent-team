@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.20.1] - 2026-08-29
+
+### Fixed
+- `README.md` now reflects the v0.20.0 feature set: `/workflow` added to the role table and workflow diagram, Features gained self-assembly / sub-agent dispatch / cross-platform parallel bullets, and "How it works" explains supervised breakout sessions and the frontier-agent path (AGENTS-GUIDE / SUBAGENT-DISPATCH).
+- `AGENTS-GUIDE.md` persona map now lists all **six** masks — the `workflow` (Workflow Executor) row was missing from the table and the self-assembly chooser.
+
 ## [0.20.0] - 2026-08-29
 
 ### Added

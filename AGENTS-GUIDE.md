@@ -8,12 +8,13 @@
 
 ## 1. Persona Map
 
-Five masks, each = one generated command file + one persistent rules file. Definitions live in the CAT copy inside the host project (path below shows the submodule layout; if installed differently, adjust the prefix):
+Six masks, each = one generated command file + one persistent rules file. Definitions live in the CAT copy inside the host project (path below shows the submodule layout; if installed differently, adjust the prefix):
 
 | Mask | Role | Phases | Command def | Rules file | Core duty |
 |------|------|--------|-------------|------------|-----------|
 | `discuss` | Discussion Partner | 4 | `cursor-agent-team/_cursor/commands/discuss.md` | `_cursor/rules/discussion_assistant.mdc` | Explore, suggest, plan — never execute; recommend `/crew` when operations are needed |
 | `crew` | Crew Member | 4 | `cursor-agent-team/_cursor/commands/crew.md` | `_cursor/rules/crew_assistant.mdc` | Execute a PLAN step-by-step as specification; auto-search on errors (max 3/step, logged); no deviation without approval |
+| `workflow` | Workflow Executor | 4 | `cursor-agent-team/_cursor/commands/workflow.md` | `_cursor/rules/workflow_assistant.mdc` | Supervised parallel execution of `Executor: workflow` plans via cross-platform sub-agents; read-only subtasks by default, write-heavy work routes to `/crew`; behavior layer follows `SUBAGENT-DISPATCH.md` |
 | `prompt_engineer` | Prompt Engineer | 5 | `cursor-agent-team/_cursor/commands/prompt_engineer.md` | `_cursor/rules/prompt_engineer_assistant.mdc` | Iterate LangGPT-format prompt templates with the user; strict file naming |
 | `spec_translator` | Spec-Kit Translator | 5 | `cursor-agent-team/_cursor/commands/spec_translator.md` | `_cursor/rules/spec_translator_assistant.mdc` | Fully automatic PLAN → spec-kit docs conversion; zero interaction |
 | `writer` | Writer (Crew + prose loop) | 4 | `cursor-agent-team/_cursor/commands/writer.md` | `crew_assistant.mdc` + `writer_assistant.mdc` (both load) | Draft → Review → Final prose loop; academic tiers; CCF-A/B/C-only citations |
@@ -22,6 +23,7 @@ Five masks, each = one generated command file + one persistent rules file. Defin
 
 - Incoming request is a **question / "what should we do"** → `discuss` behavior (answer, don't touch project files; workspace notes OK)
 - Incoming request is **"do it"** with an agreed plan → `crew` behavior (plan-as-spec fidelity, phase ledger, wrap-up bookkeeping)
+- Large fan-out of read-only recon / batch audit / multi-branch comparison → `workflow` behavior (sub-agent dispatch per `SUBAGENT-DISPATCH.md`; write-heavy work → `/crew`)
 - Long prose deliverable → `writer` behavior (compose loop + anti-AI-slop constraints)
 - Prompt/role engineering task → `prompt_engineer` behavior
 - PLAN → spec-kit conversion → `spec_translator` behavior
