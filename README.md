@@ -23,7 +23,7 @@
 ## A new era: agents that self-assemble
 
 cursor-agent-team (CAT) began as a set of slash commands that let one AI assistant wear
-different role masks inside a single conversation. With **v0.21.0** the center of gravity
+different role masks inside a single conversation. With **v0.21.1** the center of gravity
 shifts: **the primary user is no longer the human typing commands — it is the frontier
 agent itself.**
 
@@ -217,7 +217,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.21.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.21.1** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.21.1] - 2026-08-29
+
+### Changed
+- **Banner restyled to a Cyberpunk 2077 aesthetic**: the friendly rounded white robot read as dated; the new hero art features an angular chrome-black android with a cyan visor, an orbiting holographic mask ring, and three neon verification badges (cyan / magenta / yellow) fed by beams from the raised power fist — dark-city atmosphere, hard neon rim light. Selected from a 5-round generate + vision-QC loop (final round judged as full-image view, since the README renders the banner at `width=760` uncropped). Previous banner retained as `banner_prev_2077remake.jpg`.
+
 ## [0.21.0] - 2026-08-29
 
 ### Changed
