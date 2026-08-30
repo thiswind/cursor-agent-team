@@ -248,7 +248,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.22.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.22.1** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

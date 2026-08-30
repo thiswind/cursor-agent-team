@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.1] - 2026-08-30
+
+### Changed
+- **Autonomy principle for frontier agents — CAT is an optional toolbox, not a per-turn obligation.** The master skill gains an Autonomy section (worth-using cues, skip cues, and what the toolbox offers); every mask skill declares that adopting it is the agent's call. One-shot asks proceed without CAT; ceremonial bookkeeping is explicitly discouraged.
+- **Sub-agent control mode (hard for downstream, optional lever for the dispatcher).** The master skill gains the mask-injection template (`[CAT mask]` / `[CAT behavior]` / `[CAT output contract]`) for putting a mask on a dispatched sub-agent and enforcing the CAT pipeline: outputs on disk under `ai_workspace/`, phase markers, verify_response evidence. Autonomous toward upstream, controllable toward downstream.
+
 ## [0.22.0] - 2026-08-30
 
 ### Added

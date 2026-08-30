@@ -26,7 +26,13 @@ master_skill:
     multi-role AI team framework: picks the right role mask (discuss, crew,
     workflow, prompt_engineer, spec_translator, writer), points to the
     authoritative protocols, and enforces the workspace/marker contracts.
+    Autonomous toward upstream (CAT is an optional toolbox — whether and
+    when to use it is the agent's call, not a per-turn obligation) and
+    controllable toward downstream (dispatchers may put masks on
+    sub-agents and enforce the CAT pipeline for predictable, auditable
+    output).
   history:
+    - "v1.1.0 (2026-08-30): Autonomy + sub-agent control mode. CAT reframed from a discipline handbook into a power tool: the agent decides when the toolbox is worth reaching for (one-shot asks skip it); dispatching agents gain the mask-injection template to enforce the pipeline on sub-agents (outputs on disk, machine-checked evidence)."
     - "v1.0.0 (2026-08-30): Initial creation. Frontier-agent front door: mask-selection table, cold-start reading order, hard rules; skills become a first-class delivery vehicle alongside slash commands (v0.22.0)."
 
 commands:

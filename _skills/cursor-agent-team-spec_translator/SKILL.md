@@ -5,7 +5,7 @@ description: "Fully automatic conversion of PLAN files into spec-kit formatted d
 
 # CAT Skill — Cursor Agent Team - Spec-Kit Translator
 
-> One of the six role masks of Cursor Agent Team (CAT), packaged as a host-agnostic skill. This file is a **thin orchestration layer**: it tells you when and how to adopt the mask; the authoritative behavioral detail lives in the repo (SSOT pointers below).
+> One of the six role masks of Cursor Agent Team (CAT), packaged as a host-agnostic skill. This file is a **thin orchestration layer**: it tells you when and how to adopt the mask; the authoritative behavioral detail lives in the repo (SSOT pointers below). Adopting it is your call — use the mask when the work merits it, skip it for one-shot asks.
 
 ## 0. Trigger self-check (before acting)
 

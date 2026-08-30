@@ -180,6 +180,32 @@ class TestFrontierSkills(unittest.TestCase):
         self.assertIn("Cold-start reading order", content)
         self.assertIn("validate_topic_tree.py", content)
 
+    def test_master_skill_declares_autonomy_and_subagent_control(self):
+        """v0.22.1: autonomous upstream / controllable downstream."""
+        content = self.targets["_skills/cursor-agent-team/SKILL.md"]
+        self.assertIn("Autonomy", content)
+        self.assertIn("your call", content)
+        self.assertIn("not a per-turn obligation", content)
+        self.assertIn("Sub-agent control mode", content)
+        self.assertIn("[CAT mask]", content)
+        self.assertIn("[CAT behavior]", content)
+        self.assertIn("[CAT output contract]", content)
+        self.assertIn("SUBAGENT-DISPATCH.md", content)
+        fm = content.split("---")[1]
+        self.assertIn("Autonomous toward upstream", fm)
+        self.assertIn("controllable toward downstream", fm)
+
+    def test_mask_skills_declare_adoption_autonomy(self):
+        """v0.22.1: mask adoption is the agent's call, not obligatory."""
+        for rel, content in self.skill_paths().items():
+            if rel == "_skills/cursor-agent-team/SKILL.md":
+                continue
+            self.assertIn(
+                "Adopting it is your call",
+                content,
+                f"{rel} missing adoption-autonomy statement",
+            )
+
     def test_skills_use_python_not_python3(self):
         for rel, content in self.skill_paths().items():
             self.assertNotIn("python3 ", content, f"{rel} should use `python`")

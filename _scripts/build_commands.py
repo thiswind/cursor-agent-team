@@ -264,7 +264,9 @@ def render_skill(cmd) -> str:
         "> One of the six role masks of Cursor Agent Team (CAT), packaged as "
         "a host-agnostic skill. This file is a **thin orchestration layer**: "
         "it tells you when and how to adopt the mask; the authoritative "
-        "behavioral detail lives in the repo (SSOT pointers below)."
+        "behavioral detail lives in the repo (SSOT pointers below). "
+        "Adopting it is your call — use the mask when the work merits it, "
+        "skip it for one-shot asks."
     )
     out.append("## 0. Trigger self-check (before acting)")
     out.append(
@@ -342,7 +344,30 @@ def render_master_skill(commands, master) -> str:
         "Engage CAT only if the project root contains `cursor-agent-team/`. "
         "**If not: do not act**; tell the user CAT is not installed and stop."
     )
-    out.append("## 1. Cold-start reading order")
+    out.append("## 1. Autonomy (core principle)")
+    out.append(
+        "CAT is an **optional toolbox** for you, not a per-turn obligation. "
+        "This skill's job is to tell you the toolbox exists, where it lives, "
+        "and how to use it — nothing more. Whether and when to use it is "
+        "**your call**."
+    )
+    out.append(
+        "Worth reaching for when: the project has a HANDOFF.md or topic "
+        "tree you need to continue; this turn's output is a decision, "
+        "conclusion, or long text worth preserving for later sessions; the "
+        "task is multi-stage or spans sessions; the user explicitly asks "
+        "for CAT or a mask.\n"
+        "Skip it when: one-shot answers, small fixes, chatter — ceremonial "
+        "bookkeeping for its own sake buys nothing; just do the work."
+    )
+    out.append(
+        "What the toolbox gives you: cross-session memory "
+        "(`ai_workspace/`: topic tree, deep notes, plans, constraints), "
+        "six pre-built persona/flow configurations (the masks), "
+        "machine-checked verification scripts, and a lookup path into "
+        "project history (`discussion_topics.md` × `git log`)."
+    )
+    out.append("## 2. Cold-start reading order")
     out.append(
         "1. `cursor-agent-team/AGENTS-GUIDE.md` — persona map, scripts "
         "reference, ai_workspace usage, session handoff pattern\n"
@@ -352,7 +377,7 @@ def render_master_skill(commands, master) -> str:
         "4. `cursor-agent-team/ai_workspace/discussion_topics.md` — timeline\n"
         "5. `git log --oneline -10` — trust the disk, not memory"
     )
-    out.append("## 2. Mask selection (when to wear which)")
+    out.append("## 3. Mask selection (when to wear which)")
     out.append(
         "| Mask | Role | One-line duty |\n|------|------|---------------|\n"
         + table
@@ -363,7 +388,7 @@ def render_master_skill(commands, master) -> str:
         "read it once, apply always."
     )
     out.append(
-        "## 3. Hard rules (non-negotiable, all masks)\n"
+        "## 4. Hard rules (non-negotiable, all masks)\n"
         "1. Workspace writes go under `cursor-agent-team/ai_workspace/` "
         "only.\n"
         "2. The topic tree is modified only via "
@@ -376,7 +401,38 @@ def render_master_skill(commands, master) -> str:
         "contracts."
     )
     out.append(
-        "## 4. Relation to slash commands\n"
+        "## 5. Sub-agent control mode (hard for downstream — your "
+        "optional lever)\n"
+        "When you (the frontier agent) dispatch sub-agents, you may put a "
+        "mask on them and **enforce the CAT pipeline**. This is CAT's "
+        "control power: autonomous toward upstream, controllable toward "
+        "downstream.\n\n"
+        "Inject three things into the dispatch prompt (template):\n\n"
+        "```text\n"
+        "[CAT mask] Your role: <mask> "
+        "(discuss/crew/prompt_engineer/spec_translator/writer/workflow)\n"
+        "[CAT behavior] Read cursor-agent-team/_claude/commands/<mask>.md "
+        "(or _cursor/rules/<mask>.mdc); follow its persona and flow\n"
+        "[CAT output contract] Write outputs under "
+        "cursor-agent-team/ai_workspace/ (notes/scratchpad/plans as "
+        "needed); on stage completion run "
+        "`python cursor-agent-team/_scripts/phase_marker.py <N> true`; "
+        "self-verify with verify_response.py before responding; report "
+        "pointers, not dumps\n"
+        "```\n\n"
+        "Where the control comes from: the mask fixes behavior → outputs "
+        "are **predictable in form**; forced on-disk outputs → you can "
+        "**audit the work site** anytime; machine-checked contracts → "
+        "claims of \"done\" carry **verifiable evidence**, not "
+        "self-report. For deeper mechanics (parallel sub-agents, domain "
+        "splits, surgical dispatch protocol) read "
+        "`cursor-agent-team/SUBAGENT-DISPATCH.md`.\n\n"
+        "Using it is also your call: simple subtasks can be dispatched "
+        "bare; the control mode pays off for multi-step, "
+        "hard-to-verify, or audit-worthy work."
+    )
+    out.append(
+        "## 6. Relation to slash commands\n"
         "Human operators keep the `/crew`, `/discuss`, ... slash commands "
         "(mid-tier path). Skills are the frontier-agent path: same six "
         "masks, self-assembled per turn instead of harness-injected."
