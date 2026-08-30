@@ -31,6 +31,28 @@ RULE_FILES = [
     ("_claude/rules/writer_assistant.md", ".claude/rules/writer_assistant.md"),
 ]
 
+SKILL_DIRS = [
+    ("_skills/cursor-agent-team", ".claude/skills/cursor-agent-team"),
+    ("_skills/cursor-agent-team-discuss", ".claude/skills/cursor-agent-team-discuss"),
+    ("_skills/cursor-agent-team-crew", ".claude/skills/cursor-agent-team-crew"),
+    ("_skills/cursor-agent-team-prompt_engineer", ".claude/skills/cursor-agent-team-prompt_engineer"),
+    ("_skills/cursor-agent-team-spec_translator", ".claude/skills/cursor-agent-team-spec_translator"),
+    ("_skills/cursor-agent-team-writer", ".claude/skills/cursor-agent-team-writer"),
+    ("_skills/cursor-agent-team-workflow", ".claude/skills/cursor-agent-team-workflow"),
+]
+
+
+def _load_owned_files(info_path):
+    """Read the previously-installed file list so re-installs can overwrite
+    owned files without touching user-added files (same pattern as
+    install_trae_solo.py)."""
+    import json
+    try:
+        with open(info_path, "r", encoding="utf-8") as f:
+            return set(json.load(f).get("files", []))
+    except (FileNotFoundError, ValueError):
+        return set()
+
 
 def main():
     script_path = os.path.abspath(__file__)
@@ -53,6 +75,7 @@ def main():
     print("Step 2: Creating directory structure...")
     u.ensure_dir(os.path.join(project_root, ".claude", "commands"))
     u.ensure_dir(os.path.join(project_root, ".claude", "rules"))
+    u.ensure_dir(os.path.join(project_root, ".claude", "skills"))
     u.ensure_dir(os.path.join(submodule_dir, "config"))
     u.colored_print("✓ Directories created", "green")
     print()
@@ -74,6 +97,19 @@ def main():
         u.colored_print(f"Error: {len(failed)} file(s) failed to copy", "red")
         sys.exit(1)
     u.colored_print("✓ Commands and rules copied", "green")
+    print()
+
+    print("Step 3b: Copying frontier-agent skills...")
+    info_path = os.path.join(project_root, ".claude", ".cursor-agent-team-installed")
+    owned_files = _load_owned_files(info_path)
+    installed_skills, failed_skills = u.copy_dirs(
+        SKILL_DIRS, submodule_dir, project_root, owned_files=owned_files
+    )
+    if failed_skills:
+        u.colored_print(f"Error: {len(failed_skills)} skill(s) failed to copy", "red")
+        sys.exit(1)
+    installed += installed_skills
+    u.colored_print("✓ Frontier-agent skills copied (.claude/skills/)", "green")
     print()
 
     print("Step 4: Recording installation information...")
@@ -108,11 +144,17 @@ def main():
     print("  These commands are mask-style slash commands in one shared conversation context.")
     print("  They intentionally do not install isolated subagents by default.")
     print()
+    print("Frontier-agent path (since v0.22.0):")
+    print("  7 skills installed under .claude/skills/ — the master routing skill")
+    print("  `cursor-agent-team` plus one per role mask. A frontier agent that")
+    print("  auto-discovers skills can run CAT without slash commands.")
+    print()
     u.print_git_tracking_note([
         ".gitmodules",
         SUBMODULE_NAME,
         ".claude/commands/",
         ".claude/rules/",
+        ".claude/skills/",
     ])
     print()
     print("Persona System:")

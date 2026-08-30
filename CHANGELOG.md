@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.22.0] - 2026-08-30
+
+### Added
+- **Installable frontier-agent skills — skills become a first-class delivery vehicle.** The six role masks plus a new master routing skill (`cursor-agent-team`) now ship as host-agnostic `SKILL.md` packages generated from `commands.yaml` into the new top-level `_skills/` directory. Each skill is a thin orchestration layer: YAML frontmatter (`name` + trigger-rich `description`) for host auto-discovery, a trigger self-check (stays silent when `cursor-agent-team/` is absent), SSOT pointers to the authoritative command/rules files, the mask operating loop, and the machine-checked output contract.
+- `spec_translator` gains a skill (previously TRAE-unsupported `null`); skills are host-agnostic, so all six masks are now skill-covered.
+- `install_claude_code.py` installs the 7 skills into `.claude/skills/`; `install_trae_solo.py` installs them into `.trae/skills/` (source moved from `_trae_solo/skills/`).
+- `commands.yaml`: new top-level `master_skill` block; per-mask `skill.rules_files` lists for SSOT pointers.
+
+### Changed
+- `build_commands.py`: `render_skill()` rewritten for the frontier-agent format; new `render_master_skill()`; skill artifacts moved from `_trae_solo/skills/` to host-agnostic `_skills/` (artifact count 22 → 24).
+- README: "Skills: the per-turn handle" section; capability table gains the skills row; Quick start gains the zero-keystroke skill path.
+
 ## [0.21.1] - 2026-08-29
 
 ### Changed

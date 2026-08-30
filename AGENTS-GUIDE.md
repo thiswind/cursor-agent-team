@@ -5,6 +5,8 @@
 > **Companion doc**: `SUBAGENT-DISPATCH.md` — how an orchestrator dispatches mid-tier sub-agents wearing CAT personas.
 >
 > **Official support note**: reading persona files directly and following their behavioral mode — without slash-command injection — is an officially supported usage path (since v0.20.0).
+>
+> **Skills note (v0.22.0)**: if your host surfaces skills (`.claude/skills/`, `.trae/skills/`, or equivalent), CAT ships as 7 `SKILL.md` packages — the `cursor-agent-team` master router plus one per mask. Treat them as thin entry points: trigger self-check, then come back to this guide and the files it points at.
 
 ## 1. Persona Map
 

@@ -17,7 +17,7 @@ class WriterReleaseTests(unittest.TestCase):
         self.assertTrue((ROOT / "_claude/rules/crew_assistant.md").is_file())
         self.assertTrue((ROOT / "_claude/rules/writer_assistant.md").is_file())
         self.assertTrue((ROOT / "VERSION").is_file())
-        self.assertTrue((ROOT / "_trae_solo/skills/cursor-agent-team-writer/SKILL.md").is_file())
+        self.assertTrue((ROOT / "_skills/cursor-agent-team-writer/SKILL.md").is_file())
         self.assertTrue((ROOT / "_trae_solo/commands/writer.md").is_file())
         self.assertTrue((ROOT / "commands.yaml").is_file())
         cursor = (ROOT / "_cursor/commands/writer.md").read_text()
@@ -34,7 +34,7 @@ class WriterReleaseTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "_scripts"))
         import _install_utils as utils
 
-        self.assertEqual(utils.get_version(str(ROOT)), "v0.21.1")
+        self.assertEqual(utils.get_version(str(ROOT)), "v0.22.0")
 
     def test_installers_list_writer(self):
         self.assertIn("_cursor/commands/writer.md", (ROOT / "install.py").read_text())

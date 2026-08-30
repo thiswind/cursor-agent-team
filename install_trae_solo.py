@@ -19,11 +19,13 @@ import _install_utils as u
 SUBMODULE_NAME = "cursor-agent-team"
 
 SKILL_FILES = [
-    ("_trae_solo/skills/cursor-agent-team-discuss", ".trae/skills/cursor-agent-team-discuss"),
-    ("_trae_solo/skills/cursor-agent-team-crew", ".trae/skills/cursor-agent-team-crew"),
-    ("_trae_solo/skills/cursor-agent-team-prompt_engineer", ".trae/skills/cursor-agent-team-prompt_engineer"),
-    ("_trae_solo/skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
-    ("_trae_solo/skills/cursor-agent-team-workflow", ".trae/skills/cursor-agent-team-workflow"),
+    ("_skills/cursor-agent-team", ".trae/skills/cursor-agent-team"),
+    ("_skills/cursor-agent-team-discuss", ".trae/skills/cursor-agent-team-discuss"),
+    ("_skills/cursor-agent-team-crew", ".trae/skills/cursor-agent-team-crew"),
+    ("_skills/cursor-agent-team-prompt_engineer", ".trae/skills/cursor-agent-team-prompt_engineer"),
+    ("_skills/cursor-agent-team-spec_translator", ".trae/skills/cursor-agent-team-spec_translator"),
+    ("_skills/cursor-agent-team-writer", ".trae/skills/cursor-agent-team-writer"),
+    ("_skills/cursor-agent-team-workflow", ".trae/skills/cursor-agent-team-workflow"),
 ]
 
 COMMAND_FILES = [

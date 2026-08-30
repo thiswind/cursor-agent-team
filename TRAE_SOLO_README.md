@@ -27,7 +27,7 @@ python cursor-agent-team/install_trae_solo.py
 
 脚本会：
 - 在项目根目录创建 `.trae/skills/` 目录
-- 将技能文件复制到 `.trae/skills/` 目录
+- 将 7 个技能（v0.22.0 起：master 路由 + 六面具，源自 `_skills/`）复制到 `.trae/skills/` 目录
 - 将 `AGENTS.md` 模板复制到项目根目录
 - 生成 `ai_workspace`（如果配置文件存在）
 
@@ -104,10 +104,11 @@ cursor-agent-team/
 │   │   ├── crew.md
 │   │   ├── discuss.md
 │   │   └── prompt_engineer.md
-│   ├── skills/                       # 技能配置
+│   ├── skills/                       # 技能配置（v0.22.0 起装 7 个：master + 六面具）
+│   │   ├── cursor-agent-team/
 │   │   ├── cursor-agent-team-crew/
 │   │   ├── cursor-agent-team-discuss/
-│   │   └── cursor-agent-team-prompt-engineer/
+│   │   └── cursor-agent-team-prompt-engineer/ 等
 │   ├── test_ai_workspace_access.py   # 测试脚本
 │   └── test_system_stability.py      # 测试脚本
 ├── _cursor/                          # Cursor 专用

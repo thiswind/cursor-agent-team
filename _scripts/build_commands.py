@@ -11,7 +11,11 @@ Artifacts generated per command (based on `platforms` in commands.yaml):
     cursor : _cursor/commands/{name}.md
     claude : _claude/commands/{name}.md
     trae   : _trae_solo/commands/{name}.md
-    trae   : _trae_solo/skills/cursor-agent-team-{name}/SKILL.md  (when skill set)
+
+Host-agnostic frontier-agent skills (generated for every command with a
+`skill` block, regardless of platform — since v0.22.0):
+    skills : _skills/{skill-slug}/SKILL.md
+    skills : _skills/cursor-agent-team/SKILL.md  (master routing skill)
 
 Every generated command embeds:
     - the Output Markers requirement (phase_marker.py contract)
@@ -222,31 +226,162 @@ def render_trae(cmd) -> str:
     return "\n\n".join(out) + "\n"
 
 
+def skill_slug(cmd) -> str:
+    return f"cursor-agent-team-{cmd['name']}"
+
+
 def render_skill(cmd) -> str:
+    """Host-agnostic frontier-agent skill (since v0.22.0).
+
+    Thin orchestration layer: YAML frontmatter for host auto-discovery,
+    trigger self-check, SSOT pointers into the repo, the mask's operating
+    loop, and the machine-checked output contract.
+    """
     skill = cmd["skill"]
-    n = cmd["phases"]
-    out = []
-    out.append(f"# {skill['name']}")
-    out.append("## Skill Name")
-    out.append(skill["name"])
-    out.append("## Skill Description")
-    out.append(skill["description"].strip())
-    out.append("## Trigger Conditions")
-    out.append("\n".join(f"- {t}" for t in skill["triggers"]))
-    out.append("## Behavior Logic")
-    out.append("\n".join(f"{i}. {b}" for i, b in enumerate(skill["behavior"], 1)))
-    out.append("## Execution Steps")
-    out.append("\n".join(f"{i}. {s}" for i, s in enumerate(skill["steps"], 1)))
-    out.append("## Expected Output Shape")
-    shape = "\n".join(
-        f"[Phase {i} DONE]\n...phase {i} content..." for i in range(n)
+    name = cmd["name"]
+    rules_files = skill.get("rules_files") or []
+    triggers_flat = "; ".join(
+        t.replace("`", "") for t in skill["triggers"]
     )
-    out.append("```\n" + shape + "\n```")
+    fm_desc = " ".join(
+        (
+            skill["description"].strip(),
+            f"Invoke when the working repo has a cursor-agent-team/ checkout "
+            f"and the request matches: {triggers_flat}.",
+            "Frontier agents may adopt this mask unprompted when the request "
+            "clearly fits (self-assembly).",
+        )
+    )
+    out = []
+    out.append(
+        "---\n"
+        f"name: {skill_slug(cmd)}\n"
+        f'description: "{fm_desc}"\n'
+        "---"
+    )
+    out.append(f"# CAT Skill — {skill['name']}")
+    out.append(
+        "> One of the six role masks of Cursor Agent Team (CAT), packaged as "
+        "a host-agnostic skill. This file is a **thin orchestration layer**: "
+        "it tells you when and how to adopt the mask; the authoritative "
+        "behavioral detail lives in the repo (SSOT pointers below)."
+    )
+    out.append("## 0. Trigger self-check (before acting)")
+    out.append(
+        "Adopt this mask only if **both** hold:\n"
+        "1. The project root contains `cursor-agent-team/` (CAT installed as "
+        "a submodule — this skill's scripts and workspace live there). "
+        "**If not: do not act on this skill**; tell the user CAT is not "
+        "installed in this repo and stop.\n"
+        f"2. The request matches this mask: {triggers_flat}."
+    )
+    out.append("## 1. Authoritative sources (read before behaving)")
+    pointers = [
+        f"- Command definition: `cursor-agent-team/_cursor/commands/{name}.md`"
+    ]
+    for rf in rules_files:
+        pointers.append(f"- Rules: `cursor-agent-team/_cursor/rules/{rf}`")
+    pointers.append(
+        "- Full persona map & discipline layer: "
+        "`cursor-agent-team/AGENTS-GUIDE.md` §1"
+    )
+    out.append("\n".join(pointers))
+    out.append("## 2. Mask contract")
+    out.append("\n".join(f"- {b}" for b in skill["behavior"]))
+    out.append("## 3. Operating loop")
+    out.append("\n".join(f"{i}. {s}" for i, s in enumerate(skill["steps"], 1)))
+    out.append(
+        "## 4. Output contract (machine-checked)\n"
+        "- End every long-form response with the phase-marker gates "
+        f"(all {cmd['phases']} phases, emitted via "
+        "`cursor-agent-team/_scripts/phase_marker.py`, never typed by hand).\n"
+        "- Close the loop with "
+        "`cursor-agent-team/_scripts/verify_response.py` before sending."
+    )
     out.append("## Dependencies")
     out.append("\n".join(f"- {d}" for d in skill["dependencies"]))
     out.append("## Notes")
     out.append("\n".join(f"- {note}" for note in skill["notes"]))
     out.append("---\n" + history_footer(cmd))
+    return "\n\n".join(out) + "\n"
+
+
+def render_master_skill(commands, master) -> str:
+    """Master routing skill: the frontier agent's front door to CAT."""
+    fm_desc = " ".join(
+        (
+            master["description"].strip(),
+            "Invoke when: the working repo has a cursor-agent-team/ checkout; "
+            "a frontier agent starts or continues work there; the user "
+            "mentions CAT, role masks, crew, discussion tree, ai_workspace, "
+            "or sub-agent dispatch.",
+        )
+    )
+    rows = []
+    for name, cmd in commands.items():
+        summary = " ".join((cmd.get("role_summary") or "").split())
+        rows.append(f"| `{name}` | {cmd['role']} | {summary} |")
+    table = "\n".join(rows)
+    out = []
+    out.append(
+        "---\n"
+        f"name: {master['name']}\n"
+        f'description: "{fm_desc}"\n'
+        "---"
+    )
+    out.append("# CAT — Master Routing Skill (frontier-agent front door)")
+    out.append(
+        "> Cursor Agent Team (CAT): one conversation, six role masks, no "
+        "orchestrator swarm. This skill is the **router** — it tells you "
+        "which mask to wear and where the authoritative protocols live. "
+        "Per-mask skills (`cursor-agent-team-<mask>`) exist for deeper "
+        "engagement."
+    )
+    out.append("## 0. Trigger self-check (before acting)")
+    out.append(
+        "Engage CAT only if the project root contains `cursor-agent-team/`. "
+        "**If not: do not act**; tell the user CAT is not installed and stop."
+    )
+    out.append("## 1. Cold-start reading order")
+    out.append(
+        "1. `cursor-agent-team/AGENTS-GUIDE.md` — persona map, scripts "
+        "reference, ai_workspace usage, session handoff pattern\n"
+        "2. `cursor-agent-team/SUBAGENT-DISPATCH.md` — if you will dispatch "
+        "mid-tier sub-agents\n"
+        "3. Project-root `HANDOFF.md` — current state snapshot (if present)\n"
+        "4. `cursor-agent-team/ai_workspace/discussion_topics.md` — timeline\n"
+        "5. `git log --oneline -10` — trust the disk, not memory"
+    )
+    out.append("## 2. Mask selection (when to wear which)")
+    out.append(
+        "| Mask | Role | One-line duty |\n|------|------|---------------|\n"
+        + table
+    )
+    out.append(
+        "Selection rules and the discipline layer (history handling, "
+        "gleaning, TTS, workspace writes) live in `AGENTS-GUIDE.md` §1 — "
+        "read it once, apply always."
+    )
+    out.append(
+        "## 3. Hard rules (non-negotiable, all masks)\n"
+        "1. Workspace writes go under `cursor-agent-team/ai_workspace/` "
+        "only.\n"
+        "2. The topic tree is modified only via "
+        "`python cursor-agent-team/_scripts/validate_topic_tree.py` "
+        "— never by hand.\n"
+        "3. Serious work products are written to files first, then "
+        "summarized in chat (path pointers, not dumps).\n"
+        "4. Phase markers (`phase_marker.py`) and response "
+        "self-verification (`verify_response.py`) are machine-checked "
+        "contracts."
+    )
+    out.append(
+        "## 4. Relation to slash commands\n"
+        "Human operators keep the `/crew`, `/discuss`, ... slash commands "
+        "(mid-tier path). Skills are the frontier-agent path: same six "
+        "masks, self-assembled per turn instead of harness-injected."
+    )
+    out.append("---\n" + history_footer({"history": master["history"]}))
     return "\n\n".join(out) + "\n"
 
 
@@ -264,18 +399,23 @@ def targets_for(cmd):
         targets.append((f"_claude/commands/{name}.md", render_claude(cmd)))
     if "trae" in cmd["platforms"]:
         targets.append((f"_trae_solo/commands/{name}.md", render_trae(cmd)))
-        if cmd.get("skill"):
-            targets.append((
-                f"_trae_solo/skills/cursor-agent-team-{name}/SKILL.md",
-                render_skill(cmd),
-            ))
+    if cmd.get("skill"):
+        targets.append((
+            f"_skills/{skill_slug(cmd)}/SKILL.md",
+            render_skill(cmd),
+        ))
     return targets
 
 
-def all_targets(commands):
+def all_targets(commands, master_skill=None):
     result = []
     for cmd in commands.values():
         result.extend(targets_for(cmd))
+    if master_skill:
+        result.append((
+            f"_skills/{master_skill['name']}/SKILL.md",
+            render_master_skill(commands, master_skill),
+        ))
     return result
 
 
@@ -284,7 +424,7 @@ def expected_dirs():
         "_cursor/commands",
         "_claude/commands",
         "_trae_solo/commands",
-        "_trae_solo/skills",
+        "_skills",
     ]
 
 
@@ -317,9 +457,11 @@ def main() -> int:
     args = parser.parse_args()
 
     with open(SOURCE_PATH, "r", encoding="utf-8") as f:
-        commands = yaml.safe_load(f)["commands"]
+        doc = yaml.safe_load(f)
+    commands = doc["commands"]
+    master_skill = doc.get("master_skill")
 
-    targets = all_targets(commands)
+    targets = all_targets(commands, master_skill)
     root = args.out_dir or PRODUCT_ROOT
 
     if args.list:

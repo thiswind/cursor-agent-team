@@ -13,7 +13,21 @@
 #     for Cursor and TRAE artifacts automatically.
 #   - Every generated command embeds the Output Markers requirement AND the
 #     Response Self-Verification step (closed loop with verify_response.py).
+#   - Since v0.22.0, every `skill:` block also generates a host-agnostic
+#     frontier-agent skill under `_skills/<slug>/SKILL.md` (YAML frontmatter,
+#     trigger self-check, SSOT pointers), plus one master routing skill from
+#     the top-level `master_skill:` block below.
 # =============================================================================
+
+master_skill:
+  name: "cursor-agent-team"
+  description: >-
+    Master routing skill for Cursor Agent Team (CAT), the single-conversation
+    multi-role AI team framework: picks the right role mask (discuss, crew,
+    workflow, prompt_engineer, spec_translator, writer), points to the
+    authoritative protocols, and enforces the workspace/marker contracts.
+  history:
+    - "v1.0.0 (2026-08-30): Initial creation. Frontier-agent front door: mask-selection table, cold-start reading order, hard rules; skills become a first-class delivery vehicle alongside slash commands (v0.22.0)."
 
 commands:
 
@@ -130,6 +144,8 @@ commands:
         Provides discussion and suggestion mode, helping users explore ideas,
         analyze problems, search information, and generate execution plans.
       aliases: ["@讨论搭档", "/discuss"]
+      rules_files:
+        - discussion_assistant.mdc
       triggers:
         - "User inputs `@讨论搭档` or `/discuss`"
         - "User needs to discuss or explore a topic"
@@ -255,6 +271,8 @@ commands:
         Provides execution mode, strictly follows plans to execute tasks,
         automatically searches for solutions, and ensures task completion.
       aliases: ["@执行组员", "/crew"]
+      rules_files:
+        - crew_assistant.mdc
       triggers:
         - "User inputs `@执行组员` or `/crew`"
         - "User needs to execute specific tasks or plans"
@@ -418,6 +436,8 @@ commands:
         prompt templates, supports interactive prompt design and version
         management.
       aliases: ["@提示工程师", "/prompt_engineer"]
+      rules_files:
+        - prompt_engineer_assistant.mdc
       triggers:
         - "User inputs `@提示工程师` or `/prompt_engineer`"
         - "User needs to create new prompt templates"
@@ -535,7 +555,35 @@ commands:
       - "v2.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)"
       - "v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only"
       - "v1.0.0 (2026-01-01): Initial creation - Spec-Kit Translator command"
-    skill: null   # not supported on TRAE
+    skill:
+      name: "Cursor Agent Team - Spec-Kit Translator"
+      description: >-
+        Fully automatic conversion of PLAN files into spec-kit formatted
+        documents, zero user interaction.
+      aliases: ["@spec_translator", "/spec_translator"]
+      rules_files:
+        - spec_translator_assistant.mdc
+      triggers:
+        - "User inputs `/spec_translator`"
+        - "A PLAN file needs conversion to spec-kit documents"
+      behavior:
+        - "**Fully Automatic**: Convert without asking the user questions"
+        - "**Format Fidelity**: Produce spec-kit compliant documents"
+        - "**Zero Interaction**: No user interaction during conversion"
+      steps:
+        - "**Role Declaration**: Run `python cursor-agent-team/_scripts/role_identity/spec_translator.py`"
+        - "**Preflight Check**: Run `python cursor-agent-team/_scripts/preflight_check.py`"
+        - "**Plan Loading**: Read the target PLAN file from `cursor-agent-team/ai_workspace/plans/`"
+        - "**Conversion**: Generate spec-kit documents per the command definition"
+        - "**Output**: Write documents to disk and report paths"
+      dependencies:
+        - "`cursor-agent-team/_scripts/role_identity/spec_translator.py`"
+        - "`cursor-agent-team/_scripts/preflight_check.py`"
+        - "`cursor-agent-team/_scripts/phase_marker.py`"
+        - "`cursor-agent-team/_scripts/verify_response.py`"
+        - "`cursor-agent-team/_cursor/commands/spec_translator.md`"
+      notes:
+        - "Claude Code / Cursor only (no TRAE slash command); the frontier-agent skill works on any host"
 
   # ===========================================================================
   # WRITER (4 phases)
@@ -658,6 +706,9 @@ commands:
         Executes prose plans using a mandatory Draft -> Review -> Final loop,
         with general and academic tiers and the shared AI workspace.
       aliases: ["@writer", "/writer"]
+      rules_files:
+        - crew_assistant.mdc
+        - writer_assistant.mdc
       triggers:
         - "User invokes `/writer` or `@writer`"
         - "User needs a paper, report, proposal, documentation, or other prose deliverable"
@@ -805,6 +856,8 @@ commands:
         with supervised autonomy, structured returns, and full workspace
         archiving.
       aliases: ["@workflow", "/workflow", "@ultra", "/ultra"]
+      rules_files:
+        - workflow_assistant.mdc
       triggers:
         - "User invokes `/workflow` or `/ultra`"
         - "A PLAN marked `Executor: workflow` needs execution with parallel fan-out"

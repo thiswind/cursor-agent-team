@@ -23,14 +23,17 @@
 ## A new era: agents that self-assemble
 
 cursor-agent-team (CAT) began as a set of slash commands that let one AI assistant wear
-different role masks inside a single conversation. With **v0.21.1** the center of gravity
+different role masks inside a single conversation. With **v0.22.0** the center of gravity
 shifts: **the primary user is no longer the human typing commands — it is the frontier
 agent itself.**
 
 Modern frontier models enter a project cold, read the docs, and self-constrain. For them
-CAT is not a command palette but an **operating discipline**: where the masks live, when to
-adopt which one, how to dispatch sub-agents, and which machine-checked contracts to honor
-— all readable directly from two files, no harness injection required.
+CAT is not a command palette but an **operating discipline**: where the masks live, when
+to adopt which one, how to dispatch sub-agents, and which machine-checked contracts to honor
+— all readable directly from two files, no harness injection required. And since v0.22.0
+that discipline ships as **installable skills**: the same six masks, packaged so a
+skill-aware host surfaces them in the agent's skill list every turn — the agent invokes
+CAT itself, no human keystroke required.
 
 > Humans are still first-class citizens: every slash command remains fully supported.
 > But if your assistant is a frontier model, you may never need to type one again.
@@ -39,7 +42,7 @@ adopt which one, how to dispatch sub-agents, and which machine-checked contracts
 
 ## For frontier agents (primary path)
 
-Drop CAT into your project and point your agent at the entry document:
+Drop CAT into your project, install the skills, and the agent picks it up on its own:
 
 ```text
 Read cursor-agent-team/AGENTS-GUIDE.md and adopt the role mask that fits this request.
@@ -50,6 +53,7 @@ That single instruction unlocks the full architecture:
 
 | Capability | Entry point | What the agent gains |
 |------------|-------------|---------------------|
+| **Installable skills** (new in v0.22.0) | `_skills/` → `.claude/skills/` / `.trae/skills/` | 7 host-agnostic skills — the `cursor-agent-team` master router plus one per mask — auto-discovered by skill-aware hosts every turn; agent self-invokes CAT |
 | **Self-assembled masks** | [`AGENTS-GUIDE.md`](AGENTS-GUIDE.md) | Picks any of the six personas cold — no slash commands, no injection; includes a "which mask when" decision list |
 | **Sub-agent dispatch** | [`SUBAGENT-DISPATCH.md`](SUBAGENT-DISPATCH.md) | Fans out mid-tier sub-agents with `[Role]/[Context]/[Task]/[Output Contract]` prompts, mask-based constraints, trust-but-verify acceptance |
 | **Cross-platform parallelism** | `/workflow` executor | Read-only recon fan-out via platform-native background agents (Claude `run_in_background` / Cursor background tasks / TRAE task runner); structured summaries only |
@@ -57,6 +61,31 @@ That single instruction unlocks the full architecture:
 | **Machine-checked contracts** | `_scripts/` | Phase markers, `verify_response.py` self-verification, topic-tree validator — discipline that survives session boundaries |
 
 Both agent-facing documents are officially supported usage paths since v0.20.0.
+
+### Skills: the per-turn handle (new in v0.22.0)
+
+Slash commands are the mid-tier handle — a human must remember and type them. Skills are
+the frontier-agent handle: **install once, and the host surfaces CAT in the agent's skill
+list on every turn.** Each generated skill is a thin orchestration layer with a trigger
+self-check, SSOT pointers into the repo, and the machine-checked output contract:
+
+```text
+_skills/
+├── cursor-agent-team/                    # master router: cold-start order,
+│   └── SKILL.md                          #   mask-selection table, hard rules
+├── cursor-agent-team-discuss/   ├── cursor-agent-team-crew/
+├── cursor-agent-team-writer/    ├── cursor-agent-team-workflow/
+├── cursor-agent-team-prompt_engineer/
+└── cursor-agent-team-spec_translator/    # every SKILL.md generated from
+                                           #   commands.yaml — single source
+```
+
+The skills carry YAML frontmatter (name + trigger-rich description) so any
+frontmatter-discovering host — Claude Code, TRAE, or future ones — can list them without
+configuration. Install paths: `install_claude_code.py` → `.claude/skills/`,
+`install_trae_solo.py` → `.trae/skills/`. A guard clause in every skill keeps the agent
+silent when `cursor-agent-team/` is absent, so a stray skill in the wrong repo degrades
+to a one-line notice instead of misfiring.
 
 ---
 
@@ -101,11 +130,12 @@ git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent
 
 # 2. Install for your platform
 python3 cursor-agent-team/install.py              # Cursor
-python3 cursor-agent-team/install_claude_code.py  # Claude Code
-python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO
+python3 cursor-agent-team/install_claude_code.py  # Claude Code (also installs skills → .claude/skills/)
+python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO (also installs skills → .trae/skills/)
 
-# 3a. Point your frontier agent at AGENTS-GUIDE.md   ← recommended
-# 3b. Or type /discuss and start                     ← classic
+# 3a. On a skill-aware host the agent now sees CAT in its skill list   ← zero-keystroke
+# 3b. Or point your frontier agent at AGENTS-GUIDE.md                  ← manual but universal
+# 3c. Or type /discuss and start                                       ← classic
 ```
 
 Or just tell your agent:
@@ -131,6 +161,7 @@ safe: supervised, read-only sub-agents that return structured summaries for veri
 
 ## Features
 
+- **Installable frontier-agent skills** (new in v0.22.0) — the six masks plus a master routing skill ship as host-agnostic SKILL.md packages (YAML frontmatter, trigger self-check, SSOT pointers); skill-aware hosts surface them to the agent every turn
 - **Frontier-agent self-assembly** — `AGENTS-GUIDE.md`: advanced agents enter cold, pick a role mask themselves, and follow it without slash commands (officially supported since v0.20.0)
 - **Supervised sub-agent dispatch** — `SUBAGENT-DISPATCH.md`: orchestrator-grade fan-out with trust-but-verify acceptance
 - **Cross-platform parallel execution** — `/workflow` fans out read-only sub-tasks to native background agents; serial downgrade on older IDEs
@@ -217,7 +248,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.21.1** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.22.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

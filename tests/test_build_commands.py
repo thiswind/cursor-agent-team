@@ -51,10 +51,11 @@ class TestGeneration(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
+        import yaml
         cls.tmp = tempfile.TemporaryDirectory()
         cls.out_dir = cls.tmp.name
-        cls.targets = dict(bc.all_targets(
-            __import__("yaml").safe_load(open(bc.SOURCE_PATH))["commands"]))
+        doc = yaml.safe_load(open(bc.SOURCE_PATH))
+        cls.targets = dict(bc.all_targets(doc["commands"], doc.get("master_skill")))
         for rel, content in cls.targets.items():
             path = os.path.join(cls.out_dir, rel)
             os.makedirs(os.path.dirname(path), exist_ok=True)
@@ -66,16 +67,18 @@ class TestGeneration(unittest.TestCase):
         cls.tmp.cleanup()
 
     def test_expected_artifact_matrix(self):
-        # 6 cursor + 6 claude + 5 trae commands + 5 trae skills = 22
-        self.assertEqual(len(self.targets), 22)
+        # 6 cursor + 6 claude + 5 trae commands + 6 mask skills + 1 master = 24
+        self.assertEqual(len(self.targets), 24)
         self.assertIn("_cursor/commands/spec_translator.md", self.targets)
         self.assertIn("_claude/commands/spec_translator.md", self.targets)
         self.assertNotIn("_trae_solo/commands/spec_translator.md", self.targets)
-        self.assertNotIn("_trae_solo/skills/cursor-agent-team-spec-translator/SKILL.md", self.targets)
+        self.assertIn("_skills/cursor-agent-team-spec_translator/SKILL.md", self.targets)
         self.assertIn("_cursor/commands/workflow.md", self.targets)
         self.assertIn("_claude/commands/workflow.md", self.targets)
         self.assertIn("_trae_solo/commands/workflow.md", self.targets)
-        self.assertIn("_trae_solo/skills/cursor-agent-team-workflow/SKILL.md", self.targets)
+        self.assertIn("_skills/cursor-agent-team-workflow/SKILL.md", self.targets)
+        self.assertIn("_skills/cursor-agent-team/SKILL.md", self.targets)
+        self.assertNotIn("_trae_solo/skills/cursor-agent-team-workflow/SKILL.md", self.targets)
 
     def test_all_artifacts_carry_generated_header(self):
         for rel, content in self.targets.items():
@@ -116,6 +119,71 @@ class TestGeneration(unittest.TestCase):
         for rel, content in self.targets.items():
             if rel.startswith("_trae_solo/commands/"):
                 self.assertTrue(content.startswith("---\nname: "), f"{rel} missing frontmatter")
+
+
+class TestFrontierSkills(unittest.TestCase):
+    """v0.22.0: host-agnostic skills under _skills/ (6 masks + master)."""
+
+    @classmethod
+    def setUpClass(cls):
+        import yaml
+        doc = yaml.safe_load(open(bc.SOURCE_PATH))
+        cls.commands = doc["commands"]
+        cls.master = doc.get("master_skill")
+        cls.targets = dict(bc.all_targets(doc["commands"], doc.get("master_skill")))
+
+    def skill_paths(self):
+        return {rel: c for rel, c in self.targets.items() if rel.startswith("_skills/")}
+
+    def test_seven_skills_generated(self):
+        paths = self.skill_paths()
+        self.assertEqual(len(paths), 7)
+        self.assertIn("_skills/cursor-agent-team/SKILL.md", paths)
+        for mask in ("discuss", "crew", "prompt_engineer", "spec_translator", "writer", "workflow"):
+            self.assertIn(f"_skills/cursor-agent-team-{mask}/SKILL.md", paths)
+
+    def test_skills_have_valid_frontmatter(self):
+        import yaml
+        for rel, content in self.skill_paths().items():
+            self.assertTrue(content.startswith("---\n"), f"{rel} must start with frontmatter")
+            fm = content.split("---")[1]
+            meta = yaml.safe_load(fm)
+            self.assertIn("name", meta, f"{rel} frontmatter missing name")
+            self.assertIn("description", meta, f"{rel} frontmatter missing description")
+            self.assertTrue(meta["description"].strip(), f"{rel} empty description")
+
+    def test_skills_embed_trigger_self_check_and_ssot_pointers(self):
+        for rel, content in self.skill_paths().items():
+            self.assertIn("Trigger self-check", content, f"{rel} missing trigger self-check")
+            self.assertIn("AGENTS-GUIDE.md", content, f"{rel} missing SSOT pointer")
+            self.assertIn("cursor-agent-team/", content)
+
+    def test_mask_skills_point_at_their_command_and_rules(self):
+        pairs = {
+            "discuss": ["discussion_assistant.mdc"],
+            "crew": ["crew_assistant.mdc"],
+            "prompt_engineer": ["prompt_engineer_assistant.mdc"],
+            "spec_translator": ["spec_translator_assistant.mdc"],
+            "writer": ["crew_assistant.mdc", "writer_assistant.mdc"],
+            "workflow": ["workflow_assistant.mdc"],
+        }
+        for mask, rules in pairs.items():
+            content = self.targets[f"_skills/cursor-agent-team-{mask}/SKILL.md"]
+            self.assertIn(f"_cursor/commands/{mask}.md", content, f"{mask}: no command pointer")
+            for rf in rules:
+                self.assertIn(rf, content, f"{mask}: missing rules pointer {rf}")
+
+    def test_master_skill_has_mask_table_and_hard_rules(self):
+        content = self.targets["_skills/cursor-agent-team/SKILL.md"]
+        for mask in ("discuss", "crew", "prompt_engineer", "spec_translator", "writer", "workflow"):
+            self.assertIn(f"`{mask}`", content, f"master: mask {mask} missing from table")
+        self.assertIn("Cold-start reading order", content)
+        self.assertIn("validate_topic_tree.py", content)
+
+    def test_skills_use_python_not_python3(self):
+        for rel, content in self.skill_paths().items():
+            self.assertNotIn("python3 ", content, f"{rel} should use `python`")
+            self.assertIn("python ", content)
 
 
 if __name__ == "__main__":
