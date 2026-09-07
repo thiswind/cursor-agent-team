@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.23.0] - 2026-09-07
+
+### Added
+- **Topic-tree validator hardening (2026-09-07 feedback harvest from the host-agent community ledger)**:
+  - **R4 scans the Topic Index table** (FR-0018): the Status column of the index table is now enum-checked, not just `**Status**:` fields; hyphenated variants (`in-progress`) are reported together with their canonical underscore form (FR-0001).
+  - **R5 advisory rule** (FR-0005): duplicate `Last Updated` lines produce a warning — the stale header copy is a cold-start trap.
+  - **R6 shrinkage gate** (FR-0007): a structurally valid update that drops >10% of round entries or >30% of file lines is rejected unless `--force` — the 122→46-line timeline-truncation incident class can no longer pass silently. The success path now also **keeps a timestamped `.bak`** under `ai_workspace/temp/` instead of deleting the backup (result JSON reports `backup_kept`).
+  - **Staleness hint** (FR-0020): validate/update prints a passive hint when the tree's `Last Updated` lags the repo HEAD commit by ≥7 days — git activity without tree updates.
+- `generate_ai_workspace.py`: the install-time topic-tree template now ships a **timeline skeleton** (FR-0011) — a `round_01` example entry under the topic detail section, the append-only timeline discipline note, the canonical underscore status enum, and a `Last Updated` field (also satisfies R3 on day one). Three host projects had grown three incompatible "dialects" because the template never defined where timeline entries live.
+
+### Added
+- **`--strict` flag for `validate_topic_tree.py`** (FR-0002): `validate`/`update` accept `--strict` — R4 (status enum) and R5 (duplicate Last Updated) warnings become blocking errors. Default mode unchanged; hosts opt into hardened mode.
+- **`commit_workspace.py` closing helper** (FR-0008/0009/0010): one command for the closing protocol's commit step — `git add -f` past the nested `ai_workspace/**` ignore rules, then a per-path `ls-files` assertion that fails loudly on silently-skipped files (the single-file add exit-1 vs directory add exit-0 asymmetry), then `git commit`. `--check-only` / `--dry-run` modes; exit 2 for non-git hosts; `CAT_HOST_ROOT` env override. This closes the silent-loss incident class (note lost 3 days; submodule host with zero version-controlled state).
+- **AGENTS-GUIDE §5 "Deployment topologies & cold-start self-check"** (FR-0006 doc part / FR-0012/0013/0015/0017/0021): the three deployment shapes (plain dir / submodule / orphan pseudo-submodule), the two-command cold-start self-check, field-proven host practices (root-level notes anti-pattern, Desktop routing AGENTS.md, public-mirror exclusion triple), and the v0.23.0+ upgrade SOP.
+
+### Changed
+- `cat-handoff` companion skill (local machine deployment): §4 closing protocol now mandates post-add assertion (`git show --stat HEAD | grep <file>`) for `ai_workspace/**` files that sit under a nested `.gitignore` (FR-0008/0010 lesson); §6 gains the append-only protection clause for hosts whose AGENTS.md already contains non-CAT content (FR-0014); §8 known-pitfalls table gains three rows (silent-add failure modes, formatter escape pollution FR-0019, Last-Updated drift FR-0005/0020).
+- `de_handoff_migrate.py` (local migration tool): append-mode migration — a host AGENTS.md with existing non-CAT content is appended a CAT routing section instead of being wholly rewritten (FR-0014; fork-type hosts' upstream guides are unrecoverable once overwritten).
 
 ## [0.22.1] - 2026-08-30
 

@@ -157,18 +157,31 @@ python cursor-agent-team/_scripts/cleanup_ai_workspace.py --older-than 7
 
 
 def _discussion_topics_minimal():
-    return """# Discussion Topics Tree
+    from datetime import datetime as _dt
+    _today = _dt.now().strftime("%Y-%m-%d")
+    return f"""# Discussion Topics Tree
 
 > Topic tree for `/discuss`. Created at install time.
+> Timeline discipline: one `round_NN` entry per working round, appended under the
+> topic's detail section (append-only; old rounds are never deleted or rewritten).
+> Status enum (canonical, underscore style): in_progress / completed / closed /
+> pending / paused / active.
 
 ## Active Topic
 
-[AF]
+### [A] First Topic: <one-line goal>
+
+- **Status**: in_progress
+- Timeline:
+  - round_01 ({_today}): kickoff — replace this skeleton with the project's first real topic; keep this entry as history.
 
 ## Topic Index
 
 | ID | Title | Status | Last Active |
 |:---|:------|:-------|:------------|
+| [A] | First Topic | in_progress | {_today} |
+
+**Last Updated**: {_today}
 """
 
 

@@ -179,25 +179,136 @@ def check_r3_last_updated(content: str) -> list:
 def check_r4_valid_states(content: str) -> list:
     """
     R4: Status values must be one of predefined values (warning level)
-    
-    Returns:
-        list: Warning messages (empty if passed)
+
+    Covers both field forms (``**Status**: value``) and the Topic Index
+    table's Status column (FR-0018: the index table was previously never
+    scanned). Hyphenated variants (e.g. ``in-progress``) are reported with
+    their canonical underscore form (FR-0001).
     """
     warnings = []
-    
-    # Find status fields
-    # Pattern: **状态**: value or **Status**: value
+
+    # Field form: **状态**: value or **Status**: value
     pattern = r'\*\*(?:状态|Status)\*\*:\s*(.+?)(?:\n|$)'
-    
     for match in re.finditer(pattern, content):
         state = match.group(1).strip()
         if state and state not in VALID_STATES:
-            warnings.append(f"R4 warning: Unknown status value '{state}', valid values are: {VALID_STATES}")
-    
+            canonical = state.replace('-', '_')
+            if canonical in VALID_STATES:
+                warnings.append(
+                    f"R4 warning: Hyphenated status '{state}' (canonical form is '{canonical}'); "
+                    f"valid values are: {sorted(VALID_STATES)}"
+                )
+            else:
+                warnings.append(f"R4 warning: Unknown status value '{state}', valid values are: {sorted(VALID_STATES)}")
+
+    # Index-table form: Status column inside the "## Topic Index" section
+    index_section = _extract_topic_index_section(content)
+    if index_section:
+        for line in index_section.splitlines():
+            line = line.strip()
+            if not line.startswith('|'):
+                continue
+            cells = [c.strip() for c in line.strip('|').split('|')]
+            if len(cells) < 4 or cells[2].lower() == 'status' or set(cells[2]) <= {'-', ':', ' '}:
+                continue
+            state = cells[2]
+            if state and state not in VALID_STATES:
+                canonical = state.replace('-', '_')
+                if canonical in VALID_STATES:
+                    warnings.append(
+                        f"R4 warning: Topic Index row has hyphenated status '{state}' "
+                        f"(canonical form is '{canonical}')"
+                    )
+                else:
+                    warnings.append(f"R4 warning: Topic Index row has unknown status '{state}'")
+
     return warnings
 
 
-def validate_content(old_content: str, new_content: str) -> dict:
+def _extract_topic_index_section(content: str) -> str:
+    """Return the body of the '## Topic Index' section (up to the next '## ' heading)."""
+    m = re.search(r'^##\s+Topic Index\s*$(.*?)(?=^##\s+|\Z)', content, re.M | re.S)
+    return m.group(1) if m else ""
+
+
+def check_r5_duplicate_last_updated(content: str) -> list:
+    """
+    R5 (advisory): more than one "Last Updated" line is a staleness hazard —
+    the header copy goes stale while the tail copy moves (FR-0005 field-level
+    companion to FR-0004).
+    """
+    lines = [l for l in content.splitlines() if re.search(r'Last Updated|最后更新', l, re.IGNORECASE)]
+    if len(lines) > 1:
+        return [f"R5 warning: {len(lines)} 'Last Updated' lines found — keep exactly one (header or tail) to avoid stale staleness signals"]
+    return []
+
+
+def _count_rounds(content: str) -> int:
+    return len(re.findall(r'^\s*[-*]\s*round_\d+', content, re.M))
+
+
+def check_r6_content_shrinkage(old_content: str, new_content: str) -> list:
+    """
+    R6: sanity gate against accidental timeline truncation (FR-0007).
+
+    A structurally valid new tree that drops most round entries or most of
+    the file is almost always a botched update (e.g. backbone-only content
+    passed via --stdin). Gate: require --force to proceed.
+    """
+    if not old_content:
+        return []
+    old_rounds = _count_rounds(old_content)
+    new_rounds = _count_rounds(new_content)
+    old_lines = len(old_content.splitlines())
+    new_lines = len(new_content.splitlines())
+    errors = []
+    if old_rounds >= 3 and new_rounds < old_rounds * 0.9:
+        errors.append(
+            f"R6 gate: round entries shrink from {old_rounds} to {new_rounds} "
+            f"(>10% loss) — timeline truncation suspected; re-run with --force ONLY if this is intentional"
+        )
+    if old_lines >= 30 and new_lines < old_lines * 0.7:
+        errors.append(
+            f"R6 gate: file shrinks from {old_lines} to {new_lines} lines (>30% loss) — "
+            f"possible backbone-only update; re-run with --force ONLY if this is intentional"
+        )
+    return errors
+
+
+def _staleness_hint(new_content: str) -> str:
+    """
+    FR-0020: compare the tree's Last Updated date with the host repo's HEAD
+    commit date; return a passive staleness signal (never an error).
+    """
+    m = re.search(r'Last Updated[^:]*:\s*(\d{4}-\d{2}-\d{2})', new_content)
+    if not m:
+        return ""
+    tree_date = m.group(1)
+    try:
+        import subprocess
+        r = subprocess.run(
+            ["git", "log", "-1", "--format=%cs"],
+            cwd=str(SCRIPT_DIR.parent), capture_output=True, text=True, timeout=5
+        )
+        head_date = r.stdout.strip() if r.returncode == 0 else ""
+    except Exception:
+        return ""
+    if not head_date:
+        return ""
+    try:
+        from datetime import date
+        td = date.fromisoformat(tree_date)
+        hd = date.fromisoformat(head_date)
+        lag = (hd - td).days
+    except ValueError:
+        return ""
+    if lag >= 7:
+        return (f"staleness_hint: topic tree Last Updated ({tree_date}) lags HEAD commit "
+                f"({head_date}) by {lag} days — git activity without tree updates; backfill before new work")
+    return ""
+
+
+def validate_content(old_content: str, new_content: str, strict: bool = False) -> dict:
     """
     Validate topic tree update using content strings directly
     
@@ -238,9 +349,27 @@ def validate_content(old_content: str, new_content: str) -> dict:
     r3_errors = check_r3_last_updated(new_content)
     result["errors"].extend(r3_errors)
     
-    # R4: Status value check (warning level)
+    # R4: Status value check (warning level; errors under --strict)
     r4_warnings = check_r4_valid_states(new_content)
-    result["warnings"].extend(r4_warnings)
+    if strict:
+        result["errors"].extend(r4_warnings)
+    else:
+        result["warnings"].extend(r4_warnings)
+
+    # R5 (advisory): duplicate Last Updated lines (errors under --strict)
+    r5_warnings = check_r5_duplicate_last_updated(new_content)
+    if strict:
+        result["errors"].extend(r5_warnings)
+    else:
+        result["warnings"].extend(r5_warnings)
+
+    # R6: content shrinkage gate (error level; bypass requires --force)
+    result["errors"].extend(check_r6_content_shrinkage(old_content, new_content))
+
+    # FR-0020: passive staleness hint (never blocks)
+    hint = _staleness_hint(new_content)
+    if hint:
+        result.setdefault("hints", []).append(hint)
     
     # Determine overall validity
     result["valid"] = len(result["errors"]) == 0
@@ -252,7 +381,7 @@ def validate_content(old_content: str, new_content: str) -> dict:
     return result
 
 
-def validate_topic_tree(old_path: str, new_path: str) -> dict:
+def validate_topic_tree(old_path: str, new_path: str, strict: bool = False) -> dict:
     """
     Validate topic tree update (file-based, original interface)
     
@@ -295,7 +424,7 @@ def validate_topic_tree(old_path: str, new_path: str) -> dict:
     return result
 
 
-def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = False) -> dict:
+def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = False, strict: bool = False) -> dict:
     """
     One-step topic tree update with automatic backup, validation, and commit/rollback
     
@@ -342,7 +471,7 @@ def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = Fal
     
     # Step 3: Validate (unless force=True or first-time use)
     if not force and old_content:
-        validation = validate_content(old_content, new_content)
+        validation = validate_content(old_content, new_content, strict=strict)
         
         if not validation["valid"]:
             # Return detailed error info for AI to fix
@@ -374,13 +503,24 @@ def update_topic_tree(new_content: str, dry_run: bool = False, force: bool = Fal
         TOPIC_TREE_PATH.write_text(new_content, encoding="utf-8")
         result["success"] = True
         result["message"] = "Topic tree updated successfully"
-        
+
         # Auto-compress after successful update (silent, won't break main flow)
         _auto_compress_if_needed()
-        
-        # Clean up temp files on success
+
+        # FR-0007: keep a timestamped backup instead of deleting the .bak
+        # (success-path backup retention; the pre-update .bak is PRESERVED)
+        try:
+            if old_content and BACKUP_PATH.exists():
+                stamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+                kept = TEMP_DIR / f"discussion_topics_{stamp}.md.bak"
+                shutil.copy(str(BACKUP_PATH), str(kept))
+                result["backup_kept"] = str(kept)
+        except Exception:
+            pass
+
+        # Clean up temp files on success (keeps the timestamped .bak above)
         _cleanup_temp_files()
-        
+
     except Exception as e:
         # Rollback on write failure
         result["success"] = False
@@ -707,10 +847,10 @@ Examples:
     
     if args.command == "validate":
         # Perform validation
-        result = validate_topic_tree(args.old, args.new)
+        result = validate_topic_tree(args.old, args.new, strict=args.strict)
         print(json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(0 if result["valid"] else 1)
-    
+
     elif args.command == "update":
         # Get new content
         if args.content:
@@ -732,12 +872,13 @@ Examples:
                 "errors": ["No content provided"]
             }, ensure_ascii=False, indent=2))
             sys.exit(1)
-        
+
         # Perform update
         result = update_topic_tree(
             new_content,
             dry_run=args.dry_run,
-            force=args.force
+            force=args.force,
+            strict=args.strict
         )
         print(json.dumps(result, ensure_ascii=False, indent=2))
         sys.exit(0 if result["success"] else 1)

@@ -122,7 +122,43 @@ HANDOFF snapshot refresh → commit (the sync point)
 
 **Parallel sessions**: `git log` before acting; append-only edits on shared files (topic tree / HANDOFF.md); claim files in notes/ for long tasks; commit = sync point.
 
-## Relation
+## 5. Deployment Topologies & Cold-Start Self-Check
+
+> Harvested from the host-agent community ledger (2026-09, FR-0012/0013/0015/0017/0021). These are field-proven deployment practices, not requirements — adopt what matches your host's shape.
+
+### 5.1 The three deployment shapes
+
+| Shape | What it looks like | Watch out for |
+|---|---|---|
+| **Plain directory** (default) | `cursor-agent-team/` is a normal tracked dir of the host repo | The nested `.gitignore` writes `ai_workspace/**` — state files are silently skipped by plain `git add`. Use `_scripts/commit_workspace.py` or `git add -f` + post-add assertion (see §5.4) |
+| **Git submodule** | `cursor-agent-team` is a gitlink (mode 160000) pinned to an upstream tag | **The state layer lives in the host's tree but the nested ignore means nothing enters the host repo by default; the submodule's own repo never receives host state** — without an explicit `add -f` policy the entire ai_workspace has zero version control (FR-0017). Always commit host-side with `add -f` |
+| **Orphan pseudo-submodule** (v0.13 legacy) | A `cursor-agent-team/` dir whose gitlink was never registered in the parent index — an "orphan" that looks installed but is tracked by nobody | Cold-start self-check catches it (below). Remedy: re-install from a clean source, migrate state via the topic-tree backup, then retire the old dir via the host's deletion protocol |
+
+### 5.2 Cold-start self-check (two commands, ~10 seconds)
+
+Run these before trusting any host's CAT state layer:
+
+```bash
+cat cursor-agent-team/VERSION   # prints the installed CAT version
+git ls-files cursor-agent-team | head -5   # empty output + no gitlink = orphan form
+```
+
+Empty `ls-files` output with no `160000` gitlink entry in `git ls-files -s` means the install is orphaned — nothing of it is version-controlled, and a single cleanup pass can erase it. This check caught a live v0.13 relic surviving since January 2026 (FR-0021).
+
+### 5.3 Field-proven host practices (from the ledger)
+
+- **Root-level `notes/` is an anti-pattern** (FR-0012): a host kept CAT notes at the host root instead of `cursor-agent-team/ai_workspace/notes/`; cold-start reads missed them and a root cleanup nearly retired the whole state layer. Notes live under `ai_workspace/notes/` — always.
+- **Desktop routing AGENTS.md for multi-project desks** (FR-0013): when one AGENTS.md routes several CAT hosts (e.g. a Desktop-level router), keep the router thin — one cold-start pointer per host project, zero state in the router itself; each host keeps its own tree. Three weeks field-tested.
+- **Public mirror exclusion triple** (FR-0015): when the host repo is mirrored to a public remote, exclude ① `ai_workspace/` (state), ② `notes/` (may quote private material), ③ `_scripts/` local tooling — via an explicit mirror exclude list + a graded scan (exact-path match, then basename match, then content keyword) + a reverse check that the mirror 404s for those paths. Field-proven; run the triple after every mirror sync.
+
+### 5.4 Upgrade SOP (v0.23.0+)
+
+1. `cd <host>/cursor-agent-team && git fetch --tags && git log --oneline HEAD..v0.23.0` — read what changed (CHANGELOG first)
+2. Re-run the cold-start self-check (§5.2) — confirm the shape is intact before touching anything
+3. Update the copy: plain-dir hosts re-run the installer (idempotent, never deletes `ai_workspace/`); submodule hosts `git checkout v0.23.0` in the submodule and bump the pointer
+4. Re-run `python3 _scripts/build_commands.py --check` (if harness artifacts live in the host) and the test suite once
+5. Append a topic-tree round noting the version bump (validator), and commit with `commit_workspace.py` / `add -f`
+6. If the host's tree predates the FR-0011 template skeleton, backfill missing structure in the same round — don't defer
 
 - `README.md` — human-facing entry
 - `SUBAGENT-DISPATCH.md` — orchestrator→sub-agent dispatch best practice (companion doc)
