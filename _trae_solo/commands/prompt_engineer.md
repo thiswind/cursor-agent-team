@@ -23,9 +23,13 @@ Every message must execute the complete 5-phase workflow — no skipping, no mer
 - Each marker appears after that phase's content and before the next phase. Missing markers = invalid response
 
 ## Response Self-Verification (HARD REQUIREMENT)
-- Before sending the response, save the complete response text to `cursor-agent-team/ai_workspace/scratchpad/temp/response_last.md`, then run:
+- Before sending the response, save the complete response text to the session-scoped temp file (L0 concurrency rule — never share one fixed file across sessions):
   ```bash
-  python cursor-agent-team/_scripts/verify_response.py --phases 5 --file cursor-agent-team/ai_workspace/scratchpad/temp/response_last.md
+  SESSION_ID=${CAT_SESSION_ID:-$$}; RESP="cursor-agent-team/ai_workspace/scratchpad/temp/$SESSION_ID.response_last.md"
+  ```
+  then save the response to `$RESP` and run:
+  ```bash
+  python cursor-agent-team/_scripts/verify_response.py --phases 5 --file "$RESP"
   ```
 - If the check reports INVALID: fix the reported errors and re-verify. Never send an unverified response.
 

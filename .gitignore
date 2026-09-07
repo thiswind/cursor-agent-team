@@ -1,16 +1,28 @@
-# AI Workspace (generated at install time) — ignore everything by default
-ai_workspace/**
+# ============================================================
+# CAT STATE LAYER — whitelist policy (v0.24.0, DESIGN-IGNORE-002)
+# Default: state files ARE tracked (git add works without -f).
+# Volatile/private zones are excluded below.
+# Host override: your ROOT .gitignore wins over this nested file.
+# ============================================================
 
-# Keep framework code inside ai_workspace
-!ai_workspace/inspiration_capital/
-!ai_workspace/inspiration_capital/scripts/
-!ai_workspace/inspiration_capital/scripts/**
+# volatile / regenerable zones — NOT tracked
+ai_workspace/temp/
+ai_workspace/sessions/
+ai_workspace/scratchpad/
+ai_workspace/**/.pytest_cache/
+ai_workspace/**/__pycache__/
+ai_workspace/**/*.bak
+ai_workspace/**/*.log
 
-# Ignore user-generated cards
+# notes are private by default (FR-0015): uncomment the next line's
+# opposite to opt OUT of tracking entirely, or keep tracked by deleting
+# the line below for fully-private deployments:
+ai_workspace/notes/
+
+# inspiration_capital user cards stay untracked
 ai_workspace/inspiration_capital/cards/**
 
-# Ignore pytest cache and pycache
-ai_workspace/inspiration_capital/.pytest_cache/
+# runtime
 __pycache__/
 *.pyc
 
@@ -33,19 +45,16 @@ ehthumbs.db
 .classpath
 .settings/
 
-# Temporary files
+# Temporary/cache
 *.tmp
 *.temp
-ai_workspace/temp/
 *.log
 *.bak
 *.backup
-
-# Cache
 .cache/
 *.cache
 
-# Paper - only track final PDF, ignore source files and build artifacts
+# Paper artifacts
 paper/*.tex
 paper/*.bib
 paper/*.aux
@@ -55,7 +64,6 @@ paper/*.out
 paper/*.log
 paper/figures/
 paper/README.md
-
 
 # paper v2 reference (copyrighted, not committed)
 paper_v2/reference/

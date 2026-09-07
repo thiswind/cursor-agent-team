@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Shared utilities for cross-platform install scripts."""
 
+import hashlib
 import json
 import os
 import re
@@ -63,6 +64,49 @@ def _validate_destination(path, project_root):
                 raise OSError(f"destination contains symlink: {current}")
     if os.path.commonpath([resolved_root, os.path.realpath(absolute)]) != resolved_root:
         raise OSError(f"resolved destination is outside project root: {path}")
+
+
+def load_owned_files(install_info_path):
+    """Load the previously-installed file list (ownership record).
+
+    Returns [] when no record exists (first install).
+    """
+    try:
+        with open(install_info_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return [x for x in data.get("files", []) if isinstance(x, str)]
+    except (OSError, json.JSONDecodeError):
+        return []
+
+
+def detect_local_edits(install_info_path, project_root):
+    """Detect host modifications to installer-owned files.
+
+    Returns ([owned_files], [edited_files]). A file counts as locally
+    edited when its content differs from the install record's md5 map
+    (recorded since v0.24.0; files without an md5 entry are assumed
+    unedited to avoid false alarms on legacy records).
+    """
+    owned = load_owned_files(install_info_path)
+    if not owned:
+        return [], []
+    try:
+        with open(install_info_path, "r", encoding="utf-8") as f:
+            md5map = json.load(f).get("md5", {})
+    except (OSError, json.JSONDecodeError):
+        return owned, []
+    edited = []
+    for rel in owned:
+        recorded = md5map.get(rel)
+        if not recorded:
+            continue
+        p = os.path.join(project_root, rel)
+        if os.path.isfile(p):
+            with open(p, "rb") as fh:
+                actual = hashlib.md5(fh.read()).hexdigest()
+            if actual != recorded:
+                edited.append(rel)
+    return owned, edited
 
 
 def copy_files(file_list, src_base, dst_base):
@@ -158,12 +202,22 @@ def get_version(submodule_dir):
 def write_install_info(path, version, platform_name, files_list):
     """Write JSON installation record for artifacts owned by this install."""
     owned_files = list(dict.fromkeys(item for item in files_list if isinstance(item, str)))
+    md5map = {}
+    for rel in owned_files:
+        p = os.path.join(os.path.dirname(path), "..", rel) if not os.path.isabs(rel) else rel
+        p = os.path.normpath(os.path.join(os.path.dirname(path), rel))
+        try:
+            with open(p, "rb") as fh:
+                md5map[rel] = hashlib.md5(fh.read()).hexdigest()
+        except OSError:
+            pass
     data = {
         "version": version,
         "installed_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "source": "cursor-agent-team",
         "platform": platform_name,
         "files": owned_files,
+        "md5": md5map,
     }
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:

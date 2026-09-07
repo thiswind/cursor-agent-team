@@ -83,6 +83,19 @@ def main():
         u.colored_print("Step 2b: Skipped (no ai_workspace_config.json)", "yellow")
     print()
 
+    # Step 2c: Ownership protection — detect host edits to owned files
+    info_path = os.path.join(project_root, ".cursor", ".cursor-agent-team-installed")
+    if os.path.isfile(info_path):
+        owned, edited = u.detect_local_edits(info_path, project_root)
+        if edited:
+            u.colored_print(
+                f"Warning: {len(edited)} installer-owned file(s) have LOCAL "
+                "edits that re-installing would overwrite:", "yellow")
+            for rel in edited:
+                print(f"    {rel}")
+            print("  Back them up now (they will be overwritten in Step 3).")
+            print()
+
     # Step 3: Copy files
     print("Step 3: Copying files...")
     all_files = COMMAND_FILES + RULE_FILES

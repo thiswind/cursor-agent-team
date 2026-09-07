@@ -100,9 +100,13 @@ Use the script stdout as the marker.
 Each completed phase must include the exact marker produced by `phase_marker.py`. If the script cannot run, use `[Phase N DONE]` as fallback and state why.
 
 ## Response Self-Verification (HARD REQUIREMENT)
-- Before sending the response, save the complete response text to `cursor-agent-team/ai_workspace/scratchpad/temp/response_last.md`, then run:
+- Before sending the response, save the complete response text to the session-scoped temp file (L0 concurrency rule — never share one fixed file across sessions):
   ```bash
-  python3 cursor-agent-team/_scripts/verify_response.py --phases 4 --file cursor-agent-team/ai_workspace/scratchpad/temp/response_last.md
+  SESSION_ID=${CAT_SESSION_ID:-$$}; RESP="cursor-agent-team/ai_workspace/scratchpad/temp/$SESSION_ID.response_last.md"
+  ```
+  then save the response to `$RESP` and run:
+  ```bash
+  python3 cursor-agent-team/_scripts/verify_response.py --phases 4 --file "$RESP"
   ```
 - If the check reports INVALID: fix the reported errors and re-verify. Never send an unverified response.
 

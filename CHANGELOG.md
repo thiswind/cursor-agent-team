@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.24.0] - 2026-09-08
+
+### Added
+- **Guard-script family (DESIGN-SKILLIFY-005 P0+P1, one-shot round)**:
+  - `verify_scratchpad.py` (G1): machine-check the draft-loop contract — draft exists, fresh this round, has a real `## Review` section.
+  - `verify_response.py` extensions: `--scratchpad` (G1 orchestration, plan C — one exit, independent impls), `--no-leak DIR` (G2 dual-signal leak check: `<!--PROC-->` marked segments + line-overlap ratio, warning-only until calibrated), `--stamp` (G3 self-check credential: ts/md5/valid appended to `verify_stamps.jsonl`).
+  - `closing_protocol.py` (G8): the five closing steps (topic-tree round / verify / note / snapshot / commit) as one stop-at-first-failure command with recovery hints.
+  - `cat_doctor.py` (G9): cold-start health check — deployment form / version / ignore policy / orphan shapes; `--fleet` audits multiple hosts read-only. During development it caught two real issues in its own workshop (a `.gitmodules` false-positive and the FR-0021 orphan-class semantics).
+  - `lint_prose.py` (G4): slop-phrase scanner, `general`/`academic` tiers, `--fail` gate option.
+  - `dispatch_header.py` + `verify_dispatch_return.py` (G5): machine-rendered dispatch prompts + four-field structured-return check with a two-strikes ledger.
+  - `new_scaffold.py` (G7): `new-plan` / `new-session` naming-convention scaffolds (create-then-compliant).
+- **Single write gateway `cat_write.py`** (RFC-CONCURRENCY-001 final-v3.1): flock-serialized (one global lock; wait time journaled — split per-target only if data demands), atomic landing (`temp` + `os.replace`), per-target validation (topic tree reuses `validate_topic_tree` at function level), JSONL journal (`journal --tail`, `lock-wait-report`). Operations: `notes --append`, `topic-round`, `plan-status`, `index-rebuild`.
+- **Four operation skills** (S2K): `cursor-agent-team-writes` / `-closing` / `-doctor` / `-dispatch` — HOW-to-act skills wrapping the guard scripts, orthogonal to the six mask skills; statically rendered into `_skills/` with `scripts/` copies (build_commands now renders `operation_skills` from commands.yaml; artifacts 22 to 34).
+- **Session-scoped response temp files** (L0): rendered verification blocks use `$CAT_SESSION_ID`/`$$`-scoped `response_last` paths — concurrent sessions no longer share one fixed file.
+- **Installer ownership protection**: install record now stores an md5 map; re-install warns before overwriting locally-edited owned files.
+
+### Changed
+- **BREAKING — state-layer tracking whitelist** (DESIGN-IGNORE-002 final-v1.2): the nested `.gitignore` flips from ignore-everything (`ai_workspace/**`) to a whitelist — state files (topic tree, plans, constraints, READMEs) are tracked by default; `temp/`, `sessions/`, `scratchpad/`, `*.bak`, and private `notes/` are excluded. Hosts opt into notes tracking by deleting one line. Legacy-policy hosts are detected by `cat_doctor.py` (`legacy-ignore-all`); the upgrade SOP (DEPLOYMENT.md section 6) covers migration.
+- `AGENTS-GUIDE.md`: section 4 closing protocol is now one command (+ gateway rule); section 5.2 self-check is now `cat_doctor.py`; section 5.3 FR-0012 corrected (root-level `notes/` was a POSITIVE pattern, not an anti-pattern — v0.23.0 mis-filed it); section 3 git-policy line rewritten for the whitelist.
+- New `DEPLOYMENT.md` (eight sections) — deployment shapes, tracking policy, installers, self-check, field practices, upgrade SOP, concurrency, uninstall.
+
+### Fixed
+- Missing `role_identity/spec_translator.py` (referenced by the mask but never shipped).
+- AGENTS-GUIDE section 4 still described the legacy HANDOFF.md flow (superseded by the 2026-08-31 notes/ migration).
+- `cat_doctor` gitmodules matching now checks `path =` entries (a URL mention no longer trips the orphan detector).
+
 ## [0.23.0] - 2026-09-07
 
 ### Added

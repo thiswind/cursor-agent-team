@@ -75,6 +75,7 @@ _skills/
 │   └── SKILL.md                          #   mask-selection table, hard rules
 ├── cursor-agent-team-discuss/   ├── cursor-agent-team-crew/
 ├── cursor-agent-team-writer/    ├── cursor-agent-team-workflow/
+- **Operation skills**: `writes` (state-layer write gateway), `closing` (five-step wrap-up), `doctor` (health check), `dispatch` (sub-agent discipline) — HOW-to-act skills, orthogonal to masks
 ├── cursor-agent-team-prompt_engineer/
 └── cursor-agent-team-spec_translator/    # every SKILL.md generated from
                                            #   commands.yaml — single source
@@ -248,7 +249,7 @@ This repository is the reference implementation of:
 
 ## Version
 
-Current version: **v0.23.0** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.24.0** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

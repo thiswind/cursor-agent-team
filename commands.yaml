@@ -892,3 +892,134 @@ commands:
         - "Only structured summaries return to the main session"
         - "Maintain functional consistency with Cursor version"
         - "Follow Phase Markers output validation requirements and run the response self-verification before sending"
+
+
+# ===========================================================================
+# Operation skills (v0.24.0) — HOW-to-act skills wrapping guard scripts.
+# Orthogonal to the six mask skills (which persona to think as).
+# Rendered by build_commands.py into _skills/cursor-agent-team-<name>/.
+# ===========================================================================
+operation_skills:
+
+  - name: writes
+    title: State-layer Writes (single gateway)
+    description: >-
+      All writes to shared ai_workspace state (topic tree, notes append,
+      plan checkboxes, plans INDEX) go through the single write gateway
+      cat_write.py — never direct Write/Edit.
+    triggers:
+      - "update the topic tree / add a round"
+      - "append a note"
+      - "check off plan items"
+      - "rebuild plans INDEX"
+      - "any write intent targeting ai_workspace state files"
+    intro: >-
+      One gateway, four operations, zero direct writes. The gateway
+      serializes concurrent sessions (flock queue), validates per target
+      (topic tree goes through validate_topic_tree), lands atomically
+      (temp + os.replace), and journals every attempt (JSONL under
+      ai_workspace/temp/cat_write_journal/). Direct Write/Edit on state
+      files is the #1 discipline violation this skill exists to prevent.
+    scripts:
+      - file: cat_write.py
+        what: "the gateway: notes --append / topic-round / plan-status / index-rebuild / journal / lock-wait-report"
+    rules:
+      - "State-layer files are NEVER written with Write/Edit tools — always via cat_write.py"
+      - "topic-round validates first (R1-R6); rejected writes never land"
+      - "Lock wait is journaled; check lock-wait-report if sessions feel slow"
+      - "Parallel sessions: file-boundary split + gateway serialization = safe"
+    references:
+      - "RFC-CONCURRENCY-001 (workshop plans/) — design & rulings"
+      - "AGENTS-GUIDE.md sec.1 discipline layer"
+    history:
+      - "v1.0.0 (2026-09-08): gateway core (global flock, journal, topic-round via validator, notes/plan-status/index-rebuild)"
+
+  - name: closing
+    title: Session Closing (five steps, one command)
+    description: >-
+      Orchestrate the five closing steps — topic-tree round, response
+      verify, closing note, handoff snapshot, commit — via
+      closing_protocol.py; stop-at-first-failure with recovery hints.
+    triggers:
+      - "session wrap-up / closing"
+      - "handoff / archive this session"
+      - "topic tree round before ending"
+      - "commit the workspace"
+    intro: >-
+      Five prompt paragraphs become one command. Each step is skipped
+      when its argument is absent, so partial closings stay honest; the
+      commit step runs commit_workspace.py (add -f + per-path assert),
+      the same helper shipped in v0.23.0.
+    scripts:
+      - file: closing_protocol.py
+        what: "orchestrator: --tree-file / --verify-file / --note / --snapshot-title / --commit-msg"
+      - file: commit_workspace.py
+        what: "add -f + per-path tracked assert + commit (v0.23.0)"
+    rules:
+      - "Closing is one command, not five remembered steps"
+      - "A failed step prints its recovery hint; earlier steps are already done — do not redo them"
+      - "Snapshot notes are CREATE-only; never edit old snapshots"
+    references:
+      - "AGENTS-GUIDE.md sec.4 (session handoff pattern)"
+      - "DESIGN-SKILLIFY-005 G8 (workshop plans/)"
+    history:
+      - "v1.0.0 (2026-09-08): five-step orchestrator"
+
+  - name: doctor
+    title: CAT Health Check (cold start & upgrades)
+    description: >-
+      Machine-run the four cold-start checks — deployment form, version,
+      ignore policy, orphan shapes — via cat_doctor.py; --fleet audits
+      multiple host repos read-only.
+    triggers:
+      - "cold start in a CAT host repo"
+      - "check CAT health"
+      - "after install/upgrade verification"
+      - "fleet audit across host repos"
+    intro: >-
+      The two-command self-check table from AGENTS-GUIDE sec.5.2, promoted
+      to one command. On the v0.24.0 whitelist policy the ignore check
+      reports whether the state layer is actually tracked — catching both
+      legacy ignore-all remnants and fresh installs where nothing was
+      added yet.
+    scripts:
+      - file: cat_doctor.py
+        what: "form/version/ignore/orphans checks; --fleet HOST ROOTS...; --json"
+    rules:
+      - "Run at cold start; trust its output over memory"
+      - "critical items (orphan shapes, untracked state layer) block work until resolved or acknowledged"
+    references:
+      - "AGENTS-GUIDE.md sec.5 (deployment topologies)"
+      - "DEPLOYMENT.md (v0.24.0)"
+    history:
+      - "v1.0.0 (2026-09-08): four checks + --fleet"
+
+  - name: dispatch
+    title: Sub-agent Dispatch Discipline
+    description: >-
+      Render compliant dispatch prompts (dispatch_header.py) and verify
+      structured returns (verify_dispatch_return.py) with the
+      two-strikes ledger.
+    triggers:
+      - "dispatching sub-agents"
+      - "parallel task fan-out"
+      - "checking a sub-agent's structured return"
+    intro: >-
+      SUBAGENT-DISPATCH.md's template and return contract, executable.
+      The header renderer guarantees the Role/Behavior/Context/Task/
+      Output-Contract sections; the return checker enforces the four
+      fields (summary/files_changed/verification/leftovers) and records
+      strikes — two strikes means re-dispatch, not re-read.
+    scripts:
+      - file: dispatch_header.py
+        what: "render the dispatch prompt (mask/task/boundary/parallel-group)"
+      - file: verify_dispatch_return.py
+        what: "four-field check + two-strikes ledger"
+    rules:
+      - "Parallel agents get disjoint file boundaries (state it in the prompt)"
+      - "Trust but verify: every return is checked before its facts are used"
+      - "Two strikes: reject the agent's outputs for this task"
+    references:
+      - "SUBAGENT-DISPATCH.md (deep reference)"
+    history:
+      - "v1.0.0 (2026-09-08): header renderer + return checker + strikes ledger"

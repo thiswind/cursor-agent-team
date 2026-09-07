@@ -28,6 +28,7 @@ import argparse
 import os
 import re
 import sys
+from pathlib import Path
 
 try:
     import yaml
@@ -45,7 +46,7 @@ GENERATED_HEADER = (
 
 VERIFY_SCRIPT = "cursor-agent-team/_scripts/verify_response.py"
 MARKER_SCRIPT = "cursor-agent-team/_scripts/phase_marker.py"
-VERIFY_TEMP_FILE = "cursor-agent-team/ai_workspace/scratchpad/temp/response_last.md"
+VERIFY_TEMP_FILE = "cursor-agent-team/ai_workspace/scratchpad/temp/session.response_last.md"
 
 
 # ---------------------------------------------------------------------------
@@ -79,13 +80,22 @@ def markers_block(phases: int) -> str:
     )
 
 
+SESSION_ID_SNIPPET = (
+    "SESSION_ID=${CAT_SESSION_ID:-$$}; "
+    'RESP="cursor-agent-team/ai_workspace/scratchpad/temp/$SESSION_ID.response_last.md"'
+)
+
+
 def verification_block(phases: int, python3: bool) -> str:
     exe = "python3" if python3 else "python"
     return (
         "**Response Self-Verification (HARD REQUIREMENT)**:\n"
         "- Before sending the response, save the complete response text to "
-        f"`{VERIFY_TEMP_FILE}`, then run:\n"
-        f"  ```bash\n  {exe} {VERIFY_SCRIPT} --phases {phases} --file {VERIFY_TEMP_FILE}\n  ```\n"
+        "the session-scoped temp file (L0 concurrency rule — never share "
+        "one fixed file across sessions):\n"
+        f"  ```bash\n  {SESSION_ID_SNIPPET}\n  ```\n"
+        "  then save the response to `$RESP` and run:\n"
+        f"  ```bash\n  {exe} {VERIFY_SCRIPT} --phases {phases} --file \"$RESP\"\n  ```\n"
         "- If the check reports INVALID: fix the reported errors and "
         "re-verify. Never send an unverified response."
     )
@@ -308,6 +318,49 @@ def render_skill(cmd) -> str:
     return "\n\n".join(out) + "\n"
 
 
+def render_operation_skill(sk) -> str:
+    """Operational skill (v0.24.0): a HOW-to-act skill wrapping guard
+    scripts. Distinct from mask skills (which persona to think as), these
+    govern which procedure to run. Content is largely static prose from
+    commands.yaml; scripts/ are copied verbatim as extra targets."""
+    fm_desc = " ".join((sk["description"].strip(),
+                        "Invoke when: " + "; ".join(
+                            t.replace("`", "") for t in sk["triggers"]) + "."))
+    out = []
+    out.append("---\n"
+               f"name: cursor-agent-team-{sk['name']}\n"
+               f'description: "{fm_desc}"\n'
+               "---")
+    out.append(f"# CAT Operation Skill — {sk['title']}")
+    out.append(sk["intro"].strip())
+    out.append("## The scripts (single source of truth)")
+    rows = []
+    for s in sk["scripts"]:
+        rows.append(f"| `python cursor-agent-team/_scripts/{s['file']}` | {s['what']} |")
+    out.append("| Command | What it does |\n|---|---|\n" + "\n".join(rows))
+    if sk.get("rules"):
+        out.append("## Rules (hard)")
+        out.append("\n".join(f"- {r}" for r in sk["rules"]))
+    out.append("## References")
+    out.append("\n".join(f"- {r}" for r in sk["references"]))
+    out.append("---\n" + history_footer({"history": sk["history"]}))
+    return "\n\n".join(out) + "\n"
+
+
+def operation_skill_targets(op_skills):
+    """Render SKILL.md targets AND copy script files into the skill dir."""
+    targets = []
+    for sk in op_skills:
+        slug = f"cursor-agent-team-{sk['name']}"
+        targets.append((f"_skills/{slug}/SKILL.md", render_operation_skill(sk)))
+        for s in sk.get("scripts", []):
+            src = Path(PRODUCT_ROOT) / "_scripts" / s["file"]
+            if src.is_file():
+                targets.append((f"_skills/{slug}/scripts/{s['file']}",
+                                src.read_text(encoding="utf-8")))
+    return targets
+
+
 def render_master_skill(commands, master) -> str:
     """Master routing skill: the frontier agent's front door to CAT."""
     fm_desc = " ".join(
@@ -463,7 +516,7 @@ def targets_for(cmd):
     return targets
 
 
-def all_targets(commands, master_skill=None):
+def all_targets(commands, master_skill=None, op_skills=None):
     result = []
     for cmd in commands.values():
         result.extend(targets_for(cmd))
@@ -472,6 +525,8 @@ def all_targets(commands, master_skill=None):
             f"_skills/{master_skill['name']}/SKILL.md",
             render_master_skill(commands, master_skill),
         ))
+    if op_skills:
+        result.extend(operation_skill_targets(op_skills))
     return result
 
 
@@ -516,8 +571,9 @@ def main() -> int:
         doc = yaml.safe_load(f)
     commands = doc["commands"]
     master_skill = doc.get("master_skill")
+    op_skills = doc.get("operation_skills") or []
 
-    targets = all_targets(commands, master_skill)
+    targets = all_targets(commands, master_skill, op_skills)
     root = args.out_dir or PRODUCT_ROOT
 
     if args.list:
