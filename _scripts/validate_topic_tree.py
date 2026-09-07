@@ -830,7 +830,12 @@ Examples:
         action="store_true",
         help="Skip validation and write directly (dangerous!)"
     )
-    
+    update_parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Treat R4/R5 warnings as errors (host hardened mode)"
+    )
+
     args = parser.parse_args()
     
     # Handle no command (backward compatibility: treat as validate if --old and --new provided)

@@ -185,5 +185,17 @@ class TestStrictMode(unittest.TestCase):
         self.assertTrue(any("R5 warning" in w for w in result["warnings"]))
 
 
+class TestStrictCLIFlag(unittest.TestCase):
+    """The update subcommand must define --strict (regression: arg lost in a partial overwrite)."""
+
+    def test_update_parser_has_strict(self):
+        import subprocess, sys
+        r = subprocess.run(
+            [sys.executable, str(Path(__file__).parent.parent / "validate_topic_tree.py"), "update", "--help"],
+            capture_output=True, text=True)
+        self.assertEqual(r.returncode, 0)
+        self.assertIn("--strict", r.stdout)
+
+
 if __name__ == "__main__":
     unittest.main()
