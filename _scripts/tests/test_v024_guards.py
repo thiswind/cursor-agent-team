@@ -265,6 +265,27 @@ class TestCatDoctor(TmpBase):
         form, detail = cat_doctor.detect_form(self.dir)
         self.assertEqual(form, "orphan-pseudo-submodule")
 
+    def test_orphan_no_false_positive_on_foreign_submodule(self):
+        import cat_doctor
+        (self.dir / ".git").mkdir()
+        (self.dir / "cursor-agent-team").mkdir()
+        (self.dir / "release").mkdir()
+        (self.dir / ".gitmodules").write_text(
+            '[submodule "release"]\n\tpath = release\n'
+            '\turl = https://github.com/thiswind/cursor-agent-team.git\n',
+            encoding="utf-8")
+        result = cat_doctor.check_orphans(self.dir)
+        self.assertEqual(result["issues"], [])
+
+    def test_validate_cli_has_strict_flag(self):
+        import subprocess, sys
+        r = subprocess.run(
+            [sys.executable, str(SCRIPTS / "validate_topic_tree.py"),
+             "validate", "--help"],
+            capture_output=True, text=True, timeout=60)
+        self.assertEqual(r.returncode, 0, r.stderr)
+        self.assertIn("--strict", r.stdout)
+
 
 class TestVerifyResponseStamp(TmpBase):
     def test_stamp_written(self):

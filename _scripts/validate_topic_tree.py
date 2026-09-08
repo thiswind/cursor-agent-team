@@ -800,7 +800,12 @@ Examples:
         required=True,
         help="Path to new topic tree file (to be validated)"
     )
-    
+    validate_parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Escalate R4/R5 warnings to blocking errors"
+    )
+
     # Update subcommand
     update_parser = subparsers.add_parser(
         "update",

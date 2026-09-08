@@ -134,7 +134,15 @@ def check_orphans(host_root: Path, cat_dir_name="cursor-agent-team"):
     ls = run_git(host_root, "ls-files", "-s") or ""
     cat_links = [l for l in ls.splitlines()
                  if l.startswith("160000") and cat_dir_name in l]
-    if (host_root / ".gitmodules").is_file() and not cat_links:
+    gitmodules_cat = False
+    if (host_root / ".gitmodules").is_file():
+        gm = (host_root / ".gitmodules").read_text(encoding="utf-8")
+        for ln in gm.splitlines():
+            s = ln.strip()
+            if s.startswith("path") and "=" in s:
+                if s.split("=", 1)[1].strip() == cat_dir_name:
+                    gitmodules_cat = True
+    if gitmodules_cat and not cat_links:
         if not (host_root / cat_dir_name / ".git").exists():
             issues.append(".gitmodules mentions CAT but no gitlink and no nested .git — orphan")
     if (host_root / cat_dir_name / ".git").is_dir() and cat_links:
