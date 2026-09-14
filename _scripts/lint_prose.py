@@ -77,6 +77,40 @@ def lint(text: str, tier: str) -> list:
     return hits
 
 
+CAPTION_RE = re.compile(r"(?i)^(table|fig(ure)?|表|图)\s*\.?\s*\d", re.I)
+
+
+def check_insertions(text: str, max_paren_words: int = 6) -> list:
+    """Detect mid-sentence explanatory insertions (issue #10 rule).
+
+    Flags: paired em dashes around an explanation, colon/semicolon followed
+    by an explanatory clause with a connective, over-long parentheticals,
+    and the Chinese equivalents. Caption lines (Table x / Figure x / 表x / 图x)
+    are exempt. Warning-level by design.
+    """
+    hits = []
+    for i, line in enumerate(text.splitlines(), 1):
+        if CAPTION_RE.search(line):
+            continue
+        for m in re.finditer(r"\S[^—–]*[—–]\s*[^—–]{8,}\s*[—–]", line):
+            hits.append({"line": i, "phrase": m.group(0)[:60],
+                         "label": "em-dash insertion"})
+        for m in re.finditer(
+                r"[a-zA-Z][^:;]{10,}[:;]\s*(which|where|because|since|"
+                r"meaning|namely|i\.e\.|that is)[ ,]", line):
+            hits.append({"line": i, "phrase": m.group(0)[:60],
+                         "label": "colon/semicolon explanatory clause"})
+        for m in re.finditer(r"\(([^)]+)\)", line):
+            inner = m.group(1)
+            if len(inner.split()) > max_paren_words:
+                hits.append({"line": i, "phrase": m.group(0)[:60],
+                             "label": f"parenthetical >{max_paren_words} words"})
+        for m in re.finditer(r"[，。；][^。！？]*——[^。！？]*[，。；]", line):
+            hits.append({"line": i, "phrase": m.group(0)[:60],
+                         "label": "中文破折号插入语"})
+    return hits
+
+
 def main() -> int:
     p = argparse.ArgumentParser(description="Slop-phrase lint for CAT writing outputs")
     p.add_argument("--file", help="file to lint")
@@ -84,6 +118,10 @@ def main() -> int:
     p.add_argument("--tier", choices=["general", "academic"], default="general")
     p.add_argument("--fail", action="store_true",
                    help="exit 1 when hits found (default: warn only)")
+    p.add_argument("--insertions", action="store_true",
+                   help="also check mid-sentence explanatory insertions "
+                        "(issue #10 rule: em dash/colon/semicolon/"
+                        "parentheses; captions exempt)")
     p.add_argument("--json", action="store_true")
     args = p.parse_args()
 
@@ -101,6 +139,8 @@ def main() -> int:
         return 1
 
     hits = lint(text, args.tier)
+    if args.insertions:
+        hits = hits + check_insertions(text)
 
     if args.json:
         print(json.dumps({"tier": args.tier, "hits": hits,

@@ -107,6 +107,37 @@ class TestLintProse(TmpBase):
         hits = lint_prose.lint("This novel framework paves the way.", "academic")
         self.assertEqual(len(hits), 2)
 
+    def test_insertion_em_dash(self):
+        text = ("The gateway serializes all writers, which prevents the torn "
+                "writes — an event where a reader sees half of a file — that "
+                "plagued v0.21 hosts.\n")
+        hits = lint_prose.check_insertions(text)
+        self.assertTrue(any(h["label"] == "em-dash insertion" for h in hits))
+
+    def test_insertion_colon_explanatory(self):
+        text = ("The gateway serializes all writers; which means concurrent "
+                "sessions can never interleave their edits.\n")
+        hits = lint_prose.check_insertions(text)
+        self.assertTrue(any(
+            h["label"] == "colon/semicolon explanatory clause" for h in hits))
+
+    def test_insertion_long_parenthetical(self):
+        text = ("The gateway serializes writers (a mechanism that guarantees "
+                "one mutation at a time across every session on the host).\n")
+        hits = lint_prose.check_insertions(text)
+        self.assertTrue(any(
+            h["label"].startswith("parenthetical") for h in hits))
+
+    def test_insertion_caption_exempt(self):
+        text = ("Table 1. Latency by host (measured with the fleet benchmark "
+                "that we deployed last week across nine machines).\n")
+        self.assertEqual(lint_prose.check_insertions(text), [])
+
+    def test_insertion_chinese_dash(self):
+        text = "该关口串行化全部写入，——避免并发撕裂——，从而保护宿主状态。\n"
+        hits = lint_prose.check_insertions(text)
+        self.assertTrue(any(h["label"] == "中文破折号插入语" for h in hits))
+
 
 class TestDispatch(TmpBase):
     def test_header_contains_sections(self):

@@ -63,13 +63,14 @@ Same as Crew for non-prose steps.
 **Inner-world boundary**: `cursor-agent-team/ai_workspace/` is the physical inner workspace. Drafts and review notes live in `scratchpad/`; do **not** paste scratchpad process into the final prose deliverable (chat may notify paths only).
 
 **Step 2.0a: Draft (HARD)**:
+- **Pre-compose sentence logic before drafting** (MUST): enumerate the claims in order, then pre-assign every explanation a standalone sentence slot — appended after the claim it serves, or folded into that sentence's main clause. Only after the sentence plan is set may drafting begin.
 - Write the prose draft into `cursor-agent-team/ai_workspace/scratchpad/drafts/` (or `analysis/` for outlines/comparisons).
 - Apply vocabulary ban + style constraints while drafting (see `writer_assistant.mdc`).
 - Do not treat a chat-inline "draft" label as this step.
 
 **Step 2.0b: Review (HARD)**:
 - Re-read plan goal + draft; append `## Review` to the same file (or `analysis/review_*`).
-- Run the Review checklist for the active tier: slop, sentence variation, stance, punctuation, deliverable fit; academic tier additionally checks PEEL, hedging, numbering, venue, citations, and writing guides.
+- Run the Review checklist for the active tier: slop, sentence variation, stance, **insertion structures** (no mid-sentence explanatory insertions by em dash/colon/semicolon/parentheses — rewrite as complete standalone sentences, NEVER just swap markers; colons legal only for lists/definitions, semicolons only for tightly parallel clauses, parentheses only in table/figure captions), deliverable fit; academic tier additionally checks PEEL, hedging, numbering, venue, citations, and writing guides.
 - If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
 
 **Step 2.1: Final prose**:
@@ -123,9 +124,10 @@ Execute the plan for the paper we discussed.
 
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v1.2.0 (Updated: 2026-08-16)
+**Version**: v1.3.0 (Updated: 2026-09-14)
 
 **Version History**:
+- v1.3.0 (2026-09-14): Insertion-structure ban (issue #10) — Step 2.0a gains MUST pre-compose sentence logic; Step 2.0b Review checks insertion structures (em dash/colon/semicolon/parentheses carrying mid-sentence explanations are the same violation; rewrite as standalone sentences, never swap markers)
 - v1.2.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v1.1.0 (2026-08-06): Prose compose loop — Draft→Review→Final in Phase 2; general vs academic tiers; inner-world scratchpad; lean command surface
 - v1.0.4 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)

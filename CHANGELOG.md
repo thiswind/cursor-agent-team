@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.24.1] - 2026-09-14
+
+### Changed
+
+- **Writer insertion-structure ban** (issue #10): mid-sentence explanatory insertions are prohibited regardless of marker (em dash, colon, semicolon, parentheses). `writer_assistant.mdc` Review #4 tightened from dash-only to all markers; punctuation narrowed to legal uses (colon: lists/definitions; semicolon: tightly parallel clauses; parentheses: table/figure captions only); removed the two workaround-inviting clauses ("prefer commas, semicolons, or separate sentences"). `_claude` mirror and `sci_writing_pitfalls.md` §3 synced.
+- **Writer Step 2.0a pre-compose** (issue #10): new MUST step — enumerate claims in order and pre-assign every explanation a standalone sentence slot before drafting begins. Mirrors the downstream `writer_assistant` v3.1.0 pilot (process-level fix, not symptom patching).
+
+### Added
+
+- `lint_prose.py --insertions`: warning-level detector for mid-sentence explanatory insertions (paired em dashes, colon/semicolon explanatory clauses, over-long parentheticals, Chinese `——` insertions), with table/figure caption exemption.
+
 ## [0.24.0] - 2026-09-08
 
 ### Added

@@ -24,7 +24,9 @@ class WriterReleaseTests(unittest.TestCase):
         claude = (ROOT / "_claude/commands/writer.md").read_text()
         trae = (ROOT / "_trae_solo/commands/writer.md").read_text()
         for term in ("Draft", "Review", "Final", "scratchpad", "Phase 2",
-                     "verify_response.py", "Generated from commands.yaml"):
+                     "verify_response.py", "Generated from commands.yaml",
+                     "Pre-compose sentence logic",
+                     "insertion structures"):
             self.assertIn(term, cursor)
             self.assertIn(term, claude)
             self.assertIn(term, trae)
@@ -34,7 +36,7 @@ class WriterReleaseTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "_scripts"))
         import _install_utils as utils
 
-        self.assertEqual(utils.get_version(str(ROOT)), "v0.24.0")
+        self.assertEqual(utils.get_version(str(ROOT)), "v0.24.1")
 
     def test_installers_list_writer(self):
         self.assertIn("_cursor/commands/writer.md", (ROOT / "install.py").read_text())

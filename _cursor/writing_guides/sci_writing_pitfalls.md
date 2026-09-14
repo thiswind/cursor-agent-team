@@ -22,7 +22,7 @@
 
 - **AVOID `---` horizontal rules**: Not academic format. Use section headings to separate.
 - **AVOID excessive bold in body**: Distracts readers. Let language convey importance.
-- **AVOID `——` (Chinese em dash)**: Use comma or colon instead.
+- **AVOID `——` (Chinese em dash)**: And the same rule extends to every marker: colon/semicolon/parentheses carrying a mid-sentence explanation are the identical violation (surface-compliant workaround). Rewrite the explanation as a complete standalone sentence appended after the claim it serves. Colons stay legal only for lists/enumerations and formal definitions.
 - **AVOID colons/question marks in headings**: IEEE prohibits them at L1/L2.
 - **Bold is correct for**: First definition of a term (e.g., **mask-weighted distance**); step labels (**Step 1:**).
 

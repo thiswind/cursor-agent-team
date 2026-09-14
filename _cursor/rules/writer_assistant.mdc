@@ -42,9 +42,10 @@ Aligned with `/discuss` inner-world design. Physical inner workspace: `cursor-ag
 ### Step 2.0a — Draft
 
 1. Create/update a file under `ai_workspace/scratchpad/drafts/` (preferred) or `analysis/` for outlines.
-2. Write the prose draft there with vocabulary ban + style constraints in mind.
-3. Do **not** treat a chat-inline “draft” label as this step.
-4. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
+2. **Pre-compose sentence logic before drafting** (MUST): enumerate the claims in order, then pre-assign every explanation a standalone sentence slot — appended after the claim it serves, or folded into that sentence's main clause. Only after the sentence plan is set may drafting begin.
+3. Write the prose draft there with vocabulary ban + style constraints in mind.
+4. Do **not** treat a chat-inline “draft” label as this step.
+5. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
 
 ### Step 2.0b — Review
 
@@ -54,7 +55,7 @@ Re-read the plan goal + draft. Append `## Review` to the same file, or write `an
 1. **Slop check**: Scan for banned phrases; replace
 2. **Sentence variation**: Mix short/long; break uniform blocks
 3. **Stance check**: Clear positions; not evasive “it depends”
-4. **Dash check**: Excessive em dashes → commas / semicolons / separate sentences
+4. **Insertion-structure check**: No mid-sentence explanatory insertions — whether marked by em dash, colon, semicolon, or parentheses. Rewrite as complete standalone sentences (explanation appended after the claim it serves, or folded into the main clause). NEVER just swap punctuation markers. Colons stay legal only for introducing lists/enumerations or formal definitions; semicolons only between tightly coordinated parallel clauses; parenthetical remarks only inside table/figure captions.
 5. **Deliverable fit**: Does the draft satisfy the plan step? Will chat/deliverable leak scratchpad process?
 
 **Academic checklist (academic tier only) — add**:
@@ -101,7 +102,7 @@ Write the reviewed prose to the plan's target file (write-first for serious prod
 - **Sentence variation**: Mix short (≤15 words) and long (30+ words) sentences. Avoid uniform 24–25 word length.
 - **Discipline-specific terminology**: Use field-standard terms rather than generic buzzwords.
 - **No stock openings**: Avoid "In the realm of...", "Let's delve into...", "In the ever-evolving landscape of..."
-- **Minimize dashes**: Em dashes sparingly; prefer commas, semicolons, or separate sentences.
+- **No mid-sentence explanatory insertions**: Em dash, colon, semicolon, or parentheses must not carry mid-sentence explanations. Rewrite as a complete standalone sentence instead of swapping markers. (Colons: lists/definitions only. Semicolons: tightly parallel clauses only. Parentheses: table/figure captions only.)
 
 ---
 
@@ -129,8 +130,9 @@ Each paragraph develops one central idea. Topic sentences act as mini thesis sta
 
 ### Punctuation (Formal Academic Style)
 
-- **Em dashes (—)**: Use sparingly; prefer commas, semicolons, or separate sentences
-- **Semicolons**: Connect two complete related sentences; or separate complex series items
+- **Em dashes (—)**: No mid-sentence explanatory insertions. Rewrite the explanation as a complete standalone sentence; NEVER swap markers (colon/semicolon/parentheses carrying the same insertion are the same violation)
+- **Semicolons**: Only between tightly coordinated parallel clauses — never to append an explanation; or separate complex series items
+- **Colons**: Only to introduce lists/enumerations or formal definitions — never mid-sentence explanations
 - **Commas**: Use purposefully; do not add without reason
 - **Exclamation/question marks**: Rare in formal academic writing
 
@@ -205,9 +207,10 @@ Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205
 
 ---
 
-**Version**: v3.0.0 (Updated: 2026-08-06)
+**Version**: v3.1.0 (Updated: 2026-09-14)
 
 **Version History**:
+- v3.1.0 (2026-09-14): **Insertion-structure ban** — mid-sentence explanatory insertions prohibited regardless of marker (em dash/colon/semicolon/parentheses); punctuation narrowed to legal uses (colon: lists/definitions; semicolon: parallel clauses; parentheses: table/figure captions); Step 2.0a gains MUST pre-compose sentence logic (claims ordered, every explanation pre-assigned a standalone sentence slot); removed the two workaround-inviting clauses ("prefer commas, semicolons, or separate sentences"). Source: issue #10 + owner ruling 2026-09-14.
 - v3.0.0 (2026-08-06): **MAJOR** — Prose compose loop HARD (Draft→Review→Final); general vs academic tiers; Slop Removal repositioned as Review checklist; aligned with discuss inner-world scratchpad
 - v2.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review; added Phase Markers subsection (PLAN-BU-001 Stage 2)
 - v2.0.0 (2026-02-08): **Agent readability overhaul** — All tables converted to bullet/key-value; vocabulary ban with "Instead use" alternatives; Trigger/Scope promoted to top; writing_guides cross-check added to Slop Removal Pass (item 10); conciseness pass (removed redundancy). Source: PLAN-AU-001.

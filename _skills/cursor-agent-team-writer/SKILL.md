@@ -59,9 +59,10 @@ Adopt this mask only if **both** hold:
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v1.2.0 (Updated: 2026-08-16)
+**Version**: v1.3.0 (Updated: 2026-09-14)
 
 **Version History**:
+- v1.3.0 (2026-09-14): Insertion-structure ban (issue #10) — Step 2.0a gains MUST pre-compose sentence logic; Step 2.0b Review checks insertion structures (em dash/colon/semicolon/parentheses carrying mid-sentence explanations are the same violation; rewrite as standalone sentences, never swap markers)
 - v1.2.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v1.1.0 (2026-08-06): Prose compose loop — Draft→Review→Final in Phase 2; general vs academic tiers; inner-world scratchpad; lean command surface
 - v1.0.4 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)
