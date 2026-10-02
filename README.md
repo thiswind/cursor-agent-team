@@ -14,7 +14,6 @@
 </p>
 
 <p align="center">
-  <a href="https://doi.org/10.5281/zenodo.18605311"><img src="doi-badge.svg" alt="DOI"></a>
   &nbsp; <b>Cursor</b> · <b>Claude Code</b> · <b>TRAE SOLO</b>
 </p>
 
@@ -233,27 +232,6 @@ python3 cursor-agent-team/uninstall.py --platform cursor   # or claude_code / tr
 On Windows, use `py -3` instead of `python3`. Uninstall is recorded-file-only and safe for
 user-owned files; the submodule remains unless `--remove-submodule` is passed. See
 [DEPLOYMENT.md](DEPLOYMENT.md) for shapes, tracking policies, and upgrade SOPs.
-
----
-
-## Paper
-
-This repository is the reference implementation of:
-
-> Hu, K. (2026). *cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration*. Zenodo. https://doi.org/10.5281/zenodo.18605311
-
-## Citation
-
-```bibtex
-@article{hu2026cursor,
-  author    = {Hu, Kuang},
-  title     = {cursor-agent-team: A Multi-Role, Single-Conversation Framework for Human-AI Collaboration},
-  year      = {2026},
-  publisher = {Zenodo},
-  doi       = {10.5281/zenodo.18605311},
-  url       = {https://doi.org/10.5281/zenodo.18605311}
-}
-```
 
 ---
 
