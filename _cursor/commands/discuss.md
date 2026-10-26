@@ -17,6 +17,14 @@
 - **What the draft is NOT**: word-count goal, reply preview pasted into chat, table-of-contents, hedge stack with no chosen claim.
 - **Privacy**: NEVER dump scratchpad file contents into the user-facing response. Chat speaks the conclusion; scratchpad holds the process.
 
+**Long-Document Input Discipline (read piece, RFC-003 marker protocol v2)**:
+- When this turn ingests a decision-critical long document (meeting transcript, review comments, long spec, contract, decision-critical report) — "missing one item could cause rework or misjudgment" — the read is NOT a single pass.
+- Archive: `cursor-agent-team/ai_workspace/scratchpad/reads/<id>/` with `viewpoints.md` (构角 viewpoint list, 4–6, per document type) + `ledger.md`.
+- `READ-GATE: PASS | SKIP(理由)` as the ledger's first line — both paths traced; SKIP = single pass + one-line note in the turn's draft.
+- Round loop: each viewpoint one full pass with source-anchored extractions `[轮1·Vi] 提取:…`; round 2+ same set, increments only `[轮N·Vi] 新发现:…` / `无增量`. Viewpoint ≠ round.
+- Ledger ends with `CONVERGED: R<N>` (N ≥ 2) or `BUDGET: R<N>(裁决理由)`, then the mandatory endpoint: 对照表 (吻合✓/偏差⚠/缺失✗) + pending questions (ask-user vs agent-decidable) + action items feeding plan generation.
+- Machine check: `python cursor-agent-team/_scripts/verify_mechanism.py read <reads-dir>`.
+
 ## Workflow (4-Phase)
 
 **MANDATORY**: Every message MUST execute the full 4-phase workflow — NO SKIPPING, NO MERGING. MUST execute: `role_identity/discuss.py` → `preflight_check.py` → ... → `persona_output.py`. Violation = invalid response.
@@ -116,9 +124,10 @@ What are your thoughts on where this should go?
 
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v6.3.0 (Updated: 2026-08-16)
+**Version**: v6.4.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies
 - v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)
 - v6.2.0 (2026-08-05): Inner World + Semantic Convergence Draft — mandatory scratchpad write before Phase 2; one spine; never paste scratchpad into chat

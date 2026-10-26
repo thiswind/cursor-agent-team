@@ -95,9 +95,10 @@ The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor and 
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v6.3.0 (Updated: 2026-08-16)
+**Version**: v6.4.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies
 - v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)
 - v6.2.0 (2026-08-05): Inner World + Semantic Convergence Draft — mandatory scratchpad write before Phase 2; one spine; never paste scratchpad into chat

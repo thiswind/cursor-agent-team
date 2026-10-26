@@ -130,6 +130,29 @@ Location: `cursor-agent-team/ai_workspace/`
 
 ---
 
+## Long-Document Input Discipline (read piece, RFC-003)
+
+When a turn ingests a document where "missing one item could cause rework or misjudgment" (meeting transcripts, decision-critical reports/papers, review comments, long requirement specs, contracts), the read is NOT a single pass. Machine-checkable markers live in the read archive; `verify_mechanism.py read <archive>` checks their form.
+
+### READ-GATE (decidable, MUST evaluate first)
+
+First line of the read archive states: `READ-GATE: PASS` (document is decision-critical as above) or `READ-GATE: SKIP(理由)` (quick browse or single-fact lookup — then single pass + one-line note in the turn's draft file, no archive required).
+
+### Two-layer scan (on PASS)
+
+Archive: `ai_workspace/scratchpad/reads/<id>/` containing `viewpoints.md` + `ledger.md`.
+
+1. **构角 (Step 0)**: construct the viewpoint list for THIS document type (not a fixed checklist). Three questions: (a) what class of missed information causes damage here? (b) what viewpoints does this document type require (transcript → stance attribution & decided-vs-pending; paper → claim-evidence match; review comments → fatal/suggestion/misunderstanding triage; spec → hard/soft constraints & implicit premises)? (c) what does my current task need from it (sets the 对照 target)? Record 4–6 viewpoints (name + one-line purpose) in `viewpoints.md`.
+2. **Round loop**: each viewpoint reads the full document once, recording extractions WITH source anchors (line/quote) in `ledger.md` as `[轮1·Vi] 提取:…`. Round 2+ re-scans with the same (or amended) set, recording ONLY increments `[轮N·Vi] 新发现:…` (or `无增量`). Viewpoint ≠ round; the full set once = one round.
+3. **Convergence line (MUST)**: ledger ends with `CONVERGED: R<N>` (all viewpoints logged only confirmations; N ≥ 2 required) or `BUDGET: R<N>(裁决理由)`.
+4. **对照产出 (mandatory endpoint)**: `ledger.md` ends with a 对照表 — document demands vs current task/status (吻合 ✓ / 偏差 ⚠ / 缺失 ✗) — plus a pending-questions list (marked "ask user" vs "agent-decidable") and an action-items list. Action items feed plan generation directly ("榨干的终点是行动"). A read without the 对照 endpoint is not done.
+
+### Crew variant
+
+Crew members receiving long-document task inputs follow the same discipline (see crew contract input-discipline clause); their read archives live under the task's scratchpad scope.
+
+---
+
 ## Topic Tree Management
 
 File: `cursor-agent-team/ai_workspace/discussion_topics.md`
@@ -188,9 +211,10 @@ Plans are consumed by AI agents, not humans. When generating PLAN or AGENT-REQUI
 
 ---
 
-**Version**: v5.3.1 (Updated: 2026-08-06)
+**Version**: v5.4.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v5.4.0 (2026-10-27): **Long-Document Input Discipline (read piece, RFC-003)** — READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list per document type, two-layer scan with per-viewpoint increment ledger in `scratchpad/reads/<id>/`, mandatory convergence line (CONVERGED: R<N>, N≥2, or BUDGET), 对照表+pending+action-items as the mandatory read endpoint feeding plan generation. Grounded in exp1 (single pass misses fatal risks; 400-char table segment) + exp3c (machine-checkable markers drive activation 0/3→3/3).
 - v5.3.1 (2026-08-06): Phase 2 inner compose — Write (2.0a) + Review (2.0b) + Answer (2.1); shallow turns still review
 - v5.3.0 (2026-08-05): Every `/discuss` turn writes scratchpad; inner-world boundary; never paste scratchpad into chat; shallow turns still file a short draft
 - v5.2.0 (2026-03-09): Added Thinking Depth section — shallow vs deep question classification, scratchpad integration for deep thinking

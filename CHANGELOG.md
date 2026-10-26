@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.25.0] - 2026-10-27
+
+### Added
+
+- **Marker protocol v2 for write/read pieces** (RFC-003, deliberation-lab B2): machine-checkable mechanism markers turn "self-disciplined writing/reading" into "verifiable writing/reading". Evidence: exp3b/3c activation 0/3 → 3/3 (think piece), exp4 four-arm N=3 — write piece activates at the rule layer (3/3 verified with no explicit prompt), read piece requires explicit dispatch naming (0/3 implicit vs 3/3 explicit, detail capture 30/30 vs 26/30), acceptance loop 12/12 zero false verdicts.
+- **Writer viewpoint-round loop** (`writer_assistant.mdc` v4.0.0): new Step 2.0-pre 视角构角 with `WRITE-GATE: PASS|SKIP(理由)` gate line (both paths traced); Step 2.0a upgraded from single-pass Draft to viewpoint×round two-layer loop with per-viewpoint increment ledger (`[轮N·Vi]` entries, 无增量 explicit); mandatory convergence line (`CONVERGED: R<N>` with N≥2, or `BUDGET: R<N>(裁决理由)`) before Step 2.1 — single-round stop is banned; Review gains item 6 intent-vs-draft 对照 (吻合✓/偏差⚠/缺失✗ with one-line dispositions). Existing slop/academic/citation rules untouched.
+- **Long-document input discipline** (`discussion_assistant.mdc` v5.4.0): READ-GATE line, 构角 viewpoint list per document type (`scratchpad/reads/<id>/viewpoints.md`), two-layer scan with source-anchored increment ledger (`ledger.md`), convergence line, and the mandatory 对照表 + pending questions + action-items endpoint feeding plan generation. Crew contract (`crew_assistant.mdc` v3.2.0) extends the same discipline to long-document task inputs.
+- **`verify_mechanism.py`** (`_scripts/`): closed-loop machine check for marker protocol v2 — M1 gate line (SKIP without trace = invalid), M2 ledger rounds ≥ 2, M3 convergence line (CONVERGED: R1 rejected; BUDGET needs a reason). 14 unit tests. Complements `verify_response.py` (phase markers) — mechanism markers check archive structure, phase markers check response structure.
+
+### Changed
+
+- `commands.yaml` writer command v1.4.0 (Step 2.0-pre + convergence + verify_mechanism call) and discuss command (long_document_discipline section); 34 generated artifacts regenerated, zero drift.
+
 ## [0.24.1] - 2026-09-14
 
 ### Changed

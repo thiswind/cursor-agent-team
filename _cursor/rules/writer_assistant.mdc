@@ -29,7 +29,7 @@ Declare the tier in Phase 1. When uncertain between general and academic, prefer
 ### Mandatory vs Recommended
 
 - **MUST** (every prose output): Vocabulary ban + Style constraints — apply while drafting
-- **MUST** (every prose output of one or more paragraphs): Draft → Review → Final compose loop (Steps 2.0a / 2.0b / 2.1)
+- **MUST** (every prose output of one or more paragraphs): WRITE-GATE line + viewpoint 构角 + Draft → Review → Final compose loop (Steps 2.0-pre / 2.0a / 2.0b / 2.1) with round ledger and convergence line
 - **MUST** (academic tier): Academic checklist items during Review
 - **RECOMMENDED**: Citation verification always before citing; human final review before submission
 
@@ -39,13 +39,32 @@ Declare the tier in Phase 1. When uncertain between general and academic, prefer
 
 Aligned with `/discuss` inner-world design. Physical inner workspace: `cursor-agent-team/ai_workspace/`. Pre-final prose lives in `scratchpad/`; do not paste process notes into the deliverable.
 
-### Step 2.0a — Draft
+The loop carries machine-checkable mechanism markers (RFC-003 marker protocol v2): a gate line, per-viewpoint ledger entries, and a convergence line live in the drafts file; `verify_mechanism.py write <archive>` checks their form. Missing markers = invalid compose loop.
+
+### Step 2.0-pre — Viewpoint 构角 (MUST, before any drafting)
+
+1. First line of the drafts file states the gate: `WRITE-GATE: PASS` (the text is review/publication/outward-formal — one wrong sentence could cause misunderstanding, rejection, or rework) or `WRITE-GATE: SKIP(理由)` (casual note or throwaway draft — then write directly, no archive required).
+2. On PASS, construct the writing-viewpoint set by answering three questions as the best writer of this text type would (this is NOT a fixed checklist):
+   - What goes wrong if this text is written badly? (ambiguity risk → clarity viewpoint; verbosity → concision; gaps → logical coherence)
+   - What viewpoints does this text type require? (methods section → symbol consistency; introduction → motivation persuasiveness; review response → point-by-point fit)
+   - Who reads it and what do they care about? (experts → novelty; cross-domain → comprehensibility; reviewers → rigor)
+3. Record the viewpoint list (3–5 viewpoints, name + one-line strategy each) in the drafts file under a `## 视角` section. Add/drop type-specific viewpoints freely; a generic five-item checklist without construction is the "checklist 构角" anti-pattern.
+
+### Step 2.0a — Draft (viewpoint-round loop)
 
 1. Create/update a file under `ai_workspace/scratchpad/drafts/` (preferred) or `analysis/` for outlines.
 2. **Pre-compose sentence logic before drafting** (MUST): enumerate the claims in order, then pre-assign every explanation a standalone sentence slot — appended after the claim it serves, or folded into that sentence's main clause. Only after the sentence plan is set may drafting begin.
-3. Write the prose draft there with vocabulary ban + style constraints in mind.
-4. Do **not** treat a chat-inline “draft” label as this step.
-5. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
+3. **Round loop (two-layer structure — viewpoint ≠ round, never confuse them)**:
+   - Round 1: pass over the whole segment once per viewpoint (each pass = rewrite the full paragraph/section with that viewpoint's sensitivities active), appending one ledger entry per viewpoint: `[轮1·V1] 本稿要点/该视角暴露的问题/改动`. The set of viewpoints IS round 1; five viewpoints is not "five rounds".
+   - Round 2+: re-run the SAME (or amended) viewpoint set over the previous round's draft; each viewpoint does reflect → critique → rewrite and records ONLY increments: `[轮N·Vi] 新发现:…` (or `无增量`). Prior-round drafts stay visible on purpose — earlier viewpoints reshaping later viewpoints' sensitivities is a feature, not anchoring to avoid.
+   - Scope adapter: for long documents run the loop at paragraph/section granularity per plan prose step; a full-document single pass is not the loop.
+4. Write the prose draft there with vocabulary ban + style constraints in mind.
+5. Do **not** treat a chat-inline “draft” label as this step.
+6. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
+
+### Convergence line (MUST before Step 2.1)
+
+The ledger ends with exactly one line: `CONVERGED: R<N>` (round N ended with all viewpoints logging only cosmetic increments; N ≥ 2 required — a single round can never converge) or `BUDGET: R<N>(裁决理由)` (round budget exhausted, writer rules with the best available draft). No convergence line → Step 2.1 MUST NOT open. Machine-checked by `verify_mechanism.py`.
 
 ### Step 2.0b — Review
 
@@ -57,6 +76,7 @@ Re-read the plan goal + draft. Append `## Review` to the same file, or write `an
 3. **Stance check**: Clear positions; not evasive “it depends”
 4. **Insertion-structure check**: No mid-sentence explanatory insertions — whether marked by em dash, colon, semicolon, or parentheses. Rewrite as complete standalone sentences (explanation appended after the claim it serves, or folded into the main clause). NEVER just swap punctuation markers. Colons stay legal only for introducing lists/enumerations or formal definitions; semicolons only between tightly coordinated parallel clauses; parenthetical remarks only inside table/figure captions.
 5. **Deliverable fit**: Does the draft satisfy the plan step? Will chat/deliverable leak scratchpad process?
+6. **Intent-vs-draft 对照 (MUST)**: produce a three-column alignment — writing intent vs final draft per viewpoint (吻合 ✓ / 偏差 ⚠ / 缺失 ✗) — appended as a `## 对照` section in the drafts file. Deviations must each carry a one-line disposition (accepted trade-off / to fix now / to flag to user).
 
 **Academic checklist (academic tier only) — add**:
 6. **PEEL check**: Topic sentence, evidence, explanation per paragraph
@@ -207,9 +227,10 @@ Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205
 
 ---
 
-**Version**: v3.1.0 (Updated: 2026-09-14)
+**Version**: v4.0.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v4.0.0 (2026-10-27): **Marker protocol v2 + viewpoint-round loop (RFC-003)** — new Step 2.0-pre 视角构角 with WRITE-GATE line (PASS/SKIP both traced, mirrors exp3c GATE evidence); Step 2.0a upgraded from single-pass Draft to viewpoint×round two-layer loop with per-viewpoint increment ledger (`[轮N·Vi]`); new mandatory convergence line (`CONVERGED: R<N>`, N≥2, or `BUDGET: R<N>`) before Step 2.1; Review gains item 6 intent-vs-draft 对照表 (吻合✓/偏差⚠/缺失✗). Grounded in: exp3b/3c activation 0/3→3/3 (machine-checkable markers make "自觉写作" into "可验收写作"), gate-annotation relapse 0/5 (SKIP must trace too), multipass-write kernel (构角/双层/增量账本/轮级收敛/对照产出). Existing slop/academic/citation rules untouched.
 - v3.1.0 (2026-09-14): **Insertion-structure ban** — mid-sentence explanatory insertions prohibited regardless of marker (em dash/colon/semicolon/parentheses); punctuation narrowed to legal uses (colon: lists/definitions; semicolon: parallel clauses; parentheses: table/figure captions); Step 2.0a gains MUST pre-compose sentence logic (claims ordered, every explanation pre-assigned a standalone sentence slot); removed the two workaround-inviting clauses ("prefer commas, semicolons, or separate sentences"). Source: issue #10 + owner ruling 2026-09-14.
 - v3.0.0 (2026-08-06): **MAJOR** — Prose compose loop HARD (Draft→Review→Final); general vs academic tiers; Slop Removal repositioned as Review checklist; aligned with discuss inner-world scratchpad
 - v2.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review; added Phase Markers subsection (PLAN-BU-001 Stage 2)

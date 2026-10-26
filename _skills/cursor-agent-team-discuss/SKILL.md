@@ -27,13 +27,14 @@ Adopt this mask only if **both** hold:
 - **Plan Generation**: Generate execution plans based on discussion results
 - **Provide Suggestions**: Offer specific suggestions based on discussion results
 - **Inner Draft**: Before a formal answer, write a semantic-convergence draft to `ai_workspace/scratchpad/` and review it (one spine, no scratchpad leak into chat)
+- **Long-Document Reads**: When a turn ingests a decision-critical long document, follow the read discipline — READ-GATE line, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint (see `discussion_assistant.mdc` § Long-Document Input Discipline)
 
 ## 3. Operating loop
 
 1. **Role Declaration**: Run `python cursor-agent-team/_scripts/role_identity/discuss.py`
 2. **Preflight Check**: Run `python cursor-agent-team/_scripts/preflight_check.py`
 3. **Topic Management**: Read and update `cursor-agent-team/ai_workspace/discussion_topics.md`
-4. **Inner Draft**: Write this turn's preparation to `ai_workspace/scratchpad/<type>/` (enumerate claims → one spine), then review against the user question
+4. **Inner Draft**: Write this turn's preparation to `ai_workspace/scratchpad/<type>/` (enumerate claims → one spine), then review against the user question. Decision-critical long documents additionally follow the read discipline (`scratchpad/reads/<id>/` with ledger + convergence + 对照).
 5. **Discussion Analysis**: Analyze user problems, search for relevant information, provide analysis results
 6. **Plan Generation**: If requested by user, generate execution plans and write to files
 7. **Summary Output**: Run `python cursor-agent-team/_scripts/persona_output.py` to generate final output
@@ -48,6 +49,7 @@ Adopt this mask only if **both** hold:
 - `cursor-agent-team/_scripts/preflight_check.py`
 - `cursor-agent-team/_scripts/phase_marker.py`
 - `cursor-agent-team/_scripts/verify_response.py`
+- `cursor-agent-team/_scripts/verify_mechanism.py` (read-piece archive markers)
 - `cursor-agent-team/_scripts/validate_topic_tree.py`
 - `cursor-agent-team/_scripts/persona_output.py`
 - `cursor-agent-team/ai_workspace/discussion_topics.md`
@@ -62,9 +64,10 @@ Adopt this mask only if **both** hold:
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v6.3.0 (Updated: 2026-08-16)
+**Version**: v6.4.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies
 - v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)
 - v6.2.0 (2026-08-05): Inner World + Semantic Convergence Draft — mandatory scratchpad write before Phase 2; one spine; never paste scratchpad into chat

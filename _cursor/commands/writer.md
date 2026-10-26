@@ -78,15 +78,23 @@ Same as Crew for non-prose steps.
 
 **Inner-world boundary**: `cursor-agent-team/ai_workspace/` is the physical inner workspace. Drafts and review notes live in `scratchpad/`; do **not** paste scratchpad process into the final prose deliverable (chat may notify paths only).
 
-**Step 2.0a: Draft (HARD)**:
+**Step 2.0-pre: Viewpoint 构角 (HARD, marker protocol v2)**:
+- First line of the drafts file states the gate: `WRITE-GATE: PASS` (review/publication/outward-formal text) or `WRITE-GATE: SKIP(理由)` (casual note — write directly, no archive).
+- On PASS construct the writing-viewpoint set (3–5, name + one-line strategy) via the three 构角 questions; record under `## 视角`. See `writer_assistant.mdc` Step 2.0-pre.
+
+**Step 2.0a: Draft (HARD, viewpoint-round loop)**:
 - **Pre-compose sentence logic before drafting** (MUST): enumerate the claims in order, then pre-assign every explanation a standalone sentence slot — appended after the claim it serves, or folded into that sentence's main clause. Only after the sentence plan is set may drafting begin.
 - Write the prose draft into `cursor-agent-team/ai_workspace/scratchpad/drafts/` (or `analysis/` for outlines/comparisons).
+- Round loop: round 1 = one full pass per viewpoint, one ledger entry each (`[轮1·V1] …`); round 2+ = same set re-run over the previous round, increments only (`[轮N·Vi] 新发现:…` / `无增量`). Viewpoint ≠ round.
 - Apply vocabulary ban + style constraints while drafting (see `writer_assistant.mdc`).
 - Do not treat a chat-inline "draft" label as this step.
 
+**Convergence line (HARD)**: ledger ends with `CONVERGED: R<N>` (N ≥ 2) or `BUDGET: R<N>(裁决理由)`; no convergence line → Step 2.1 MUST NOT open.
+
 **Step 2.0b: Review (HARD)**:
 - Re-read plan goal + draft; append `## Review` to the same file (or `analysis/review_*`).
-- Run the Review checklist for the active tier: slop, sentence variation, stance, **insertion structures** (no mid-sentence explanatory insertions by em dash/colon/semicolon/parentheses — rewrite as complete standalone sentences, NEVER just swap markers; colons legal only for lists/definitions, semicolons only for tightly parallel clauses, parentheses only in table/figure captions), deliverable fit; academic tier additionally checks PEEL, hedging, numbering, venue, citations, and writing guides.
+- Run the Review checklist for the active tier: slop, sentence variation, stance, **insertion structures** (no mid-sentence explanatory insertions by em dash/colon/semicolon/parentheses — rewrite as complete standalone sentences, NEVER just swap markers; colons legal only for lists/definitions, semicolons only for tightly parallel clauses, parentheses only in table/figure captions), deliverable fit, **intent-vs-draft 对照** (吻合✓/偏差⚠/缺失✗ + one-line disposition each); academic tier additionally checks PEEL, hedging, numbering, venue, citations, and writing guides.
+- Verify the archive markers: `python cursor-agent-team/_scripts/verify_mechanism.py write <drafts-file>`.
 - If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
 
 **Step 2.1: Final prose**:
@@ -116,9 +124,10 @@ Execute the plan for the paper we discussed.
 
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v1.3.0 (Updated: 2026-09-14)
+**Version**: v1.4.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v1.4.0 (2026-10-27): Marker protocol v2 (RFC-003) — Step 2.0-pre viewpoint 构角 with WRITE-GATE line (PASS/SKIP both traced); Step 2.0a upgraded to viewpoint×round loop with increment ledger; mandatory convergence line (CONVERGED: R<N> N>=2 or BUDGET) before Step 2.1; Review gains intent-vs-draft 对照; archive markers machine-checked by verify_mechanism.py
 - v1.3.0 (2026-09-14): Insertion-structure ban (issue #10) — Step 2.0a gains MUST pre-compose sentence logic; Step 2.0b Review checks insertion structures (em dash/colon/semicolon/parentheses carrying mid-sentence explanations are the same violation; rewrite as standalone sentences, never swap markers)
 - v1.2.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v1.1.0 (2026-08-06): Prose compose loop — Draft→Review→Final in Phase 2; general vs academic tiers; inner-world scratchpad; lean command surface
