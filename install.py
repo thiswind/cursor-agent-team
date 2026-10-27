@@ -2,13 +2,19 @@
 """install.py - Install Cursor AI Agent Team Framework (cross-platform).
 
 Usage:
-    python cursor-agent-team/install.py
+    python cursor-agent-team/install.py [--ide cursor|claude_code|trae_solo] [--yes]
+
+    --ide selects the target IDE form. The default (cursor) preserves the
+    historical behaviour of this script; claude_code / trae_solo dispatch to
+    their dedicated installer entrypoints.
 
 Prerequisites:
     git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 """
 
+import argparse
 import os
+import subprocess
 import sys
 
 _scripts_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "_scripts")
@@ -16,6 +22,11 @@ sys.path.insert(0, _scripts_dir)
 import _install_utils as u
 
 SUBMODULE_NAME = "cursor-agent-team"
+
+IDE_DISPATCH = {
+    "claude_code": "install_claude_code.py",
+    "trae_solo": "install_trae_solo.py",
+}
 
 COMMAND_FILES = [
     ("_cursor/commands/discuss.md", ".cursor/commands/discuss.md"),
@@ -44,7 +55,7 @@ RULE_FILES = [
 ]
 
 
-def main():
+def install_cursor():
     script_path = os.path.abspath(__file__)
     submodule_dir = u.get_submodule_dir(script_path)
     project_root = u.get_project_root(script_path)
@@ -149,6 +160,42 @@ def main():
     print("  Set 'enabled: true' and provide the absolute path to your persona.yaml")
     print(f"  Check status: python {SUBMODULE_NAME}/_scripts/persona_output.py --check")
     print()
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="Install Cursor AI Agent Team Framework")
+    ap.add_argument(
+        "--ide",
+        choices=["cursor", "claude_code", "trae_solo"],
+        default="cursor",
+        help="Target IDE form to install (default: cursor). "
+             "claude_code / trae_solo dispatch to their dedicated "
+             "installer entrypoints.",
+    )
+    ap.add_argument(
+        "--yes",
+        action="store_true",
+        help="Non-interactive acknowledgement (no-op for the installer; "
+             "accepted for consistency with uninstall.py)",
+    )
+    args = ap.parse_args()
+
+    if args.ide != "cursor":
+        entry = IDE_DISPATCH[args.ide]
+        entry_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), entry)
+        if not os.path.isfile(entry_path):
+            u.colored_print(f"Error: dispatcher target not found: {entry}", "red")
+            sys.exit(1)
+        fwd = [sys.executable, entry_path]
+        if args.yes:
+            fwd.append("--yes")
+        print(f"Dispatching to {entry} (--ide {args.ide})...")
+        print()
+        result = subprocess.run(fwd)
+        sys.exit(result.returncode)
+
+    install_cursor()
 
 
 if __name__ == "__main__":

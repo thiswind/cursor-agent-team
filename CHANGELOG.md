@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.25.2] - 2026-10-28
+
+### Fixed
+
+- **`install.py --ide` no longer silently ignored (S-4, from the v0.25.0 acceptance campaign)**: `install.py` had no argument parsing at all, so `--ide claude-code` (or any `--ide` value) was silently dropped — the Cursor form got installed and the script exited 0. `install.py` now parses arguments: `--ide {cursor,claude_code,trae_solo}` (default `cursor`, preserving the historical bare-invocation behaviour); `claude_code`/`trae_solo` dispatch to their dedicated entrypoints (`install_claude_code.py` / `install_trae_solo.py`) via `subprocess` with exit-code passthrough; an invalid value fails fast with argparse's usage error (exit code 2, the CLI convention — a typo must not silently install the wrong platform). `--yes` is accepted (no-op) for consistency with `uninstall.py` and existing CI invocations. Design decision (from the fix-round deliberation ledger): dispatch instead of merging the three platform installers into one file — the three forms differ too much (14 Cursor rules vs Claude Code skills vs TRAE AGENTS.md template) and the dedicated entrypoints remain the source of truth.
+- **`uninstall.py` no longer assumes Cursor when `--platform` is omitted (S-5)**: `--platform` previously defaulted to `cursor`, so a user who installed Claude Code and ran bare `uninstall.py --yes` got "Framework not installed" while the `.claude` tree remained. Now `--platform` defaults to auto-detect: exactly one installation → uninstalled automatically (with an "Auto-detected single installation" notice); multiple → hard error (exit 1) listing the installed platforms with per-platform `--platform` usage lines; none → "not installed on any platform" notice (exit 0). This matches the uninstaller convention measured across rustup / cargo / AWS CLI (never guess, never delete the wrong thing).
+- **Nested empty-dir cleanup after uninstall**: `.claude/skills/<skill>/` trees (recorded files inside nested dirs) previously survived recorded-file removal as empty directories. Uninstall now removes installer-created parent directories bottom-up when empty, scoped to the platform's own top dir (`\.cursor` / `.claude` / `.trae`); directories containing user files are never touched (empty-only rmdir). Verified: user-added `.claude/skills/my-user-skill/` survives, installer-owned skill trees vanish.
+
+### Changed
+
+- `README.md`: Quick start and platform table now lead with the `--ide` form (dedicated entrypoints still listed); uninstall auto-detect/multi-install behaviour documented; stale "current version v0.24.1" corrected to v0.25.1.
+- Acceptance harness (`product/test_p0_smoke.py`): P0-B5 version gate now asserts `VERSION == CHANGELOG head entry` instead of pinning a literal (root-fix of the S-2 pattern at the P0 layer — a release bump can no longer break the gate); new regression cases P0-A5..A10 cover S-4/S-5 (invalid `--ide` exit 2, dispatch artifacts, multi-install bare-uninstall error, clean `.claude` removal, single-install auto-detect, zero-install notice). P0 layer 18/18 green.
+
 ## [0.25.1] - 2026-10-27
 
 ### Added

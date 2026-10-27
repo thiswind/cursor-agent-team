@@ -130,9 +130,10 @@ planned — no context handoff, no re-explaining.
 git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
 
 # 2. Install for your platform
-python3 cursor-agent-team/install.py              # Cursor
-python3 cursor-agent-team/install_claude_code.py  # Claude Code (also installs skills → .claude/skills/)
-python3 cursor-agent-team/install_trae_solo.py    # TRAE SOLO (also installs skills → .trae/skills/)
+python3 cursor-agent-team/install.py                        # Cursor
+python3 cursor-agent-team/install.py --ide claude_code      # Claude Code (dispatches; also installs skills → .claude/skills/)
+python3 cursor-agent-team/install.py --ide trae_solo        # TRAE SOLO (dispatches; also installs skills → .trae/skills/)
+# Dedicated entrypoints still work: install_claude_code.py / install_trae_solo.py
 
 # 3a. On a skill-aware host the agent now sees CAT in its skill list   ← zero-keystroke
 # 3b. Or point your frontier agent at AGENTS-GUIDE.md                  ← manual but universal
@@ -225,19 +226,22 @@ python3 cursor-agent-team/uninstall.py --platform cursor   # or claude_code / tr
 
 | Platform | Installer | What gets installed |
 |----------|-----------|---------------------|
-| Cursor | `install.py` | `.cursor/commands/` and `.cursor/rules/` |
-| Claude Code | `install_claude_code.py` | `.claude/commands/` mask commands, `.claude/rules/` Writer rules, and skills → `.claude/skills/` |
-| TRAE SOLO | `install_trae_solo.py` | `.trae/skills/` including Writer and an `AGENTS.md` template only when absent |
+| Cursor | `install.py` (or `--ide cursor`) | `.cursor/commands/` and `.cursor/rules/` |
+| Claude Code | `install.py --ide claude_code` (or `install_claude_code.py`) | `.claude/commands/` mask commands, `.claude/rules/` Writer rules, and skills → `.claude/skills/` |
+| TRAE SOLO | `install.py --ide trae_solo` (or `install_trae_solo.py`) | `.trae/skills/` including Writer and an `AGENTS.md` template only when absent |
 
-On Windows, use `py -3` instead of `python3`. Uninstall is recorded-file-only and safe for
-user-owned files; the submodule remains unless `--remove-submodule` is passed. See
+On Windows, use `py -3` instead of `python3`. Uninstall: `python3 uninstall.py`
+auto-detects the only installed platform; with several installed it errors and
+lists them — pass `--platform cursor|claude_code|trae_solo` explicitly.
+Uninstall is recorded-file-only and safe for user-owned files; the submodule
+remains unless `--remove-submodule` is passed. See
 [DEPLOYMENT.md](DEPLOYMENT.md) for shapes, tracking policies, and upgrade SOPs.
 
 ---
 
 ## Version
 
-Current version: **v0.24.1** — see [CHANGELOG.md](CHANGELOG.md).
+Current version: **v0.25.1** — see [CHANGELOG.md](CHANGELOG.md).
 
 ## License
 

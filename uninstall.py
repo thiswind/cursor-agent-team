@@ -99,14 +99,25 @@ def _run_git(project_root: str, args: list[str]) -> tuple[bool, str]:
     return True, (out or "ok")
 
 
+def _detect_installed_platforms(project_root: str) -> list[str]:
+    """Return platform names whose install-info file exists in project_root."""
+    found = []
+    for platform, rel in PLATFORM_INSTALL_INFO.items():
+        if os.path.isfile(os.path.join(project_root, rel)):
+            found.append(platform)
+    return found
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--yes", action="store_true", help="Skip confirmation prompt")
     ap.add_argument(
         "--platform",
         choices=sorted(PLATFORM_INSTALL_INFO),
-        default="cursor",
-        help="Platform installation to remove (default: cursor)",
+        default=None,
+        help="Platform installation to remove. Omit to auto-detect: "
+             "uninstalls the only installed platform, or errors listing "
+             "installed ones when several are present.",
     )
     ap.add_argument(
         "--remove-submodule",
@@ -117,6 +128,29 @@ def main() -> int:
 
     script_path = os.path.abspath(__file__)
     project_root = u.get_project_root(script_path)
+
+    if args.platform is None:
+        installed_platforms = _detect_installed_platforms(project_root)
+        if len(installed_platforms) == 1:
+            args.platform = installed_platforms[0]
+            print(f"Auto-detected single installation: "
+                  f"{PLATFORM_LABELS[args.platform]}")
+            print()
+        elif len(installed_platforms) > 1:
+            labels = ", ".join(PLATFORM_LABELS[p] for p in installed_platforms)
+            u.colored_print(
+                f"Error: multiple installations found ({labels}).", "red")
+            print("Specify which one to remove, e.g.:")
+            for p in installed_platforms:
+                print(f"  uninstall.py --platform {p} --yes")
+            return 1
+        else:
+            u.colored_print(
+                "Framework not installed on any platform "
+                "(cursor / claude_code / trae_solo).", "yellow")
+            print("Nothing to uninstall.")
+            return 0
+
     install_info_rel = PLATFORM_INSTALL_INFO[args.platform]
     platform_label = PLATFORM_LABELS[args.platform]
 
@@ -180,6 +214,26 @@ def main() -> int:
     # Always remove install record itself (not included in files list)
     if _remove_path(install_info_path):
         removed.append(install_info_rel)
+
+    # Nested cleanup FIRST: parent dirs of installer-recorded files (e.g.
+    # .claude/skills/<skill>/) are removed bottom-up when empty, so skill
+    # trees vanish with their contents. Scoped to the platform's own top
+    # dir; empty-only rmdir never touches dirs with user files. Running
+    # this before the top-dir pass ensures the platform top dir (.claude)
+    # is already empty when the top pass tries to remove it.
+    platform_top = os.path.dirname(install_info_rel)  # .cursor/.claude/.trae
+    parent_dirs = set()
+    for rel in files:
+        if not isinstance(rel, str) or not rel:
+            continue
+        d = os.path.dirname(rel)
+        while d and d != "." and d != platform_top:
+            if d.startswith(platform_top + os.sep):
+                parent_dirs.add(d)
+            d = os.path.dirname(d)
+    for rel_dir in sorted(parent_dirs, key=lambda p: -p.count(os.sep)):
+        _try_rmdir_if_empty(os.path.join(project_root, rel_dir),
+                            removed, rel_dir + "/")
 
     # Cleanup empty dirs (best-effort)
     for rel_dir, label in PLATFORM_DIRS[args.platform]:
