@@ -37,10 +37,14 @@ class WriterReleaseTests(unittest.TestCase):
         import _install_utils as utils
 
         version = utils.get_version(str(ROOT))
+        # S-2 root fix: assert against the VERSION file itself (authoritative),
+        # not a hardcoded release number — a pinned literal goes stale every
+        # release. What matters is that get_version tracks VERSION exactly.
+        expected = (ROOT / "VERSION").read_text().strip().lstrip("v")
         self.assertEqual(
-            version.lstrip("v"), "0.25.0",
-            "VERSION metadata must track the current release; "
-            f"got {version!r}")
+            version.lstrip("v"), expected,
+            "get_version() must track the VERSION file exactly; "
+            f"got {version!r}, VERSION says {expected!r}")
 
     def test_installers_list_writer(self):
         self.assertIn("_cursor/commands/writer.md", (ROOT / "install.py").read_text())
