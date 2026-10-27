@@ -36,7 +36,11 @@ class WriterReleaseTests(unittest.TestCase):
         sys.path.insert(0, str(ROOT / "_scripts"))
         import _install_utils as utils
 
-        self.assertEqual(utils.get_version(str(ROOT)), "v0.24.1")
+        version = utils.get_version(str(ROOT))
+        self.assertEqual(
+            version.lstrip("v"), "0.25.0",
+            "VERSION metadata must track the current release; "
+            f"got {version!r}")
 
     def test_installers_list_writer(self):
         self.assertIn("_cursor/commands/writer.md", (ROOT / "install.py").read_text())

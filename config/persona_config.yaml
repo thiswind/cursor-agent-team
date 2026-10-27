@@ -20,7 +20,7 @@ enabled: false
 #   path: "/home/user/my-persona/persona.yaml"
 #
 # 如果路径为空或文件不存在，人格系统将不启用
-path: "/Users/thiswind/Documents/工作/信息学院工作/桌面文件夹/cursor_workspaces/03_Program_Development/cursor-agent-team-workshop/sofia-persona/persona.yaml"
+path: ""
 
 # ============================================================================
 # 高级选项 (可选)

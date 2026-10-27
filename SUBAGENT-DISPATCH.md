@@ -60,7 +60,7 @@ Default to `crew` for scoped recon; reach for `discuss` only when the subtask in
 
 ## Evidence
 
-2026-08-29, host project cursor-agent-team-workshop (PLAN-WF-001 Phase 1): orchestrator dispatched 3 parallel read-only sub-agents (crew mask) for persona-map / scripts / workspace recon. 3/3 first-return compliance with mask + output contract; 0 rejections. One sub-agent flagged a real defect family (protected-file list inconsistency) that the orchestrator verified and folded into `AGENTS-GUIDE.md`. Full log: `ai_workspace/scratchpad/analysis/dispatch_log_20260829.md` (workshop repo).
+2026-08-29, host project (PLAN-WF-001 Phase 1): orchestrator dispatched 3 parallel read-only sub-agents (crew mask) for persona-map / scripts / workspace recon. 3/3 first-return compliance with mask + output contract; 0 rejections. One sub-agent flagged a real defect family (protected-file list inconsistency) that the orchestrator verified and folded into `AGENTS-GUIDE.md`. Full log: `ai_workspace/scratchpad/analysis/dispatch_log_20260829.md` (host repo).
 
 ## v2 Ideas (not required by this practice)
 
