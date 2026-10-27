@@ -24,6 +24,7 @@
 - Round loop: each viewpoint one full pass with source-anchored extractions `[轮1·Vi] 提取:…`; round 2+ same set, increments only `[轮N·Vi] 新发现:…` / `无增量`. Viewpoint ≠ round.
 - Ledger ends with `CONVERGED: R<N>` (N ≥ 2) or `BUDGET: R<N>(裁决理由)`, then the mandatory endpoint: 对照表 (吻合✓/偏差⚠/缺失✗) + pending questions (ask-user vs agent-decidable) + action items feeding plan generation.
 - Machine check: `python cursor-agent-team/_scripts/verify_mechanism.py read <reads-dir>`.
+- **Landing self-check (MUST, closes the read)**: re-read `viewpoints.md` + `ledger.md` from disk (not from the response), confirm existence + READ-GATE first line + convergence + 对照 endpoint, then append `LANDED: <archive-dir> verified-by-read-back` to the ledger. Instructed archive path wins; self-invented paths without a pointer file = failed run. Never claim "已建档" unless this check passed.
 
 ## Workflow (4-Phase)
 
@@ -124,9 +125,10 @@ What are your thoughts on where this should go?
 
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v6.4.0 (Updated: 2026-10-27)
+**Version**: v6.5.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v6.5.0 (2026-10-27): Read-archive landing self-check (S-1 fix, v0.25.0 acceptance) — long_document_discipline gains MUST closing step: re-read viewpoints.md + ledger.md from disk, confirm READ-GATE first line + convergence + 对照 endpoint, append `LANDED: <archive-dir> verified-by-read-back`; instructed path wins over self-invented archive IDs (kills P1-B2 run1 / P2-B4 0/3 failure modes)
 - v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies
 - v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)

@@ -114,3 +114,29 @@ def test_read_single_round_banned():
 def test_read_skip_ok():
     r = run("read", "READ-GATE: SKIP(查单一事实)\n单遍笔记\n", as_file=False)
     assert r["valid"], r
+
+
+# --- S-1 fix (v0.25.1): LANDED proof line, warning-level ---
+
+def test_write_no_landed_warns():
+    r = run("write",
+            "WRITE-GATE: PASS\n[轮1·V1] x\n[轮2·V1] y\nCONVERGED: R2\n")
+    assert r["valid"], r  # still valid — warning only
+    assert any("S1" in w for w in r["warnings"])
+
+
+def test_write_landed_no_warn():
+    r = run("write",
+            "WRITE-GATE: PASS\n[轮1·V1] x\n[轮2·V1] y\nCONVERGED: R2\n"
+            "LANDED: p1_archive.md verified-by-read-back\n")
+    assert r["valid"], r
+    assert not any("S1" in w for w in r["warnings"])
+
+
+def test_read_landed_no_warn():
+    r = run("read",
+            "READ-GATE: PASS\n[轮1·V1] x\n[轮2·V1] y\nCONVERGED: R2\n"
+            "## 对照\n吻合 ✓\nLANDED: reads/p1_read verified-by-read-back\n",
+            as_file=False)
+    assert r["valid"], r
+    assert not any("S1" in w for w in r["warnings"])

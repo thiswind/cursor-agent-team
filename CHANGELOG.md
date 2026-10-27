@@ -2,8 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [0.25.1] - 2026-10-27
+
+### Added
+
+- **Archive-landing self-check (S-1, from the v0.25.0 acceptance campaign)**: the acceptance suite (~45 `claude -p` runs + 18 script cases) measured a noise floor of 80% (4/5) on the write piece — the recurring failure mode is a response that *reports* a complete archive (gate line, ledger, convergence) while the file never lands on disk, because the Write tool was never actually invoked. Three-layer fix:
+  - `writer_assistant.mdc` v4.1.0 — new **Step 2.0c (MUST, before Final prose)**: re-read the archive from disk (not from the response), confirm existence + `WRITE-GATE:` first line + convergence line, then append a `LANDED: <filename> verified-by-read-back` proof line; naming discipline pinned (instructed path wins, deviations require a pointer file); chat claims of "已写入" are banned unless the check passed.
+  - `discussion_assistant.mdc` v5.5.0 — read discipline gains the same **landing self-check** closing step (re-read `viewpoints.md` + `ledger.md` from disk, `LANDED:` proof in the ledger, instructed archive path wins over self-invented IDs). Kills the P1-B2/P2-B4 failure modes (SKIP trace or archive at a self-invented path).
+  - `crew_assistant.mdc` v3.3.0 — long-document input clause references the landing self-check.
+  - `verify_mechanism.py` — new warning-level S1 check: PASS-path archives without a `LANDED:` proof line get `S1: no LANDED proof line…` (warning until the next release cycle proves the read-back discipline, then escalates to error). 3 new unit tests; suite 116 green.
+
+### Changed
+
+- `commands.yaml`: writer command v1.5.0 (HARD Step 2.0c) and discuss command v6.5.0 (landing self-check in `long_document_discipline`); 34 artifacts regenerated, zero drift.
 
 ## [0.25.0] - 2026-10-27
 

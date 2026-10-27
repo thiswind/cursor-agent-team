@@ -95,9 +95,10 @@ The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor and 
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->
 
-**Version**: v6.4.0 (Updated: 2026-10-27)
+**Version**: v6.5.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v6.5.0 (2026-10-27): Read-archive landing self-check (S-1 fix, v0.25.0 acceptance) — long_document_discipline gains MUST closing step: re-read viewpoints.md + ledger.md from disk, confirm READ-GATE first line + convergence + 对照 endpoint, append `LANDED: <archive-dir> verified-by-read-back`; instructed path wins over self-invented archive IDs (kills P1-B2 run1 / P2-B4 0/3 failure modes)
 - v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies
 - v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)
 - v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)

@@ -40,6 +40,7 @@ GATE_RE = re.compile(r"^(WRITE|READ)-GATE:\s*(PASS|SKIP)\s*(\([^)]*\))?\s*$")
 ROUND_RE = re.compile(r"\[轮(\d+)·V(\d+)")
 CONVERGED_RE = re.compile(r"^CONVERGED:\s*R(\d+)\s*$", re.M)
 BUDGET_RE = re.compile(r"^BUDGET:\s*R(\d+)\s*(\([^)]*\))?\s*$", re.M)
+LANDED_RE = re.compile(r"^LANDED:\s*\S+.*read-back.*$", re.M)
 
 
 def first_gate_line(text: str):
@@ -102,6 +103,13 @@ def check_archive(piece: str, text: str) -> tuple[list, list]:
         if piece == "read" and "对照" not in text:
             warnings.append("M2: no 对照 endpoint in read ledger (mandatory "
                             "read endpoint; escalate after exp4 evidence)")
+        # S-1 fix (v0.25.1): landing proof line — warning-level until next
+        # release cycle proves the read-back discipline, then escalate
+        if not LANDED_RE.search(text):
+            warnings.append("S1: no LANDED proof line ('LANDED: <path> "
+                            "verified-by-read-back') — archive-landing "
+                            "self-check (writer v4.1.0 / discuss v5.5.0 "
+                            "Step 2.0c) not recorded")
     else:  # SKIP
         if not (m.group(3) and m.group(3).strip("()")):
             warnings.append("M1: SKIP without a reason string")

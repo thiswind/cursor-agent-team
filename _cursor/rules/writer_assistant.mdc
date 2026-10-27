@@ -30,6 +30,7 @@ Declare the tier in Phase 1. When uncertain between general and academic, prefer
 
 - **MUST** (every prose output): Vocabulary ban + Style constraints — apply while drafting
 - **MUST** (every prose output of one or more paragraphs): WRITE-GATE line + viewpoint 构角 + Draft → Review → Final compose loop (Steps 2.0-pre / 2.0a / 2.0b / 2.1) with round ledger and convergence line
+- **MUST** (archive landing, Step 2.0c): the archive file must EXIST on disk with the gate line before Step 2.1 opens — a response that only *describes* the archive without the file landing is a failed run
 - **MUST** (academic tier): Academic checklist items during Review
 - **RECOMMENDED**: Citation verification always before citing; human final review before submission
 
@@ -89,6 +90,16 @@ Re-read the plan goal + draft. Append `## Review` to the same file, or write `an
     - `cursor-agent-team/_cursor/writing_guides/title_guidelines.md` (titles)
 
 If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
+
+### Step 2.0c — Archive-landing self-check (MUST, before Step 2.1)
+
+Failure mode this step kills (measured, v0.25.0 acceptance): the response **reports** a complete archive — gate line, viewpoint ledger, convergence — but the file never landed on disk; the Write tool was never actually invoked. Describing an archive is not writing it.
+
+1. After Step 2.0b, re-read the archive file **from disk** (Read tool on the exact path under `ai_workspace/scratchpad/drafts/`), NOT from your own last message.
+2. Confirm three facts on the file you just read: (a) the file exists at the declared path; (b) its first non-empty line is the `WRITE-GATE:` line; (c) the convergence line is present. Any miss → invoke Write now, then re-check.
+3. Only after all three hold, append to the archive a one-line proof: `LANDED: <filename> verified-by-read-back`.
+4. Naming discipline: the archive filename follows the task instruction or, when unspecified, `<topic-slug>_archive.md` under `drafts/`. If you deviate from an instructed path, append `LANDED:` at the instructed path with a pointer line to the actual file.
+5. Do not claim "已写入/已存档" in chat unless step 2 passed this round. A chat claim with no landed file is the definition of a failed run.
 
 ### Step 2.1 — Final prose
 
@@ -230,6 +241,7 @@ Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205
 **Version**: v4.0.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v4.1.0 (2026-10-27): **Archive-landing self-check (S-1 fix, v0.25.0 acceptance finding)** — new Step 2.0c MUST before Step 2.1: re-read the archive from disk (not from the response), confirm existence + gate line + convergence line, then append `LANDED: <filename> verified-by-read-back` proof line; naming discipline pinned (instructed path wins; deviation must leave a pointer file). Kills the measured failure mode where the response reports a complete archive but the Write tool was never invoked (noise floor run5: 0 files landed while chat claimed WRITE-GATE: PASS + CONVERGED: R3). Grounded in: v0.25.0 acceptance campaign, noise floor 80% (4/5).
 - v4.0.0 (2026-10-27): **Marker protocol v2 + viewpoint-round loop (RFC-003)** — new Step 2.0-pre 视角构角 with WRITE-GATE line (PASS/SKIP both traced, mirrors exp3c GATE evidence); Step 2.0a upgraded from single-pass Draft to viewpoint×round two-layer loop with per-viewpoint increment ledger (`[轮N·Vi]`); new mandatory convergence line (`CONVERGED: R<N>`, N≥2, or `BUDGET: R<N>`) before Step 2.1; Review gains item 6 intent-vs-draft 对照表 (吻合✓/偏差⚠/缺失✗). Grounded in: exp3b/3c activation 0/3→3/3 (machine-checkable markers make "自觉写作" into "可验收写作"), gate-annotation relapse 0/5 (SKIP must trace too), multipass-write kernel (构角/双层/增量账本/轮级收敛/对照产出). Existing slop/academic/citation rules untouched.
 - v3.1.0 (2026-09-14): **Insertion-structure ban** — mid-sentence explanatory insertions prohibited regardless of marker (em dash/colon/semicolon/parentheses); punctuation narrowed to legal uses (colon: lists/definitions; semicolon: parallel clauses; parentheses: table/figure captions); Step 2.0a gains MUST pre-compose sentence logic (claims ordered, every explanation pre-assigned a standalone sentence slot); removed the two workaround-inviting clauses ("prefer commas, semicolons, or separate sentences"). Source: issue #10 + owner ruling 2026-09-14.
 - v3.0.0 (2026-08-06): **MAJOR** — Prose compose loop HARD (Draft→Review→Final); general vs academic tiers; Slop Removal repositioned as Review checklist; aligned with discuss inner-world scratchpad

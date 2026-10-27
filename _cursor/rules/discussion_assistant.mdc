@@ -147,6 +147,16 @@ Archive: `ai_workspace/scratchpad/reads/<id>/` containing `viewpoints.md` + `led
 3. **Convergence line (MUST)**: ledger ends with `CONVERGED: R<N>` (all viewpoints logged only confirmations; N ≥ 2 required) or `BUDGET: R<N>(裁决理由)`.
 4. **对照产出 (mandatory endpoint)**: `ledger.md` ends with a 对照表 — document demands vs current task/status (吻合 ✓ / 偏差 ⚠ / 缺失 ✗) — plus a pending-questions list (marked "ask user" vs "agent-decidable") and an action-items list. Action items feed plan generation directly ("榨干的终点是行动"). A read without the 对照 endpoint is not done.
 
+### Landing self-check (MUST, closes the read)
+
+Failure mode this kills (measured, v0.25.0 acceptance): the response reports a complete read archive — READ-GATE, viewpoints, ledger, 对照表 — but `reads/<id>/` never landed on disk; or the archive landed at a self-invented path instead of the instructed one.
+
+1. After the 对照 endpoint, re-read BOTH files **from disk** (Read tool on `reads/<id>/viewpoints.md` and `reads/<id>/ledger.md`), NOT from your own last message.
+2. Confirm: (a) both files exist at the declared archive dir; (b) `ledger.md`'s first non-empty line is the `READ-GATE:` line; (c) the convergence line and 对照 endpoint are present. Any miss → invoke Write now, re-check.
+3. Append to `ledger.md` one proof line: `LANDED: <archive-dir> verified-by-read-back`.
+4. Path discipline: when the task instruction names an archive path, that path wins; writing elsewhere requires a pointer file at the instructed path. Self-invented archive IDs without a pointer = failed run.
+5. Do not claim "已建档/档案已写" in chat unless step 2 passed this round.
+
 ### Crew variant
 
 Crew members receiving long-document task inputs follow the same discipline (see crew contract input-discipline clause); their read archives live under the task's scratchpad scope.
@@ -211,9 +221,10 @@ Plans are consumed by AI agents, not humans. When generating PLAN or AGENT-REQUI
 
 ---
 
-**Version**: v5.4.0 (Updated: 2026-10-27)
+**Version**: v5.5.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v5.5.0 (2026-10-27): **Read-archive landing self-check (S-1 fix, v0.25.0 acceptance finding)** — new MUST subsection closing the read discipline: re-read viewpoints.md + ledger.md from disk (not from the response), confirm existence + READ-GATE first line + convergence + 对照 endpoint, append `LANDED: <archive-dir> verified-by-read-back` proof; path discipline pinned (instructed path wins, deviation requires pointer file). Kills measured failure modes: archive reported but never written; SKIP trace or archive landed at self-invented path (P1-B2 run1, P2-B4 0/3).
 - v5.4.0 (2026-10-27): **Long-Document Input Discipline (read piece, RFC-003)** — READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list per document type, two-layer scan with per-viewpoint increment ledger in `scratchpad/reads/<id>/`, mandatory convergence line (CONVERGED: R<N>, N≥2, or BUDGET), 对照表+pending+action-items as the mandatory read endpoint feeding plan generation. Grounded in exp1 (single pass misses fatal risks; 400-char table segment) + exp3c (machine-checkable markers drive activation 0/3→3/3).
 - v5.3.1 (2026-08-06): Phase 2 inner compose — Write (2.0a) + Review (2.0b) + Answer (2.1); shallow turns still review
 - v5.3.0 (2026-08-05): Every `/discuss` turn writes scratchpad; inner-world boundary; never paste scratchpad into chat; shallow turns still file a short draft

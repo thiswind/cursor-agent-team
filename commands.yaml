@@ -82,6 +82,7 @@ commands:
         - Round loop: each viewpoint one full pass with source-anchored extractions `[轮1·Vi] 提取:…`; round 2+ same set, increments only `[轮N·Vi] 新发现:…` / `无增量`. Viewpoint ≠ round.
         - Ledger ends with `CONVERGED: R<N>` (N ≥ 2) or `BUDGET: R<N>(裁决理由)`, then the mandatory endpoint: 对照表 (吻合✓/偏差⚠/缺失✗) + pending questions (ask-user vs agent-decidable) + action items feeding plan generation.
         - Machine check: `python cursor-agent-team/_scripts/verify_mechanism.py read <reads-dir>`.
+        - **Landing self-check (MUST, closes the read)**: re-read `viewpoints.md` + `ledger.md` from disk (not from the response), confirm existence + READ-GATE first line + convergence + 对照 endpoint, then append `LANDED: <archive-dir> verified-by-read-back` to the ledger. Instructed archive path wins; self-invented paths without a pointer file = failed run. Never claim "已建档" unless this check passed.
     phase_list:
       - n: 0
         title: Boot
@@ -146,6 +147,7 @@ commands:
       /discuss
       [After discussion] The discussion is sufficient, please generate the plan.
     history:
+      - "v6.5.0 (2026-10-27): Read-archive landing self-check (S-1 fix, v0.25.0 acceptance) — long_document_discipline gains MUST closing step: re-read viewpoints.md + ledger.md from disk, confirm READ-GATE first line + convergence + 对照 endpoint, append `LANDED: <archive-dir> verified-by-read-back`; instructed path wins over self-invented archive IDs (kills P1-B2 run1 / P2-B4 0/3 failure modes)"
       - "v6.4.0 (2026-10-27): Long-Document Input Discipline (RFC-003 read piece) — READ-GATE, 构角 viewpoints, two-layer scan ledger, convergence line, 对照 endpoint; verify_mechanism.py added to dependencies"
       - "v6.3.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)"
       - "v6.2.1 (2026-08-06): Phase 2 inner compose — Step 2.0a Write + Step 2.0b Review + Step 2.1 Formal Answer (not a new top-level phase)"
@@ -707,6 +709,12 @@ commands:
           - Verify the archive markers: `python cursor-agent-team/_scripts/verify_mechanism.py write <drafts-file>`.
           - If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
 
+          **Step 2.0c: Archive-landing self-check (HARD, before Step 2.1)**:
+          - Re-read the archive file **from disk** (Read tool on the exact path), NOT from your own last message.
+          - Confirm on the file just read: (a) exists at the declared path; (b) first non-empty line is the `WRITE-GATE:` line; (c) convergence line present. Any miss → invoke Write now, re-check.
+          - Then append one proof line to the archive: `LANDED: <filename> verified-by-read-back`.
+          - Instructed archive path wins over self-invented names; deviation requires a pointer file at the instructed path. Never claim "已写入" in chat unless this check passed.
+
           **Step 2.1: Final prose**:
           - Emit the **reviewed** prose to the plan's target location (file write-first for serious products).
           - NEVER dump scratchpad process notes into the deliverable.
@@ -722,6 +730,7 @@ commands:
       /writer
       Execute the plan for the paper we discussed.
     history:
+      - "v1.5.0 (2026-10-27): Archive-landing self-check (S-1 fix, v0.25.0 acceptance) — new HARD Step 2.0c before Final prose: re-read archive from disk (not from the response), confirm existence + WRITE-GATE first line + convergence line, append `LANDED: <filename> verified-by-read-back` proof; instructed path wins over self-invented names, deviation requires pointer file. Kills the measured mode where the response reports a complete archive but Write was never invoked (noise floor 80% → target 100%)"
       - "v1.4.0 (2026-10-27): Marker protocol v2 (RFC-003) — Step 2.0-pre viewpoint 构角 with WRITE-GATE line (PASS/SKIP both traced); Step 2.0a upgraded to viewpoint×round loop with increment ledger; mandatory convergence line (CONVERGED: R<N> N>=2 or BUDGET) before Step 2.1; Review gains intent-vs-draft 对照; archive markers machine-checked by verify_mechanism.py"
       - "v1.3.0 (2026-09-14): Insertion-structure ban (issue #10) — Step 2.0a gains MUST pre-compose sentence logic; Step 2.0b Review checks insertion structures (em dash/colon/semicolon/parentheses carrying mid-sentence explanations are the same violation; rewrite as standalone sentences, never swap markers)"
       - "v1.2.0 (2026-08-16): Single-source generation from commands.yaml; added Response Self-Verification closed loop (verify_response.py)"
