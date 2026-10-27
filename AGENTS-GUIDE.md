@@ -174,9 +174,9 @@ surviving since January 2026 (FR-0021).
 
 ### 5.4 Upgrade SOP (v0.23.0+)
 
-1. `cd <host>/cursor-agent-team && git fetch --tags && git log --oneline HEAD..v0.24.0` — read what changed (CHANGELOG first); plain-dir hosts without a git checkout: compare VERSION files
+1. `cd <host>/cursor-agent-team && git fetch --tags && git log --oneline HEAD..v0.28.0` — read what changed (CHANGELOG first); plain-dir hosts without a git checkout: compare VERSION files
 2. Re-run the cold-start self-check (§5.2) — confirm the shape is intact before touching anything
-3. Update the copy: plain-dir hosts re-run the installer (idempotent, never deletes `ai_workspace/`; v0.24.0+ warns before overwriting locally-edited owned files); submodule hosts `git checkout v0.24.0` in the submodule and bump the pointer
+3. Update the copy: plain-dir hosts re-run the installer (idempotent, never deletes `ai_workspace/`; v0.24.0+ warns before overwriting locally-edited owned files); submodule hosts `git checkout v0.28.0` in the submodule and bump the pointer
 4. Re-run `python3 _scripts/build_commands.py --check` (if harness artifacts live in the host) and the test suite once
 5. Append a topic-tree round noting the version bump (validator), and commit with `commit_workspace.py` / `add -f`
 6. If the host's tree predates the FR-0011 template skeleton, backfill missing structure in the same round — don't defer
