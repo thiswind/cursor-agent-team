@@ -17,7 +17,9 @@ Shared aspects (see individual `.mdc` files for details):
 
 ### Phase Markers (Output Validation)
 
-Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response.
+Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line.
+
+**Exactly-one-path rule (S-3 fix)**: the marker MUST exist at every join point — script-produced OR, when the script truly cannot run (permission-restricted sandbox, missing python), **hand-typed canonical line `[Phase N DONE]` / `[Phase N FAIL]`**. Explaining that the script is unavailable is NOT a substitute: a response that only says "python 受限无法运行 phase_marker.py" without the marker line is an INVALID response. The fallback marker counts exactly like the script's.
 
 ### Priority Levels
 
@@ -221,9 +223,10 @@ Plans are consumed by AI agents, not humans. When generating PLAN or AGENT-REQUI
 
 ---
 
-**Version**: v5.5.0 (Updated: 2026-10-27)
+**Version**: v5.6.0 (Updated: 2026-10-27)
 
 **Version History**:
+- v5.6.0 (2026-10-27): Phase Markers gains **exactly-one-path rule** (S-3 fix, v0.25.0 acceptance P1-C1 0/3): marker must exist at every join point — script-produced or hand-typed canonical `[Phase N DONE]`; explaining script unavailability without the marker line is invalid.
 - v5.5.0 (2026-10-27): **Read-archive landing self-check (S-1 fix, v0.25.0 acceptance finding)** — new MUST subsection closing the read discipline: re-read viewpoints.md + ledger.md from disk (not from the response), confirm existence + READ-GATE first line + convergence + 对照 endpoint, append `LANDED: <archive-dir> verified-by-read-back` proof; path discipline pinned (instructed path wins, deviation requires pointer file). Kills measured failure modes: archive reported but never written; SKIP trace or archive landed at self-invented path (P1-B2 run1, P2-B4 0/3).
 - v5.4.0 (2026-10-27): **Long-Document Input Discipline (read piece, RFC-003)** — READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list per document type, two-layer scan with per-viewpoint increment ledger in `scratchpad/reads/<id>/`, mandatory convergence line (CONVERGED: R<N>, N≥2, or BUDGET), 对照表+pending+action-items as the mandatory read endpoint feeding plan generation. Grounded in exp1 (single pass misses fatal risks; 400-char table segment) + exp3c (machine-checkable markers drive activation 0/3→3/3).
 - v5.3.1 (2026-08-06): Phase 2 inner compose — Write (2.0a) + Review (2.0b) + Answer (2.1); shallow turns still review
