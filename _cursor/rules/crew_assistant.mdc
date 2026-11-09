@@ -17,9 +17,7 @@ Shared aspects (see individual `.mdc` files for details):
 
 ### Phase Markers (Output Validation)
 
-Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line.
-
-**Exactly-one-path rule (S-3 fix)**: the marker MUST exist at every join point — script-produced OR, when the script truly cannot run (permission-restricted sandbox, missing python), **hand-typed canonical line `[Phase N DONE]` / `[Phase N FAIL]`**. Explaining that the script is unavailable is NOT a substitute: a response that only says "python 受限无法运行 phase_marker.py" without the marker line is an INVALID response. The fallback marker counts exactly like the script's.
+Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response.
 
 ### Priority Levels
 
@@ -82,7 +80,7 @@ Completion markers are produced by the **script**, not by typing. At each phase-
 
 Before execution, read files listed in plan's "Related Files" section, plus related code/config files. Analyze content in relation to plan, confirm status, identify conflicts, record findings.
 
-**Long-document task inputs (MUST, read piece of RFC-003)**: when a task input is a decision-critical long document (meeting transcript, review comments, long spec, contract, report the plan relies on), apply the discuss read discipline: READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list, two-layer scan with per-viewpoint increment ledger, convergence line (`CONVERGED: R<N>` N≥2 or `BUDGET: R<N>`), and the 对照表/action-items endpoint. Read archive lives under this session's directory (`reads/<id>/`); `verify_mechanism.py read <archive>` checks the markers. Quick lookups stay single-pass with a SKIP note. **Landing self-check applies** (S-1 fix): re-read the archive files from disk before claiming completion, append `LANDED: <archive-dir> verified-by-read-back` to the ledger; instructed path wins over self-invented paths.
+**Long-document task inputs (MUST, read piece of RFC-003)**: when a task input is a decision-critical long document (meeting transcript, review comments, long spec, contract, report the plan relies on), apply the discuss read discipline: READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list, two-layer scan with per-viewpoint increment ledger, convergence line (`CONVERGED: R<N>` N≥2 or `BUDGET: R<N>`), and the 对照表/action-items endpoint. Read archive lives under this session's directory (`reads/<id>/`); `verify_mechanism.py read <archive>` checks the markers. Quick lookups stay single-pass with a SKIP note.
 
 ---
 
@@ -145,8 +143,6 @@ Before execution, read files listed in plan's "Related Files" section, plus rela
 **Version**: v3.2.0 (Updated: 2026-10-27)
 
 **Version History**:
-- v3.4.0 (2026-10-27): Phase Markers gains **exactly-one-path rule** (S-3 fix, v0.25.0 acceptance P1-C1 0/3): marker must exist at every join point — script-produced or hand-typed canonical `[Phase N DONE]`; "explaining the script is unavailable" without the marker line is an invalid response. Old wording ("Do not type manually… fall back to outputting by hand") left a gap the acceptance run measured: the model explained the constraint instead of typing the fallback marker.
-- v3.3.0 (2026-10-27): Long-document input clause gains **landing self-check** (S-1 fix, v0.25.0 acceptance): re-read archive files from disk before claiming completion; `LANDED:` proof line in ledger; instructed path wins over self-invented paths.
 - v3.2.0 (2026-10-27): Long-document task inputs MUST follow the discuss read discipline (RFC-003 read piece): READ-GATE, 构角, two-layer scan ledger, convergence line, 对照 endpoint; archive under session `reads/<id>/`.
 - v3.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)
 - v3.0.0 (2026-02-08): **MAJOR** — Conciseness overhaul per PLAN-AV-002. Script-as-Truth deletions (Time Awareness, workspace tree, cleanup details), tables→bullets, MUST/RECOMMENDED markers, merged Execution Rules into Behavior Constraints, English-only.

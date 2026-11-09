@@ -2,37 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/1.0.0/),
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.28.0] - 2026-10-28
+## [0.29.0] - 2026-11-09
 
-A discipline-hardening release: the acceptance campaigns of v0.25.x measured where
-self-discipline still relied on trust, and this version closes every measured gap with
-machine-checked contracts. Also ships fully redrawn README artwork and the largest
-README refresh since v0.22.0.
+### BREAKING — Host主线切换：Trae CN 升一等公民（PLAN-TRAE-CN-001）
 
-### Added
-
-- **Archive-landing self-check (S-1)**: the acceptance suite (~45 `claude -p` runs + 18 script cases) measured an 80% recurrence of the write-piece failure mode — a response that *reports* a complete archive (gate line, ledger, convergence) while the file never lands on disk, because the Write tool was never actually invoked. Three-layer fix:
-  - `writer_assistant.mdc` v4.1.0 — new **Step 2.0c (MUST, before Final prose)**: re-read the archive from disk (not from the response), confirm existence + `WRITE-GATE:` first line + convergence line, then append a `LANDED: <filename> verified-by-read-back` proof line; naming discipline pinned (instructed path wins, deviations require a pointer file); chat claims of "已写入" are banned unless the check passed.
-  - `discussion_assistant.mdc` v5.5.0 — read discipline gains the same **landing self-check** closing step (re-read `viewpoints.md` + `ledger.md` from disk, `LANDED:` proof in the ledger, instructed archive path wins over self-invented IDs). Kills the P1-B2/P2-B4 failure modes (SKIP trace or archive at a self-invented path).
-  - `crew_assistant.mdc` v3.3.0 — long-document input clause references the landing self-check.
-  - `verify_mechanism.py` — new warning-level S1 check: PASS-path archives without a `LANDED:` proof line get `S1: no LANDED proof line…` (warning until the next release cycle proves the read-back discipline, then escalates to error). 3 new unit tests.
-- **Phase-marker exactly-one-path rule (S-3, from P1-C1 0/3)**: the acceptance run measured a design gap in the Phase Markers wording — old text said "Do not type `[Phase N DONE]` manually … fall back to outputting the canonical format by hand", and in a permission-restricted sandbox (no Bash) the model chose a third, unlisted path: explaining the constraint without producing any marker. `crew_assistant.mdc` v3.4.0 / `writer_assistant.mdc` v4.2.0 / `discussion_assistant.mdc` v5.6.0 now pin the rule: the marker MUST exist at every join point — script-produced OR hand-typed canonical line; "explaining that the script is unavailable" without the marker line is an INVALID response. Re-run P1-C1 ×3 after the fix: 3/3 PASS.
-
-### Fixed
-
-- **`install.py --ide` no longer silently ignored (S-4)**: `install.py` had no argument parsing at all, so `--ide claude-code` (or any `--ide` value) was silently dropped — the Cursor form got installed and the script exited 0. `install.py` now parses arguments: `--ide {cursor,claude_code,trae_solo}` (default `cursor`, preserving the historical bare-invocation behaviour); `claude_code`/`trae_solo` dispatch to their dedicated entrypoints (`install_claude_code.py` / `install_trae_solo.py`) via `subprocess` with exit-code passthrough; an invalid value fails fast with argparse's usage error (exit code 2, the CLI convention — a typo must not silently install the wrong platform). `--yes` is accepted (no-op) for consistency with `uninstall.py` and existing CI invocations. Design decision (from the fix-round deliberation ledger): dispatch instead of merging the three platform installers into one file — the three forms differ too much (14 Cursor rules vs Claude Code skills vs TRAE AGENTS.md template) and the dedicated entrypoints remain the source of truth.
-- **`uninstall.py` no longer assumes Cursor when `--platform` is omitted (S-5)**: `--platform` previously defaulted to `cursor`, so a user who installed Claude Code and ran bare `uninstall.py --yes` got "Framework not installed" while the `.claude` tree remained. Now `--platform` defaults to auto-detect: exactly one installation → uninstalled automatically (with an "Auto-detected single installation" notice); multiple → hard error (exit 1) listing the installed platforms with per-platform `--platform` usage lines; none → "not installed on any platform" notice (exit 0). This matches the uninstaller convention measured across rustup / cargo / AWS CLI (never guess, never delete the wrong thing).
-- **Nested empty-dir cleanup after uninstall**: `.claude/skills/<skill>/` trees (recorded files inside nested dirs) previously survived recorded-file removal as empty directories. Uninstall now removes installer-created parent directories bottom-up when empty, scoped to the platform's own top dir (`.cursor` / `.claude` / `.trae`); directories containing user files are never touched (empty-only rmdir). Verified: user-added `.claude/skills/my-user-skill/` survives, installer-owned skill trees vanish.
-
-### Changed
-
-- **README fully refreshed for the v0.25 → v0.28 discipline arc**: "A new era" now narrates the four-shift evolution (v0.22.0 frontier agent → v0.24.0 write gateway → v0.25.0 marker protocol v2 → v0.28.0 airtight discipline); the frontier-agent capability table gains three rows (landing self-check, marker protocol v2, unified `--ide` installer); new "Verified discipline: markers, ledgers, landing proof" section; Features list re-badged with per-capability version stamps; Architecture prose aligned with the new diagram; version footer bumped to v0.28.0.
-- **README artwork fully redrawn**: `logo.png` — luminous cyan glass cursor-arrow inside a graphite hexagon frame with three violet agent dots (semantics: cursor + team); `banner.jpg` — hexagonal command hub with six orbiting agent pods over a holographic mission-control panel, left third reserved for the title (AI-generated, gpt-image pipeline, 3-round generate + vision-QC selection loop); `architecture.png` — hand-drawn dark-theme SVG→PNG (1560×1046) replacing the light-theme raster: dual entry paths, the meeting room with all six mask chips, supervised violet fan-out with the verify-and-merge return path, write gateway and `ai_workspace/` panels, machine-checked-contracts strip — exact text, brand-consistent cyan/violet palette.
-- `commands.yaml`: writer command v1.5.0 (HARD Step 2.0c) and discuss command v6.5.0 (landing self-check in `long_document_discipline`); 34 artifacts regenerated, zero drift.
-- Acceptance harness (`product/test_p0_smoke.py`): P0-B5 version gate now asserts `VERSION == CHANGELOG head entry` instead of pinning a literal (root-fix of the S-2 pattern at the P0 layer — a release bump can no longer break the gate); new regression cases P0-A5..A10 cover S-4/S-5 (invalid `--ide` exit 2, dispatch artifacts, multi-install bare-uninstall error, clean `.claude` removal, single-install auto-detect, zero-install notice). P0 layer 18/18 green.
+- **移除 TRAE SOLO 适配**：`install_trae_solo.py`、`TRAE_SOLO_README.md`、`_trae_solo/` 全部退役（上游 v3.3.56 起 SOLO 品牌已并入 Trae CN 统一 Agent，宿主已无处安装）。
+- **新增 `install_trae_cn.py`（主安装器）**：安装 `.trae/skills/`（11 项：master + 六面具 + 四操作技能）、`.trae/rules/`（cat-router 常驻路由 + 六面具规则，Trae CN 原生 md+frontmatter 格式）、`.trae/commands/`（5 个斜杠命令）、项目根 `AGENTS.md`（append 模式，FR-0014 纪律）。ownership md5 保护、ai_workspace 生成与既有安装器同构。
+- **新增 `_scripts/convert_rules_trae_cn.py`**：从 `_cursor/rules/*.mdc` 单源生成 `_trae_cn/rules/*.md`（`--check` 支持 CI 防漂移）；规则 frontmatter 按 docs.trae.cn/ide_rules 契约（name/description/alwaysApply）。
+- **`build_commands.py`**：trae 平台工件目标 `_trae_solo/commands/` → `_trae_cn/commands/`。
+- **Trae CLI（traecli）兼容**：官方读取 `.trae/rules/`、`.trae/skills/`、AGENTS.md——一次安装 IDE/CLI 双生效；MCP 不随安装器下发（用户 GUI 手配决策）。
+- **Cursor / Claude Code 降为顺便适配**：安装器保留可用、仅安全修复；规则演进只在 `_trae_cn/` 主线（`_cursor/` 落后不补）。
 
 ## [0.25.0] - 2026-10-27
 

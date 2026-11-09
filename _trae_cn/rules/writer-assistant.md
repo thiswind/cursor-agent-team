@@ -1,0 +1,243 @@
+---
+name: writer-assistant
+description: Rules for /writer command - Prose compose loop, AI slop avoidance, academic extras. Extends crew_assistant.
+alwaysApply: false
+---
+
+# Writer Assistant Rules
+
+> **Purpose**: When using `/writer`, apply these rules IN ADDITION to `crew_assistant`. Writer = Crew + **Draft → Review → Final** prose compose + AI slop avoidance (+ academic extras when tier = academic).
+
+**Trigger**: Any plan step that produces **natural-language prose** (papers, sections, paragraphs, documentation, reports)
+**Scope**: Phase 2 (Execute) when generating or editing prose
+**Does NOT apply to**: Code, config, BibTeX, file paths, commands — only natural language prose
+**Default discipline**: Computer Science and Technology
+
+### Phase Markers (Output Validation)
+
+Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response. (Writer uses the same 4-phase workflow as Crew.)
+
+### Writing Tiers
+
+| Tier | Trigger | Checks |
+|------|---------|--------|
+| **general** | Docs, reports, proposals, non-submission prose | Vocabulary ban + style + Draft→Review→Final |
+| **academic** | Papers, theses, arXiv, submission packages | general + PEEL, hedging, numbering, citation venues, writing_guides |
+
+Declare the tier in Phase 1. When uncertain between general and academic, prefer **academic** if the plan mentions submission/preprint/venue; otherwise **general**.
+
+### Mandatory vs Recommended
+
+- **MUST** (every prose output): Vocabulary ban + Style constraints — apply while drafting
+- **MUST** (every prose output of one or more paragraphs): WRITE-GATE line + viewpoint 构角 + Draft → Review → Final compose loop (Steps 2.0-pre / 2.0a / 2.0b / 2.1) with round ledger and convergence line
+- **MUST** (academic tier): Academic checklist items during Review
+- **RECOMMENDED**: Citation verification always before citing; human final review before submission
+
+---
+
+## Prose Compose Loop (HARD)
+
+Aligned with `/discuss` inner-world design. Physical inner workspace: `cursor-agent-team/ai_workspace/`. Pre-final prose lives in `scratchpad/`; do not paste process notes into the deliverable.
+
+The loop carries machine-checkable mechanism markers (RFC-003 marker protocol v2): a gate line, per-viewpoint ledger entries, and a convergence line live in the drafts file; `verify_mechanism.py write <archive>` checks their form. Missing markers = invalid compose loop.
+
+### Step 2.0-pre — Viewpoint 构角 (MUST, before any drafting)
+
+1. First line of the drafts file states the gate: `WRITE-GATE: PASS` (the text is review/publication/outward-formal — one wrong sentence could cause misunderstanding, rejection, or rework) or `WRITE-GATE: SKIP(理由)` (casual note or throwaway draft — then write directly, no archive required).
+2. On PASS, construct the writing-viewpoint set by answering three questions as the best writer of this text type would (this is NOT a fixed checklist):
+   - What goes wrong if this text is written badly? (ambiguity risk → clarity viewpoint; verbosity → concision; gaps → logical coherence)
+   - What viewpoints does this text type require? (methods section → symbol consistency; introduction → motivation persuasiveness; review response → point-by-point fit)
+   - Who reads it and what do they care about? (experts → novelty; cross-domain → comprehensibility; reviewers → rigor)
+3. Record the viewpoint list (3–5 viewpoints, name + one-line strategy each) in the drafts file under a `## 视角` section. Add/drop type-specific viewpoints freely; a generic five-item checklist without construction is the "checklist 构角" anti-pattern.
+
+### Step 2.0a — Draft (viewpoint-round loop)
+
+1. Create/update a file under `ai_workspace/scratchpad/drafts/` (preferred) or `analysis/` for outlines.
+2. **Pre-compose sentence logic before drafting** (MUST): enumerate the claims in order, then pre-assign every explanation a standalone sentence slot — appended after the claim it serves, or folded into that sentence's main clause. Only after the sentence plan is set may drafting begin.
+3. **Round loop (two-layer structure — viewpoint ≠ round, never confuse them)**:
+   - Round 1: pass over the whole segment once per viewpoint (each pass = rewrite the full paragraph/section with that viewpoint's sensitivities active), appending one ledger entry per viewpoint: `[轮1·V1] 本稿要点/该视角暴露的问题/改动`. The set of viewpoints IS round 1; five viewpoints is not "five rounds".
+   - Round 2+: re-run the SAME (or amended) viewpoint set over the previous round's draft; each viewpoint does reflect → critique → rewrite and records ONLY increments: `[轮N·Vi] 新发现:…` (or `无增量`). Prior-round drafts stay visible on purpose — earlier viewpoints reshaping later viewpoints' sensitivities is a feature, not anchoring to avoid.
+   - Scope adapter: for long documents run the loop at paragraph/section granularity per plan prose step; a full-document single pass is not the loop.
+4. Write the prose draft there with vocabulary ban + style constraints in mind.
+5. Do **not** treat a chat-inline “draft” label as this step.
+6. For short single-paragraph notes, a short `drafts/` file is still required (no chat-only draft).
+
+### Convergence line (MUST before Step 2.1)
+
+The ledger ends with exactly one line: `CONVERGED: R<N>` (round N ended with all viewpoints logging only cosmetic increments; N ≥ 2 required — a single round can never converge) or `BUDGET: R<N>(裁决理由)` (round budget exhausted, writer rules with the best available draft). No convergence line → Step 2.1 MUST NOT open. Machine-checked by `verify_mechanism.py`.
+
+### Step 2.0b — Review
+
+Re-read the plan goal + draft. Append `## Review` to the same file, or write `analysis/review_*`.
+
+**General checklist (all prose)**:
+1. **Slop check**: Scan for banned phrases; replace
+2. **Sentence variation**: Mix short/long; break uniform blocks
+3. **Stance check**: Clear positions; not evasive “it depends”
+4. **Insertion-structure check**: No mid-sentence explanatory insertions — whether marked by em dash, colon, semicolon, or parentheses. Rewrite as complete standalone sentences (explanation appended after the claim it serves, or folded into the main clause). NEVER just swap punctuation markers. Colons stay legal only for introducing lists/enumerations or formal definitions; semicolons only between tightly coordinated parallel clauses; parenthetical remarks only inside table/figure captions.
+5. **Deliverable fit**: Does the draft satisfy the plan step? Will chat/deliverable leak scratchpad process?
+6. **Intent-vs-draft 对照 (MUST)**: produce a three-column alignment — writing intent vs final draft per viewpoint (吻合 ✓ / 偏差 ⚠ / 缺失 ✗) — appended as a `## 对照` section in the drafts file. Deviations must each carry a one-line disposition (accepted trade-off / to fix now / to flag to user).
+
+**Academic checklist (academic tier only) — add**:
+6. **PEEL check**: Topic sentence, evidence, explanation per paragraph
+7. **Hedging balance**: Not over-/under-hedged
+8. **Numbering consistency**: IEEE-style hierarchy if numbered
+9. **Citation venue check**: CCF A, B, C (or plan-allowed) only
+10. **Writing guides cross-check**:
+    - `cursor-agent-team/_cursor/writing_guides/sci_writing_pitfalls.md`
+    - `cursor-agent-team/_cursor/writing_guides/review_checklist.md`
+    - `cursor-agent-team/_cursor/writing_guides/title_guidelines.md` (titles)
+
+If review fails: revise in scratchpad, review again. Do not open Step 2.1 until review passes.
+
+### Step 2.1 — Final prose
+
+Write the reviewed prose to the plan's target file (write-first for serious products). Notify path in chat; do not dump scratchpad process.
+
+**Human edit boundary**: Writer performs AI-side draft/review only. User should do final human review before submission (maintain authorship control).
+
+---
+
+## AI Slop Avoidance (MANDATORY)
+
+### 1. Vocabulary Ban (MUST)
+
+**NEVER use** these words/phrases in prose (appear 100–1000× more in LLM than human text):
+
+- **Overused verbs**: delve, leverage, harness, embark, navigate, unleash, explore, embrace, elevate, resonate
+  - **Instead use**: use, apply, adopt, draw on, examine, investigate, address
+- **Overused nouns**: realm, landscape, paradigm, linchpin, game changer
+  - **Instead use**: domain, field, area, framework, model, factor
+- **Overused adjectives**: crucial, robust, seamless(ly), multifaceted, unprecedented, dynamic
+  - **Instead use**: important, effective, reliable, smooth, complex, varied
+- **Buzzwords**: revolutionize → **Instead use**: improve, advance, transform
+- **Stock phrases**: "it depends...", "I'm happy to help", "in today's fast-paced", "not just X, but Y"
+- **Academic slop**: "objective study aimed", "research needed to understand", "play significant role in shaping"
+
+**Action**: During Draft and again in Review, scan for these; replace with discipline-specific or simpler alternatives.
+
+### 2. Style Constraints (MUST)
+
+- **Clear stance**: Take positions. Avoid "it depends on..." as default (evasive). State conclusions. *Distinct from hedging*: hedging = appropriate caution when evidence is limited; stance = no evasive default.
+- **Sentence variation**: Mix short (≤15 words) and long (30+ words) sentences. Avoid uniform 24–25 word length.
+- **Discipline-specific terminology**: Use field-standard terms rather than generic buzzwords.
+- **No stock openings**: Avoid "In the realm of...", "Let's delve into...", "In the ever-evolving landscape of..."
+- **No mid-sentence explanatory insertions**: Em dash, colon, semicolon, or parentheses must not carry mid-sentence explanations. Rewrite as a complete standalone sentence instead of swapping markers. (Colons: lists/definitions only. Semicolons: tightly parallel clauses only. Parentheses: table/figure captions only.)
+
+---
+
+## Academic Writing Standards (Computer Science PhD Level)
+
+When tier = **academic**, apply these domain practices. Target: Computer Science PhD / CCF A, B, C venues.
+
+### Paragraph Structure (PEEL)
+
+- **Point**: Topic sentence states main idea in the first 1–2 sentences
+- **Evidence**: Supporting material (cited sources, data, examples)
+- **Explanation**: Analysis showing why evidence supports the point; allocate substantial space
+- **Link**: Optional transitions to previous/next paragraph
+
+Each paragraph develops one central idea. Topic sentences act as mini thesis statements.
+
+### Hedging (Appropriate Caution)
+
+- **Use when**: Evidence is limited; critiquing others; offering tentative claims
+- **Approximators**: roughly, approximately, largely, typically, generally, partially, to a certain extent
+- **Shields**: could, may, might, appear, seem, suggest, possibly, probably, perhaps
+- **Lexical verbs**: suggest, indicate, imply, tend
+- **Avoid over-hedging**: Too much hedging sounds uncertain about your own work
+- **Avoid under-hedging**: Too little sounds naive or dismissive of others
+
+### Punctuation (Formal Academic Style)
+
+- **Em dashes (—)**: No mid-sentence explanatory insertions. Rewrite the explanation as a complete standalone sentence; NEVER swap markers (colon/semicolon/parentheses carrying the same insertion are the same violation)
+- **Semicolons**: Only between tightly coordinated parallel clauses — never to append an explanation; or separate complex series items
+- **Colons**: Only to introduce lists/enumerations or formal definitions — never mid-sentence explanations
+- **Commas**: Use purposefully; do not add without reason
+- **Exclamation/question marks**: Rare in formal academic writing
+
+### Section Numbering (IEEE-Style Reference)
+
+When numbering is used, follow consistent hierarchy:
+
+- **Primary**: Roman numerals — I., II., III.
+- **Secondary**: Capital letters — A., B., C.
+- **Tertiary**: Arabic numerals, right paren — 1), 2), 3)
+- **Quaternary**: Lowercase letters, right paren — a), b), c)
+
+Acknowledgment and References sections are unnumbered. Enumeration is optional but must be consistent.
+
+### Capitalization (Headings)
+
+- Title case: capitalize first and last words, all nouns, pronouns, adjectives, verbs, adverbs, subordinating conjunctions
+- Lowercase: articles, coordinating conjunctions, prepositions ≤3 letters (unless first/last)
+
+### Citations and References
+
+- Use BibTeX keys; cite ≥20 references for full papers
+- **Default venue scope**: CCF A, B, C class only (see Literature Search)
+- Prefer 2023–2025
+- IEEE numerical style [1], [2] when venue requires it
+
+### General
+
+- **Tone**: Formal, precise; avoid colloquialisms
+- **Author voice**: Maintain consistent perspective; avoid "we believe" without evidence
+- **Structure**: Follow plan's section outline; use formal headings
+
+---
+
+## Literature Search (Writer-Specific)
+
+When Writer searches for papers to cite during writing, apply these rules. They **override** crew's general academic search for citation purposes.
+
+### Venue Scope (Default)
+
+**Hard constraint**: Only cite papers from **CCF-recommended A, B, C class** conferences and journals.
+
+- **A**: Top-tier, flagship venues (e.g., SIGMOD, NeurIPS, ACL)
+- **B**: Highly reputable, major influence (e.g., RecSys, CIKM)
+- **C**: Recognized, well-regarded (e.g., ECIR, PAKDD)
+- **Reference**: CCF 中国计算机学会推荐国际学术会议和期刊目录 (2022): https://www.ccf.org.cn/Academic_Evaluation/By_category/
+- **Scope**: 10 fields (AI, DB, SE, Networks, etc.). Match venue to paper's subfield.
+- **Override**: If plan explicitly allows non-CCF venues (e.g., workshop, preprint), follow plan.
+
+### PhD-Level Search Strategy
+
+1. **Define scope**: Research question → keywords, synonyms, alternative terms
+2. **Inclusion/exclusion criteria**: Decide before search (e.g., time range, language, study type)
+3. **Sources**: Google Scholar, Semantic Scholar, DBLP, arXiv, venue proceedings; use CCF list to filter
+4. **Citation chaining**: Backward (references of key papers) + forward (papers citing key papers)
+5. **Document**: Record search terms, sources, date; enables reproducibility
+
+### Quality and Verification
+
+- **Verify before citing**: Do not cite from memory. Confirm title, authors, venue, year via search.
+- **Avoid hallucination**: Always validate each citation.
+- **Recency**: Prefer 2023–2025 for state-of-the-art; include foundational work when relevant.
+
+---
+
+## Reference: Inspiration Card
+
+Full details: `cursor-agent-team/ai_workspace/inspiration_capital/cards/20260205_033505_001.md`
+
+- Vocabulary ban list, Antislop framework, Moltbook agent experience
+- Literature search: explicit criteria, multi-step, verification before citing
+
+---
+
+**Version**: v4.0.0 (Updated: 2026-10-27)
+
+**Version History**:
+- v4.0.0 (2026-10-27): **Marker protocol v2 + viewpoint-round loop (RFC-003)** — new Step 2.0-pre 视角构角 with WRITE-GATE line (PASS/SKIP both traced, mirrors exp3c GATE evidence); Step 2.0a upgraded from single-pass Draft to viewpoint×round two-layer loop with per-viewpoint increment ledger (`[轮N·Vi]`); new mandatory convergence line (`CONVERGED: R<N>`, N≥2, or `BUDGET: R<N>`) before Step 2.1; Review gains item 6 intent-vs-draft 对照表 (吻合✓/偏差⚠/缺失✗). Grounded in: exp3b/3c activation 0/3→3/3 (machine-checkable markers make "自觉写作" into "可验收写作"), gate-annotation relapse 0/5 (SKIP must trace too), multipass-write kernel (构角/双层/增量账本/轮级收敛/对照产出). Existing slop/academic/citation rules untouched.
+- v3.1.0 (2026-09-14): **Insertion-structure ban** — mid-sentence explanatory insertions prohibited regardless of marker (em dash/colon/semicolon/parentheses); punctuation narrowed to legal uses (colon: lists/definitions; semicolon: parallel clauses; parentheses: table/figure captions); Step 2.0a gains MUST pre-compose sentence logic (claims ordered, every explanation pre-assigned a standalone sentence slot); removed the two workaround-inviting clauses ("prefer commas, semicolons, or separate sentences"). Source: issue #10 + owner ruling 2026-09-14.
+- v3.0.0 (2026-08-06): **MAJOR** — Prose compose loop HARD (Draft→Review→Final); general vs academic tiers; Slop Removal repositioned as Review checklist; aligned with discuss inner-world scratchpad
+- v2.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review; added Phase Markers subsection (PLAN-BU-001 Stage 2)
+- v2.0.0 (2026-02-08): **Agent readability overhaul** — All tables converted to bullet/key-value; vocabulary ban with "Instead use" alternatives; Trigger/Scope promoted to top; writing_guides cross-check added to Slop Removal Pass (item 10); conciseness pass (removed redundancy). Source: PLAN-AU-001.
+- v1.3.0 (2026-02-05): **Prompt audit**—Mandatory vs Recommended table; MUST (vocabulary ban, style constraints) vs RECOMMENDED (Slop Removal Pass); trigger "two or more paragraphs"; discipline default (CS); academic output defined; stance vs hedging clarified; CCF unified to A, B, C; merged Moltbook tips; removed redundant Prompt Best Practices; consolidated duplicates.
+- v1.2.0 (2026-02-05): **Literature search (Writer-specific)**—Default CCF A, B, C only; PhD-level search strategy (inclusion/exclusion, citation chaining, verification); anti-hallucination. Added citation venue check to slop removal pass. Sources: CCF 2022 list, systematic review methods.
+- v1.1.0 (2026-02-05): **Academic writing standards (CS PhD level)**—PEEL paragraph structure, hedging (approximators/shields), punctuation (formal style, dash sparing), IEEE-style numbering, capitalization. Extended slop removal pass with PEEL/hedging/numbering checks. Sources: IEEE Editorial Style Manual, Hull/Indiana/Monash/Oxford academic writing guides.
+- v1.0.2 (2026-02-05): Added dash minimization—avoid excessive em dashes (—); added dash check to slop removal pass.
+- v1.0.1 (2026-02-05): Added banned words (explore, embrace, elevate, dynamic, resonate, revolutionize); added human edit boundary note.
+- v1.0.0 (2026-02-05): Initial creation. AI slop avoidance (vocabulary ban, style constraints, slop removal pass). Based on /discuss research and Moltbook agent experience.

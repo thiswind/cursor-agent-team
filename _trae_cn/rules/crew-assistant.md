@@ -1,0 +1,152 @@
+---
+name: crew-assistant
+description: Rules for /crew command - Crew Member behavior and task execution
+alwaysApply: false
+---
+
+# Crew Assistant Rules
+
+> Persistent rules for the Crew Member — always active and automatically injected.
+
+## Cross-Cutting Concerns
+
+Shared aspects (see individual `.mdc` files for details):
+- **Persona**: Run `persona_output.py` before final output
+- **History**: `history_context_handler.mdc` applied when reading conversation history
+- **Gleaning**: `gleaning.mdc` (after execution) — Wandering NOT used for `/crew`
+
+### Phase Markers (Output Validation)
+
+Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response.
+
+### Priority Levels
+
+- **MUST**: Plan adherence, no plan modification without user approval, error reporting, plan/index bookkeeping after execution
+- **NEVER**: Skip Phase 3 (wrap-up), modify plan goals based on search results
+- **RECOMMENDED**: Pre-execution search, runtime search, session workspace creation, document reading
+
+---
+
+## Plan Reading Rules
+
+- **Directory**: `cursor-agent-team/ai_workspace/plans/`
+- **Naming**: `PLAN-[TopicID]-[Seq].md` (e.g., `PLAN-C-001.md`)
+- **Index**: `cursor-agent-team/ai_workspace/plans/INDEX.md`
+
+**Plan Identification**:
+- User specifies plan number (e.g., "PLAN-C-001") → Read specified plan
+- User says "Execute the plan we just discussed" → Identify most recent plan from current topic
+- User says "Execute the plan for topic X" → Identify latest plan for topic X
+- Only `/crew` used → Auto-identify latest pending plan from current topic
+
+**Plan File Structure**: Plan info (number, topic, time, creator, status), goal, execution steps, related files, expected results, notes, execution records.
+
+---
+
+## Information Retrieval
+
+### Pre-Execution Search (RECOMMENDED)
+
+**Trigger**: Plan involves specific techniques, tools, frameworks, or claims that need verification.
+
+**Academic search** (when plan involves research/methods):
+- **MUST** use top-tier venues only: NeurIPS, ICML, ICLR, AAAI, CVPR, ACL, JMLR, TPAMI, etc.
+- Platform: Google Scholar, arXiv (sorted by time)
+- Prioritize last 1–2 years; always report publication dates
+- Avoid low-quality sources
+
+**General web search** (when plan involves implementation/tools):
+- Prioritize: official docs → Stack Overflow / GitHub → technical blogs
+- Cross-validate from multiple sources
+- Check for deprecated methods or outdated practices
+
+### Runtime Search (RECOMMENDED)
+
+**Trigger**: Error occurs, step cannot be completed, unexpected behavior, or technical obstacle during execution.
+
+**Strategy**:
+1. Identify problem — extract error message, type, context
+2. Formulate search query — error-specific or solution-focused
+3. Search — official docs first, then community solutions
+4. Evaluate — prioritize recent, official, verified solutions
+5. Apply — use as guidance WITHOUT modifying plan goals; if plan modification needed, report to user
+6. Record — save to `runtime_research.md` (timestamp, query, results, outcome)
+
+**Limits**: Max 3 search attempts per step; cache results for repeated errors; skip search for trivially resolvable errors.
+
+---
+
+## Document Reading (RECOMMENDED)
+
+Before execution, read files listed in plan's "Related Files" section, plus related code/config files. Analyze content in relation to plan, confirm status, identify conflicts, record findings.
+
+**Long-document task inputs (MUST, read piece of RFC-003)**: when a task input is a decision-critical long document (meeting transcript, review comments, long spec, contract, report the plan relies on), apply the discuss read discipline: READ-GATE line (PASS/SKIP both traced), 构角 viewpoint list, two-layer scan with per-viewpoint increment ledger, convergence line (`CONVERGED: R<N>` N≥2 or `BUDGET: R<N>`), and the 对照表/action-items endpoint. Read archive lives under this session's directory (`reads/<id>/`); `verify_mechanism.py read <archive>` checks the markers. Quick lookups stay single-pass with a SKIP note.
+
+---
+
+## Workspace Management
+
+- **Location**: `cursor-agent-team/ai_workspace/crew/sessions/session_YYYYMMDD_HHMMSS/`
+- **Contents**: session_log.md, plan.md, research.md, documents.md, execution_steps.md, runtime_research.md, results.md, discussion_update.md
+- **Retention**: 7 days; use `cleanup_ai_workspace.py` (run `--help` for options)
+- **Session isolation**: Each execution gets its own directory
+
+---
+
+## Execution & Behavior Constraints
+
+**Plan Adherence (MUST)**:
+- Execute exactly as specified in plan steps, in order
+- Record each step's execution status with timestamp
+- Do NOT modify plan steps without user confirmation
+- If plan is unclear, ask user for clarification before proceeding
+
+**Error Handling (MUST)**:
+- Detect errors early; auto-search for solutions (see Runtime Search)
+- Record all runtime searches in `runtime_research.md`
+- If no solution found or plan modification needed: report to user and wait
+
+**Permissions**:
+- All operations that Cursor Agent can perform are allowed
+- Wait for user confirmation when Cursor prompts for authorization
+- Search provides technical guidance only — does NOT change plan goals
+
+---
+
+## Plan and Discussion Record Update (MUST)
+
+**When**: Always after plan execution (successful, failed, or partial).
+
+**Process**:
+1. If the target plan is known, update plan status and `plans/INDEX.md` through:
+   ```bash
+   python cursor-agent-team/_scripts/update_plan_status.py PLAN-[TopicID]-[Seq] --status completed --session cursor-agent-team/ai_workspace/crew/sessions/session_YYYYMMDD_HHMMSS --note "Implementation completed and verified"
+   ```
+2. Use `--status paused` or `--status in_progress` instead when execution is blocked or partial.
+3. If the target plan cannot be inferred, do not guess; report: `Plan status not updated: target plan could not be inferred.`
+4. Read `cursor-agent-team/ai_workspace/discussion_topics.md` when this execution changes topic state.
+5. Add execution record if topic update is needed: `[Time] - /crew - [PlanID] - [Result]`
+
+**Record Format**:
+- Time: YYYY-MM-DD HH:MM:SS
+- Executor: `/crew`
+- Plan Number: `PLAN-[TopicID]-[Seq]`
+- Result: Started / Completed (success/failed/partial)
+
+**Example**:
+```
+- 2026-02-08 16:30 - /crew - PLAN-C-001 - Completed (success)
+```
+
+---
+
+**Version**: v3.2.0 (Updated: 2026-10-27)
+
+**Version History**:
+- v3.2.0 (2026-10-27): Long-document task inputs MUST follow the discuss read discipline (RFC-003 read piece): READ-GATE, 构角, two-layer scan ledger, convergence line, 对照 endpoint; archive under session `reads/<id>/`.
+- v3.1.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)
+- v3.0.0 (2026-02-08): **MAJOR** — Conciseness overhaul per PLAN-AV-002. Script-as-Truth deletions (Time Awareness, workspace tree, cleanup details), tables→bullets, MUST/RECOMMENDED markers, merged Execution Rules into Behavior Constraints, English-only.
+- v2.2.2 (2026-02-05): Phase marker format — [Phase N DONE] + each marker on its own line
+- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) — HARD REQUIREMENT
+- v2.1.0 (2026-02-03): Refined Cross-Cutting Concerns — reduced to 5 lines following Script as Truth principle
+- v2.0.0 (2026-02-03): **MAJOR** — Standardized to English-only. Removed all Chinese-English mixed content.

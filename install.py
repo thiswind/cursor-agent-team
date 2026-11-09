@@ -2,11 +2,11 @@
 """install.py - Install Cursor AI Agent Team Framework (cross-platform).
 
 Usage:
-    python cursor-agent-team/install.py [--ide cursor|claude_code|trae_solo] [--yes]
+    python cursor-agent-team/install.py [--ide trae_cn|cursor|claude_code] [--yes]
 
-    --ide selects the target IDE form. The default (cursor) preserves the
-    historical behaviour of this script; claude_code / trae_solo dispatch to
-    their dedicated installer entrypoints.
+    --ide selects the target IDE form. The default (trae_cn, the primary host
+    since v0.26.0) dispatches to install_trae_cn.py; cursor / claude_code
+    dispatch to their dedicated installer entrypoints (side-targets).
 
 Prerequisites:
     git submodule add https://github.com/thiswind/cursor-agent-team.git cursor-agent-team
@@ -25,7 +25,7 @@ SUBMODULE_NAME = "cursor-agent-team"
 
 IDE_DISPATCH = {
     "claude_code": "install_claude_code.py",
-    "trae_solo": "install_trae_solo.py",
+    "trae_cn": "install_trae_cn.py",
 }
 
 COMMAND_FILES = [
@@ -167,11 +167,11 @@ def main():
         description="Install Cursor AI Agent Team Framework")
     ap.add_argument(
         "--ide",
-        choices=["cursor", "claude_code", "trae_solo"],
-        default="cursor",
-        help="Target IDE form to install (default: cursor). "
-             "claude_code / trae_solo dispatch to their dedicated "
-             "installer entrypoints.",
+        default="trae_cn",
+        choices=["trae_cn", "cursor", "claude_code"],
+        help="Target IDE form to install (default: trae_cn, the primary "
+             "host since v0.26.0). cursor / claude_code dispatch to their "
+             "dedicated installer entrypoints (side-targets).",
     )
     ap.add_argument(
         "--yes",

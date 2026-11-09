@@ -1,0 +1,393 @@
+---
+name: prompt-engineer-assistant
+description: Rules for /prompt_engineer command - Prompt Engineer behavior and LangGPT format
+alwaysApply: false
+---
+
+# Prompt Engineer Assistant Rules
+
+> **Purpose**: Persistent rules for the Prompt Engineer - these rules are always active and automatically injected.
+
+## Cross-Cutting Concerns
+
+Shared aspects (see individual `.mdc` files for details):
+- **Persona**: Run `persona_output.py` before final output
+- **History**: `history_context_handler.mdc` applied when reading conversation history
+- **Note**: Prompt Engineer does NOT use Wandering or Gleaning
+
+### Phase Markers (Output Validation)
+
+Completion markers are produced by the **script**, not by typing. At each phase-end join point: review the phase output, then run `python cursor-agent-team/_scripts/phase_marker.py <N> true` or `false`; use the script's stdout as that phase's marker line. Do not type `[Phase N DONE]` manually. If the agent cannot run the script (e.g. environment constraint), fall back to outputting the canonical format `[Phase N DONE]` by hand. Missing markers = invalid response.
+
+**Rationale**: Structured output creates an explicit commitment and attention anchor. Missing markers = invalid response.
+
+---
+
+## File Path Rules
+
+### Prompt Files
+- **Directory**: `cursor-agent-team/ai_prompts/`
+- **Naming**: `[name]_prompts.md`
+- **Example**: `figure_caption_prompts.md`
+
+### Command Files
+- **Directory**: `.cursor/commands/`
+- **Naming**: `[name].md`
+- **Example**: `figure_caption.md`
+
+### Rule Files
+- **Directory**: `.cursor/rules/`
+- **Naming**: `[name]_assistant.mdc`
+- **Example**: `figure_caption_assistant.mdc`
+
+## LangGPT Format Requirements
+
+### Required Structure
+1. **Role (角色)**: Defines the AI's role
+2. **Constraints (约束)**: Lists constraints and requirements
+3. **Goal (目标)**: Describes the goal of the prompt
+4. **Output (输出)**: Specifies the expected output format
+
+### Format Validation
+- Must follow LangGPT structure
+- Must include all required sections
+- Must use clear, structured markdown
+
+## File Naming Conventions
+
+### Prompt Files
+- Format: `[name]_prompts.md`
+- Use lowercase with underscores
+- Descriptive names
+
+### Command Files
+- Format: `[name].md`
+- Use lowercase with underscores
+- Match prompt name (without `_prompts` suffix)
+
+### Rule Files
+- Format: `[name]_assistant.mdc`
+- Use lowercase with underscores
+- Match prompt name (without `_prompts` suffix) + `_assistant.mdc`
+
+## Workspace Management Rules
+
+### Directory Structure
+
+The AI workspace for Prompt Engineer is located at `cursor-agent-team/ai_workspace/prompt_engineer/`:
+
+```
+cursor-agent-team/ai_workspace/prompt_engineer/
+├── sessions/
+│   └── session_YYYYMMDD_HHMMSS/
+│       ├── mode.md                    # Mode identifier (create/maintain)
+│       ├── target_prompt.md           # Target prompt (maintain mode)
+│       ├── session_log.md             # Session log
+│       ├── requirements.md             # Requirements analysis
+│       ├── questions.md               # Multiple-choice questions record
+│       ├── examples.md                # Behavior examples
+│       ├── comparison.md              # Before/after comparison (maintain mode)
+│       ├── drafts/                    # Draft files
+│       │   ├── prompt_draft.md
+│       │   ├── command_draft.md
+│       │   └── rule_draft.md
+│       └── tests/                     # Test files (currently unused)
+└── README.md                          # Workspace documentation
+```
+
+### File Naming in Workspace
+
+**Session Files**:
+- Format: `session_YYYYMMDD_HHMMSS/`
+- Example: `session_20251229_150530/`
+
+**Session Log**:
+- Format: `session_log.md`
+
+**Requirements**:
+- Format: `requirements.md`
+
+**Questions**:
+- Format: `questions.md`
+
+**Examples**:
+- Format: `examples.md`
+
+**Comparison**:
+- Format: `comparison.md`
+
+**Drafts**:
+- Format: `prompt_draft.md`, `command_draft.md`, `rule_draft.md`
+
+### Usage Rules
+
+1. **Purpose**: Record intermediate thoughts, requirements analysis, and draft prompts during prompt creation/maintenance
+2. **Scope**: Only accessible during `/prompt_engineer` command execution
+3. **Temporary Nature**: Files are temporary and cleaned after finalization
+4. **Session Isolation**: Each session has its own directory to avoid conflicts with other agents
+5. **Human Access**: Humans can view AI workspace to understand AI's thinking process, but don't need to actively manage it
+
+### Cleanup Policy
+
+- **After Finalization**: Temporary files are cleaned after user confirms finalization
+- **Session Retention**: Session directories can be kept for reference (suggested: 7 days)
+- **Important Content**: Important content should be saved to permanent locations (`cursor-agent-team/ai_prompts/`, `.cursor/commands/`, `.cursor/rules/`)
+
+## Output Type Determination Rules
+
+### Rule Only
+- **When**: Persistent behavior rules, reusable across contexts
+- **Example**: File path rules, format requirements, workspace management
+- **Output**: `.cursor/rules/[name]_assistant.mdc`
+- **Characteristics**: 
+  - Defines persistent behavior
+  - Can be referenced by multiple commands
+  - Contains infrastructure-level rules
+
+### Command Only
+- **When**: Specific command behavior, one-time operations
+- **Example**: One-time script execution, simple operations
+- **Output**: `.cursor/commands/[name].md`
+- **Characteristics**:
+  - Defines command-specific behavior
+  - Self-contained operation
+  - No need for persistent rules
+
+### Rule + Command
+- **When**: Both persistent rules and command behavior needed
+- **Example**: Complex commands with persistent rules, commands that need workspace management
+- **Output**: Both files
+- **Characteristics**:
+  - Command file references rule file
+  - Rule file contains persistent infrastructure
+  - Command file contains role behavior and workflow
+
+## Version Management Rules
+
+### Semantic Versioning (SemVer)
+
+Format: `MAJOR.MINOR.PATCH`
+
+- **MAJOR** (X.0.0): Breaking changes, incompatible updates
+  - Example: Complete restructure of prompt format
+  - Example: Removing required sections
+  - Example: Changing fundamental behavior
+
+- **MINOR** (0.X.0): New features, backward compatible
+  - Example: Adding new optional sections
+  - Example: Adding new features while maintaining compatibility
+  - Example: Extending functionality
+
+- **PATCH** (0.0.X): Bug fixes, minor improvements
+  - Example: Fixing typos
+  - Example: Clarifying wording
+  - Example: Minor formatting improvements
+
+### Version History Requirements
+
+**Initial Creation**:
+```markdown
+---
+**Version**: v1.0.0 (Created: YYYY-MM-DD)
+
+**Version History**:
+- v1.0.0 (YYYY-MM-DD): Initial creation
+```
+
+**Updates**:
+```markdown
+---
+**Version**: v1.1.0 (Updated: YYYY-MM-DD)
+
+**Version History**:
+- v1.1.0 (YYYY-MM-DD): Added feature X, improved Y
+- v1.0.0 (YYYY-MM-DD): Initial creation
+```
+
+**Breaking Changes**:
+```markdown
+---
+**Version**: v2.0.0 (Updated: YYYY-MM-DD)
+
+**Version History**:
+- v2.0.0 (YYYY-MM-DD): Major restructure - breaking changes (see migration guide)
+- v1.2.0 (YYYY-MM-DD): Added feature Z
+- v1.1.0 (YYYY-MM-DD): Added feature X
+- v1.0.0 (YYYY-MM-DD): Initial creation
+```
+
+### Version Number Determination
+
+1. **Analyze Changes**: Determine scope of changes
+2. **Check Compatibility**: Assess backward compatibility
+3. **Determine Increment**: 
+   - Breaking changes → MAJOR
+   - New features (compatible) → MINOR
+   - Bug fixes/minor improvements → PATCH
+4. **Update History**: Add entry to version history
+
+## Existing File Detection Rules
+
+### Scan Directories
+
+**Before creating or maintaining prompts, MUST scan**:
+
+1. `cursor-agent-team/ai_prompts/` - for existing prompt files
+2. `.cursor/commands/` - for existing command files
+3. `.cursor/rules/` - for existing rule files
+
+### Conflict Detection
+
+**If similar functionality exists**:
+1. **Inform User**: Clearly state that similar functionality exists
+2. **Show Existing Files**: List existing files that might conflict
+3. **Ask for Confirmation**: 
+   - "A similar prompt exists: `[name]_prompts.md`. Do you want to:
+     A) Update the existing prompt
+     B) Create a new prompt with a different name
+     C) Cancel"
+4. **Suggest Update**: If appropriate, suggest updating existing file instead of creating duplicate
+
+### Duplicate Prevention
+
+- **Check Names**: Ensure no duplicate names
+- **Check Functionality**: Check if similar functionality exists
+- **User Override**: If user explicitly requests creation despite existing file, proceed but warn user
+
+## Mode Detection Rules
+
+### Create Mode Triggers
+
+**Automatic Detection**:
+- User says "create", "new", "generate"
+- User says "I need a prompt for..."
+- Functionality doesn't exist in scanned files
+- User describes functionality that doesn't match existing prompts
+
+**User Explicit**:
+- User explicitly says "create a new prompt"
+- User explicitly says "generate a new prompt"
+
+### Maintain Mode Triggers
+
+**Automatic Detection**:
+- User says "update", "modify", "improve", "refine", "maintain"
+- User mentions existing prompt name
+- User refers to "this prompt", "that prompt"
+- User says "change [existing prompt name]"
+
+**User Explicit**:
+- User explicitly says "update [prompt name]"
+- User explicitly says "modify [prompt name]"
+
+### User Override
+
+- **Priority**: User's explicit instruction takes priority over auto-detection
+- **If user explicitly specifies mode**: Follow user's instruction regardless of auto-detection
+- **If user says "create" but similar exists**: Still inform user about existing file, but proceed if user confirms
+
+### Mode Confirmation
+
+- **Show Detected Mode**: "Detected mode: [Create/Maintain]"
+- **If uncertain**: Ask user to clarify
+- **If conflict**: Show both options and ask user to choose
+
+## Time Awareness Rules
+
+### Mandatory Current Time Retrieval
+
+**CRITICAL**: Before any prompt engineering work, AI **must first retrieve current time**.
+
+- **Why**: Essential for version management and timestamps
+- **Method**: Use system time
+- **Display**: Always display current time at the start of responses
+- **Format**: `当前时间：[YYYY-MM-DD HH:MM:SS]` or `Current Time: [YYYY-MM-DD HH:MM:SS]`
+
+### Timestamp Requirements
+
+- **Version History**: Include creation/update dates
+- **Session Logs**: Include timestamps for all actions
+- **File Metadata**: Include timestamps in file headers
+
+## Behavior Constraints
+
+### File Modification Rules
+
+**Allowed Modifications**:
+- Create/modify files in `cursor-agent-team/ai_workspace/prompt_engineer/` (workspace)
+- Create/modify prompt files in `cursor-agent-team/ai_prompts/` (after user confirmation)
+- Create/modify command files in `.cursor/commands/` (after user confirmation)
+- Create/modify rule files in `.cursor/rules/` (after user confirmation)
+
+**Modification Workflow**:
+1. **Draft First**: Always create drafts in workspace first
+2. **Show User**: Show generated content to user
+3. **Get Confirmation**: Wait for user confirmation before saving to official directories
+4. **Finalize**: Only save to official directories after user confirms finalization
+
+### Interactive Workflow Requirements
+
+1. **Requirements Recitation**: Must recite requirements in natural language
+2. **Multiple-Choice Questions**: Use multiple-choice format for clarification
+3. **Behavior Examples**: Show Q&A examples before finalizing
+4. **User Confirmation**: Get user confirmation at each major step
+5. **Iteration Support**: Support multiple iterations based on user feedback
+
+## Discussion Record Update Rules
+
+### When to Update
+
+The Prompt Engineer should update discussion records when:
+- User explicitly indicates this is execution of a plan
+- An active execution plan is detected from discussion topics
+- After finalizing a prompt that was part of a plan execution
+
+### Update Process
+
+1. **Read Discussion Topics**: Read `cursor-agent-team/ai_workspace/discussion_topics.md`
+2. **Identify Associated Topic and Plan**: 
+   - Find the topic that generated the plan (if any)
+   - Identify the plan number (e.g., PLAN-C-001)
+3. **Update Execution Records**:
+   - Add entry to topic's "执行记录" field
+   - Format: `[时间] - /prompt_engineer - [方案编号] - 执行完成（成功/失败/部分完成）`
+   - Example: `2025-12-29 15:55:00 - /prompt_engineer - PLAN-C-002 - 执行完成（成功）`
+4. **Update Plan Status** (if plan file exists):
+   - Update plan file status to "已完成" or "执行中"
+   - Add execution record to plan file
+
+### Record Format
+
+**Execution Record Format**:
+- Format: `[时间] - [执行者] - [方案编号] - [执行结果]`
+- Time: YYYY-MM-DD HH:MM:SS
+- Executor: `/prompt_engineer`
+- Plan Number: `PLAN-[话题ID]-[序号]`
+- Result: 成功 / 失败 / 部分完成
+
+**Example**:
+```markdown
+- **执行记录**:
+  - 2025-12-29 15:55:00 - /prompt_engineer - PLAN-C-002 - 执行完成（成功）
+```
+
+---
+
+**Last Updated**: 2026-02-05
+
+**Version**: v2.2.1
+
+**Version History**:
+- v2.3.0 (2026-02-28): Phase Marker semantics — output from phase_marker.py script after review (PLAN-BU-001 Stage 2)
+- v2.2.2 (2026-02-05): Phase marker format - [Phase N DONE] + each marker on its own line (tokenizer stability + format clarity)
+- v2.2.1 (2026-02-05): Phase marker format - [Phase N ✓] → [Phase N DONE] for LLM tokenizer stability
+- v2.2.0 (2026-02-05): Added Phase Markers (Output Validation) - HARD REQUIREMENT for [Phase 0 DONE] through [Phase 4 DONE]
+- v2.1.0 (2026-02-03): Refined Cross-Cutting Concerns section - reduced from ~55 lines to 5 lines following "Script as Truth" principle.
+- v2.0.0 (2026-02-03): **MAJOR** - Standardized to English-only. Removed all Chinese-English mixed content in headers.
+- v1.4.0 (2026-02-03): Added History Context Handler as cross-cutting concern. This handles indirect persona contamination from chat history by identifying `<persona_styled>` tagged content and extracting technical facts while ignoring expression style.
+- v1.3.0 (2026-02-03): **MAJOR**: Added Persona Sandboxing architecture. Added Input Persona Layer and Output Persona Layer as cross-cutting concerns. This separates persona influence from core work, improving work quality while maintaining user experience.
+- v1.2.0 (2026-02-03): Removed Preflight Check section (now defined in command file's Workflow Step 0 to ensure AI always sees and executes it).
+- v1.1.0 (2025-12-29): Added discussion record update rules to support crew command integration
+- v1.0.0 (2025-12-29): Initial version
+
+**Note**: These rules are persistent and automatically applied when using the `/prompt_engineer` command. They define the infrastructure and constraints for the Prompt Engineer Assistant, while the command itself defines the role behavior and workflow.

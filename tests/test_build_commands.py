@@ -71,14 +71,14 @@ class TestGeneration(unittest.TestCase):
         self.assertEqual(len(self.targets), 24)
         self.assertIn("_cursor/commands/spec_translator.md", self.targets)
         self.assertIn("_claude/commands/spec_translator.md", self.targets)
-        self.assertNotIn("_trae_solo/commands/spec_translator.md", self.targets)
+        self.assertNotIn("_trae_cn/commands/spec_translator.md", self.targets)
         self.assertIn("_skills/cursor-agent-team-spec_translator/SKILL.md", self.targets)
         self.assertIn("_cursor/commands/workflow.md", self.targets)
         self.assertIn("_claude/commands/workflow.md", self.targets)
-        self.assertIn("_trae_solo/commands/workflow.md", self.targets)
+        self.assertIn("_trae_cn/commands/workflow.md", self.targets)
         self.assertIn("_skills/cursor-agent-team-workflow/SKILL.md", self.targets)
         self.assertIn("_skills/cursor-agent-team/SKILL.md", self.targets)
-        self.assertNotIn("_trae_solo/skills/cursor-agent-team-workflow/SKILL.md", self.targets)
+        self.assertNotIn("_trae_cn/skills/cursor-agent-team-workflow/SKILL.md", self.targets)
 
     def test_all_artifacts_carry_generated_header(self):
         for rel, content in self.targets.items():
@@ -94,7 +94,7 @@ class TestGeneration(unittest.TestCase):
 
     def test_cursor_and_trae_use_python_not_python3(self):
         for rel, content in self.targets.items():
-            if rel.startswith(("_cursor/", "_trae_solo/")):
+            if rel.startswith(("_cursor/", "_trae_cn/")):
                 self.assertNotIn("python3 ", content, f"{rel} should use `python`")
                 self.assertIn("python ", content)
 
@@ -117,7 +117,7 @@ class TestGeneration(unittest.TestCase):
 
     def test_trae_frontmatter_present(self):
         for rel, content in self.targets.items():
-            if rel.startswith("_trae_solo/commands/"):
+            if rel.startswith("_trae_cn/commands/"):
                 self.assertTrue(content.startswith("---\nname: "), f"{rel} missing frontmatter")
 
 

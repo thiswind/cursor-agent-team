@@ -89,7 +89,7 @@ python cursor-agent-team/_scripts/preflight_check.py
 - Report concise results, verification performed, and the JSON result from `update_plan_status.py` when it ran.
 
 ## Note
-The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor and TRAE SOLO.
+The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor, Trae CN and Claude Code.
 
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->

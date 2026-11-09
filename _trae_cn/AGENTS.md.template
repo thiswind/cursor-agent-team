@@ -1,7 +1,8 @@
 # Cursor Agent Team Project Rules
 
 ## Overview
-This is the Cursor Agent Team framework. For full documentation, see the `cursor-agent-team` submodule.
+This is the Cursor Agent Team (CAT) framework, hosted primarily on Trae CN.
+For full documentation, see the `cursor-agent-team` submodule.
 
 ## Core Roles
 - **Discussion Partner**: Exploration mode - breadth and depth, no execution
@@ -14,8 +15,15 @@ This is the Cursor Agent Team framework. For full documentation, see the `cursor
 2. **Execute**: Use crew member to execute the plans
 3. **Expand**: Use prompt engineer to create new roles when needed
 
+## CAT Routing
+- Role-mask rules are installed at `.trae/rules/` (`cat-router` is always on;
+  the six mask rules activate on demand).
+- Skills are installed at `.trae/skills/cursor-agent-team-*`.
+- Trae CLI (`traecli`) reads AGENTS.md, `.trae/rules/` and `.trae/skills/`
+  natively, so the same install serves both IDE and CLI.
+
 ## AI Workspace
 All plans, notes, and discussion topics are stored in `cursor-agent-team/ai_workspace/`.
 
 ## Shared Workspace
-This workspace is shared between Cursor and TRAE SOLO.
+This workspace is shared between Trae CN, Cursor and Claude Code.

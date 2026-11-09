@@ -45,7 +45,7 @@ SKILL_DIRS = [
 def _load_owned_files(info_path):
     """Read the previously-installed file list so re-installs can overwrite
     owned files without touching user-added files (same pattern as
-    install_trae_solo.py)."""
+    install_trae_cn.py)."""
     import json
     try:
         with open(info_path, "r", encoding="utf-8") as f:

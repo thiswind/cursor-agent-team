@@ -44,9 +44,9 @@ Two governing rules:
 
 | Platform | Installer | Installs |
 |---|---|---|
-| Cursor | `install.py` | `.cursor/commands/*.md` + `.cursor/rules/*.mdc` |
-| Claude Code | `install_claude_code.py` | `.claude/commands/*.md` |
-| TRAE SOLO | `install_trae_solo.py` | `_trae_solo/` harness + skills |
+| **Trae CN (primary)** | `install_trae_cn.py` | `.trae/skills/` (11) + `.trae/rules/*.md` (cat-router + six masks) + `.trae/commands/*.md` + `AGENTS.md`; traecli-compatible |
+| Cursor (side-target) | `install.py` | `.cursor/commands/*.md` + `.cursor/rules/*.mdc` |
+| Claude Code (side-target) | `install_claude_code.py` | `.claude/commands/*.md` |
 
 All installers are **idempotent** (re-run safely), never delete
 `ai_workspace/`, and since v0.24.0 warn before overwriting installer-owned
@@ -54,7 +54,7 @@ files that have local edits (ownership recorded with md5 in the install
 record).
 
 The skills under `_skills/` are **statically distributed** — hosts on
-skill-aware harnesses (Claude Code / TRAE plugin / others) can register
+skill-aware harnesses (Claude Code / Trae CN / traecli / others) can register
 them directly; the installers remain for command-file harnesses.
 
 ## 4. Cold-start self-check

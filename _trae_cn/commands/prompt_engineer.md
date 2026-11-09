@@ -99,7 +99,7 @@ python cursor-agent-team/_scripts/persona_output.py
 ```
 
 ## Note
-The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor and TRAE SOLO.
+The workspace at `cursor-agent-team/ai_workspace/` is shared between Cursor, Trae CN and Claude Code.
 
 ---
 <!-- Generated from commands.yaml by _scripts/build_commands.py — do not edit by hand. Edit commands.yaml and regenerate. -->

@@ -10,7 +10,7 @@ Single source of truth workflow:
 Artifacts generated per command (based on `platforms` in commands.yaml):
     cursor : _cursor/commands/{name}.md
     claude : _claude/commands/{name}.md
-    trae   : _trae_solo/commands/{name}.md
+    trae   : _trae_cn/commands/{name}.md
 
 Host-agnostic frontier-agent skills (generated for every command with a
 `skill` block, regardless of platform — since v0.22.0):
@@ -230,7 +230,7 @@ def render_trae(cmd) -> str:
     out.append(
         "## Note\n"
         "The workspace at `cursor-agent-team/ai_workspace/` is shared "
-        "between Cursor and TRAE SOLO."
+        "between Cursor, Trae CN and Claude Code."
     )
     out.append("---\n" + history_footer(cmd))
     return "\n\n".join(out) + "\n"
@@ -507,7 +507,7 @@ def targets_for(cmd):
     if "claude" in cmd["platforms"]:
         targets.append((f"_claude/commands/{name}.md", render_claude(cmd)))
     if "trae" in cmd["platforms"]:
-        targets.append((f"_trae_solo/commands/{name}.md", render_trae(cmd)))
+        targets.append((f"_trae_cn/commands/{name}.md", render_trae(cmd)))
     if cmd.get("skill"):
         targets.append((
             f"_skills/{skill_slug(cmd)}/SKILL.md",
@@ -534,7 +534,7 @@ def expected_dirs():
     return [
         "_cursor/commands",
         "_claude/commands",
-        "_trae_solo/commands",
+        "_trae_cn/commands",
         "_skills",
     ]
 
